@@ -31,6 +31,7 @@ namespace Player.Controller
                         if (playerToAssign.GetAcqusitionScore() < playerController.GetAcqusitionScore()) {
                             playerToAssign = playerController;
                         
+
                         }
                     }
                     else
