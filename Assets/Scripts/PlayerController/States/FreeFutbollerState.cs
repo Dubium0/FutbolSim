@@ -1,12 +1,11 @@
 ﻿
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
-using UnityEngine.Playables;
-using Utility;
-namespace Player.Controller
+using UnityEngine.InputSystem.XR;
+
+namespace Player.Controller.States
 {
 
-    public class FreeFutbollerState : IPlayerActions
+    public class FreeFutbollerState : IPlayerState
     {
         private PlayerController controller_;
         private float currentAcceleration_;
@@ -16,12 +15,20 @@ namespace Player.Controller
         {
             controller_ = controller;
 
-            controller_.SprintAction.performed += context => { OnSprintEnter(); };
-            controller_.SprintAction.canceled += context => { OnSprintExit(); };
-
-            controller_.Rigidbody.maxLinearVelocity = controller.PlayerData.MaxWalkSpeed;
-            currentAcceleration_ = controller_.PlayerData.WalkingAcceleration;
         }
+
+        public void HandleTransition()
+        {
+            if (SoccerBall.Instance.IsPlayerStruggling(controller_))
+            {
+                controller_.SetState(new StrugglingFutbollerState(controller_));
+            }else if (SoccerBall.Instance.CurrentOwnerPlayer == controller_)
+            {
+                controller_.SetState(new DribblingFutbollerState(controller_));
+            }
+              
+        }
+
         public void Move()
         {
             var inputVector = controller_.MovementVector;
@@ -33,6 +40,25 @@ namespace Player.Controller
                 controller_.transform.forward = MathExtra.MoveTowards(controller_.transform.forward, inputVector, 1 / controller_.PlayerData.RotationTime);
             }
 
+        }
+
+        public void OnEnter()
+        {
+            controller_.SprintAction.performed += context => { OnSprintEnter(); };
+            controller_.SprintAction.canceled += context => { OnSprintExit(); };
+
+            controller_.Rigidbody.maxLinearVelocity = controller_.PlayerData.MaxWalkSpeed;
+            currentAcceleration_ = controller_.PlayerData.WalkingAcceleration;
+        }
+
+        public void OnExit()
+        {
+            controller_.Debugger.Log("Bye Bye free state");
+        }
+
+        public void OnFixedUpdate()
+        {
+           
         }
 
         public void OnHighActionAEnter()
@@ -89,9 +115,6 @@ namespace Player.Controller
         }
 
        
-        public void HandleCollision(Collision collision)
-        {
-
-        }
+       
     }
 }

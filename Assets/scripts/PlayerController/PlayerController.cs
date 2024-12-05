@@ -1,14 +1,20 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEngine.InputSystem;
 using Utility;
+using Player.Controller.States;
+using System.Collections;
 namespace Player.Controller
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour    
     {
 
         [SerializeField] private PlayerData playerData_;
-
+        [SerializeField] private Transform focusPoint_;
+        private const int ghostLayer_ = 6;
+        private const int playerLayer_ = 3;
+        private const int groundLayer_ = 7;
         public PlayerData PlayerData {  get { return playerData_; } }
 
         #region Input Actions
@@ -27,6 +33,7 @@ namespace Player.Controller
         public InputAction SprintAction {  get { return sprintAction_; } }
 
         
+        
         private InputAction lowActionA_;
         private InputAction lowActionB_;
         private InputAction highActionA_;
@@ -35,7 +42,14 @@ namespace Player.Controller
 
         public Vector3 WorldMousePosition { 
             get {
-                return Camera.main.ScreenToWorldPoint(lookAction_.ReadValue<Vector2>().WithZ(Camera.main.transform.position.z - 1));
+                Ray ray = Camera.main.ScreenPointToRay(lookAction_.ReadValue<Vector2>());
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer_))
+                {
+                    Vector3 worldPosition = hit.point;
+                    Debug.Log("Mouse World Position: " + worldPosition);
+                    return worldPosition;
+                }
+                return Vector3.zero;
             } 
         }
 
@@ -52,31 +66,25 @@ namespace Player.Controller
 
         #region Utilities
         [SerializeField] private bool debugSwitch = true;
-        DebugUtils debugger_ = new();
+        private DebugUtils debugger_ = new();
+
+        public DebugUtils Debugger { get { return debugger_; } }
         #endregion
 
         #region States
         
 
-        private IPlayerActions currentState_;
+        private IPlayerState currentState_;
         #endregion
-
-        public SoccerBall SoccerBall = null;
 
         private PersistenFunctionCollection<string> fixedUpdateFunctions_ = new();
 
         public PersistenFunctionCollection<string> FixedUpdateFunctions { get { return fixedUpdateFunctions_; } }
+        
+        private int currentBallAcqusitionStamina_;
 
 
-        public int GetAcqusitionScore()
-        {
-            return 0;
-        }
-
-        public void SetOwner(SoccerBall soccerBall)
-        {
-            
-        }
+      
 
         private void OnValidate()
         {
@@ -86,6 +94,7 @@ namespace Player.Controller
 
         private void Awake()
         {
+            gameObject.layer = playerLayer_;
             debugger_.SetSeverity(Severity.INFO);
             rigidbody_ = GetComponent<Rigidbody>();
             SetActions();
@@ -93,8 +102,9 @@ namespace Player.Controller
 
             if (playerData_ == null) debugger_.Log("Player Data is null! Create an assign player data to agent", Severity.ERROR);
             
-            currentState_ = new FreeFutbollerState(this);
             
+            SetState(new FreeFutbollerState(this));
+            currentBallAcqusitionStamina_ = playerData_.MaxBallAcqusitionStamina;
             
             
             BindActions();
@@ -104,6 +114,7 @@ namespace Player.Controller
         private void FixedUpdate()
         {
             currentState_.Move();
+            currentState_.OnFixedUpdate();
         }
 
         private void SetActions()
@@ -135,13 +146,57 @@ namespace Player.Controller
             sprintAction_.performed += context => { currentState_.OnSprintEnter(); };
             sprintAction_.canceled += context => { currentState_.OnSprintExit(); };
         }
-
-
-        private void OnCollisionEnter(Collision collision)
+        
+        public int TryToAcquireBall()
         {
-            currentState_.HandleCollision(collision);
+            if ( currentBallAcqusitionStamina_ - PlayerData.BallAcqusitionStaminaReductionRate >  0 )
+            {
+                currentBallAcqusitionStamina_ -= PlayerData.BallAcqusitionStaminaReductionRate;
+
+            }
+            else
+            {
+                currentBallAcqusitionStamina_ = 0;
+            }
+            return ( currentBallAcqusitionStamina_/ playerData_.MaxBallAcqusitionStamina) * playerData_.BallAcqusitionPoint;
         }
 
+        public int GetTeamIndex()
+        {
+            return 0;
+        }
+
+        public Vector3 GetFocusPoint()
+        {
+            return focusPoint_.position;
+        }
+        public void OnBallStateChanged()
+        {
+            if (currentState_ != null)
+            {
+                currentState_.HandleTransition();
+            }
+        }
+        public void SetState(IPlayerState state)
+        {
+            if (currentState_ != null) { 
+                currentState_.OnExit();
+            }
+            currentState_ = state;
+            currentState_.OnEnter();    
+        }
+
+        public void ChangeToGhostLayer()
+        {
+            StartCoroutine(ChangeToGhostLayerForATime(0.4f));
+        }
+        private IEnumerator ChangeToGhostLayerForATime(float time)
+        {
+
+            gameObject.layer = ghostLayer_;
+            yield return new WaitForSeconds(time);  
+            gameObject.layer = playerLayer_;
+        }
     }
 
 

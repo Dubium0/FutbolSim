@@ -2,10 +2,14 @@
 
 namespace Player.Controller
 {
-    [CreateAssetMenu(fileName = "Player Data",menuName ="YunYun Tools/Player/Player Data")]
+    [CreateAssetMenu(fileName = "Player Data",menuName ="Futbol Sim/Player/Player Data")]
     public class PlayerData : ScriptableObject
     {
+        //same for all players
+        public const int BallAcqusitionStaminaReductionRate = 5;
 
+
+        // might change by player
         [SerializeField] private float maxWalkSpeed_ = 4.0f;
         public float MaxWalkSpeed { get => maxWalkSpeed_;  }
         
@@ -27,6 +31,13 @@ namespace Player.Controller
         [SerializeField] private LayerMask ballAcquisitonLayers_;
         public LayerMask BallAcquisitonLayers {  get =>  ballAcquisitonLayers_; }
 
+
+        [SerializeField,Range(10,int.MaxValue)] private int maxBallAcqusitionStamina_;
+        public int MaxBallAcqusitionStamina { get => maxBallAcqusitionStamina_; }
+
+
+        [SerializeField] private int ballAcqusitionPoint_;
+        public int BallAcqusitionPoint { get => ballAcqusitionPoint_; }
     }
 
 

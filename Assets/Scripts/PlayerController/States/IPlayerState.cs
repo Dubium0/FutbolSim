@@ -1,13 +1,15 @@
-using Unity.VisualScripting;
-using UnityEngine;
 
-
-namespace Player.Controller
+namespace Player.Controller.States
 {
+    
 
+    public interface IPlayerState
+    {
+    public void OnEnter();
+    public void OnExit();
+    public void OnFixedUpdate();
 
-public interface IPlayerActions
-{
+        public void HandleTransition();
     public void Move();
 
     public void OnSprintEnter();
@@ -21,9 +23,6 @@ public interface IPlayerActions
     public void OnHighActionAExit();
     public void OnHighActionBEnter();
     public void OnHighActionBExit();
-
-
-    public void HandleCollision(Collision collision);
 
     }
 }
