@@ -35,13 +35,13 @@ namespace Utility
                 switch (severity) {
                 
                     case Severity.INFO:
-                        Debug.Log(message);
+                        Debug.Log($"{name_}::{message}");
                         break;
                     case Severity.WARNING:
-                        Debug.LogWarning(message); 
+                        Debug.LogWarning($"{name_}::{message}"); 
                         break;
                     case Severity.ERROR:
-                        Debug.LogError(message);
+                        Debug.LogError($"{name_}::{message}");
                     break;
                 }
             }
