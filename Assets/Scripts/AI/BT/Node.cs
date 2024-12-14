@@ -1,4 +1,7 @@
+
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 namespace AI.BT
 {
     
@@ -12,33 +15,17 @@ namespace AI.BT
             Success = 1,
         };
 
-        private Node parent_ = null;
-        private List<Node> children_ = new ();
-
-        public Node Parent { get => parent_; }
-        public List<Node> Children { get => children_; }
-
         public abstract Result Tick();
 
-        public void RemoveChildren(Node child)
+        protected Node Parent { get; set; }
+
+        public void SetParent(Node node)
         {
-            children_.Remove(child);//
+            Parent = node;
         }
 
-        public void AddChildren(Node child)
-        {
-            children_.Add(child);
-            child.SetParent(this);
-        }
+
         
-        public void SetParent(Node parent)
-        {
-            if (parent_ != null)
-            {
-                parent_.RemoveChildren(this);
-            }
-            parent_ = parent;
-        }
 
     }
 
