@@ -7,6 +7,14 @@ public enum TeamFlag
     Red,
     Blue
 }
+
+public enum FormationPhase
+{
+    Defense,
+    Start,
+    Default,
+    Attack
+}
 public class FootballTeam : MonoBehaviour
 {
 
@@ -39,14 +47,15 @@ public class FootballTeam : MonoBehaviour
     private void CreateAgents()
     {
         var defCount = currentFormation.DefensePosition.Length;
-        var midfieldCount = currentFormation.DefensePosition.Length;
-        var attackCount = currentFormation.DefensePosition.Length;
+        var midfieldCount = currentFormation.MidfieldPosition.Length;
+        var attackCount = currentFormation.ForwardPosition.Length;
 
         int index = 0;
         for (var i = 0; i < defCount; i++)
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
             var agentComponent = agent.GetComponent<IFootballAgent>();
+            agentComponent.InitAISystems(this, index);
             FootballAgents[index] = agentComponent;
             homePositions_[index] = currentFormation.DefensePosition[i];
             index++;
@@ -56,7 +65,7 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
             var agentComponent = agent.GetComponent<IFootballAgent>();
-            
+            agentComponent.InitAISystems(this, index);
             FootballAgents[index] = agentComponent;
             homePositions_[index] = currentFormation.MidfieldPosition[i];
             index++;
@@ -66,7 +75,7 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
             var agentComponent = agent.GetComponent<IFootballAgent>();
-          
+            agentComponent.InitAISystems(this, index);
             FootballAgents[index] = agentComponent;
             homePositions_[index] = currentFormation.ForwardPosition[i];
             index++;
@@ -76,8 +85,8 @@ public class FootballTeam : MonoBehaviour
     private void UpdateHomePositions()
     {
         var defCount = currentFormation.DefensePosition.Length;
-        var midfieldCount = currentFormation.DefensePosition.Length;
-        var attackCount = currentFormation.DefensePosition.Length;
+        var midfieldCount = currentFormation.MidfieldPosition.Length;
+        var attackCount = currentFormation.ForwardPosition.Length;
 
         int index = 0;
         for (var i = 0; i < defCount; i++)
@@ -111,4 +120,6 @@ public class FootballTeam : MonoBehaviour
         return homePositions_[index].position;
 
     }
+
+    
 }
