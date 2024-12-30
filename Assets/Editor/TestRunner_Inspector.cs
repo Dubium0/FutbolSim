@@ -13,7 +13,7 @@ public class TestRunner_Inspector : Editor
 
         if (GUILayout.Button("Execute Test"))
         {
-            myTarget.ExecuteAndPrintTest();
+            //myTarget.ExecuteAndPrintTest();
         }
     }
 

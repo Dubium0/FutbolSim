@@ -32,8 +32,8 @@ namespace Player.Controller
 
         public InputAction SprintAction {  get { return sprintAction_; } }
 
-        
-        
+        public Vector3 LinearVelocity { get { return rigidbody_.linearVelocity; } }
+
         private InputAction lowActionA_;
         private InputAction lowActionB_;
         private InputAction highActionA_;
