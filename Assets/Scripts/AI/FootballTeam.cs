@@ -11,8 +11,10 @@ public class FootballTeam : MonoBehaviour
 {
 
     public TeamFlag TeamFlag;
-    public FootballAgent[] FootballAgents = new FootballAgent[10];
-    public FootballAgent GoalKeeper;
+    public IFootballAgent[] FootballAgents = new IFootballAgent[10];
+    public IFootballAgent GoalKeeper;
+
+    private Transform[] homePositions_ = new Transform[11];
 
     public FootballFormation DefenseFormation;
     public FootballFormation StartFormation;
@@ -41,31 +43,72 @@ public class FootballTeam : MonoBehaviour
         var attackCount = currentFormation.DefensePosition.Length;
 
         int index = 0;
-        for (var i = 0; i < defCount; i++) {
+        for (var i = 0; i < defCount; i++)
+        {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
-            var agentComponent = agent.GetComponent<FootballAgent>();
-            agentComponent.PlayerType = PlayerType.Defender;
+            var agentComponent = agent.GetComponent<IFootballAgent>();
             FootballAgents[index] = agentComponent;
+            homePositions_[index] = currentFormation.DefensePosition[i];
             index++;
         }
 
         for (var i = 0; i < midfieldCount; i++)
         {
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
-            var agentComponent = agent.GetComponent<FootballAgent>();
-            agentComponent.PlayerType = PlayerType.Midfielder;
+            var agentComponent = agent.GetComponent<IFootballAgent>();
+            
             FootballAgents[index] = agentComponent;
+            homePositions_[index] = currentFormation.MidfieldPosition[i];
             index++;
         }
 
         for (var i = 0; i < attackCount; i++)
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
-            var agentComponent = agent.GetComponent<FootballAgent>();
-            agentComponent.PlayerType = PlayerType.Forward;
+            var agentComponent = agent.GetComponent<IFootballAgent>();
+          
             FootballAgents[index] = agentComponent;
+            homePositions_[index] = currentFormation.ForwardPosition[i];
             index++;
         }
     }
-}
 
+    private void UpdateHomePositions()
+    {
+        var defCount = currentFormation.DefensePosition.Length;
+        var midfieldCount = currentFormation.DefensePosition.Length;
+        var attackCount = currentFormation.DefensePosition.Length;
+
+        int index = 0;
+        for (var i = 0; i < defCount; i++)
+        {
+         
+            homePositions_[index] = currentFormation.DefensePosition[i];
+            index++;
+        }
+
+        for (var i = 0; i < midfieldCount; i++)
+        {
+           
+            homePositions_[index] = currentFormation.MidfieldPosition[i];
+            index++;
+        }
+
+        for (var i = 0; i < attackCount; i++)
+        {
+            homePositions_[index] = currentFormation.ForwardPosition[i];
+            index++;
+        }
+    }
+
+    public Vector3 GetHomePosition(int index)
+    {
+        if (index < 0 || index >= FootballAgents.Length)
+        {
+            Debug.LogError("Index out of range");
+            return Vector3.zero;
+        }
+        return homePositions_[index].position;
+
+    }
+}

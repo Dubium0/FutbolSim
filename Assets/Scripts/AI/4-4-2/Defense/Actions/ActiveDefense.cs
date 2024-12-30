@@ -23,11 +23,11 @@ public class ActiveDefense : ActionNode
        // var ball_owner_position = ball_owner.transform.position;
        // var ball_owner_velocity = ball_owner.LinearVelocity;
 
-        var agent = blackBoard.GetValue<FootballAgent>("Owner Agent");
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
         var info = agent.AgentInfo;
 
         
-        var distanceToBall = Vector3.Distance(agent.transform.position, ball_position);
+        var distanceToBall = Vector3.Distance(agent.Transform.position, ball_position);
 
 
         
@@ -36,7 +36,7 @@ public class ActiveDefense : ActionNode
 
         if (distanceToBall > info.DefenseRadius)
         {
-            var direction = (ball_position - agent.transform.position);
+            var direction = (ball_position - agent.Transform.position);
             direction.y = 0;
             var prevY = agent.Rigidbody.linearVelocity.y;
             agent.Rigidbody.linearVelocity = (direction.normalized * agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
