@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1688689670626690269}
   - component: {fileID: 4173365972393902170}
   - component: {fileID: 7119296889028265957}
-  - component: {fileID: 6696977122112188953}
+  - component: {fileID: 3294158761605411476}
   m_Layer: 3
   m_Name: Midfield Agent
   m_TagString: Futboller
@@ -33,7 +33,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.587, z: -4.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8046176244359863716}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4476250375051655483
@@ -139,7 +140,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &6696977122112188953
+--- !u!114 &3294158761605411476
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,7 +149,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 1735108021080809503}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f534a646c98c76478dac5a6f2d428a8, type: 3}
+  m_Script: {fileID: 11500000, guid: 15d57b95b410c464097f553fea8dcc3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   agentInfo_: {fileID: 11400000, guid: 7ff96ace7a1d96742add4fa70012ae72, type: 2}
+  focusPointTransform_: {fileID: 8046176244359863716}
+--- !u!1 &3253117935570770063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8046176244359863716}
+  m_Layer: 3
+  m_Name: Focus Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8046176244359863716
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3253117935570770063}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7381816792006279900}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

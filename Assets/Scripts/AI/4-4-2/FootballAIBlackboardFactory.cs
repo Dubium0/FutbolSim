@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 
 
-public class MidfieldAiBlackboardFactory : IAbstractBlackboardFactory
+public class FootballAiBlackboardFactory : IAbstractBlackboardFactory
 {
 
     // Get all necessery references 
@@ -11,7 +11,7 @@ public class MidfieldAiBlackboardFactory : IAbstractBlackboardFactory
     private IFootballAgent ownerAgent_;
     private FootballTeam ownerTeam_;
     private int teamIndex_; 
-    public MidfieldAiBlackboardFactory(IFootballAgent ownerAgent, FootballTeam ownerTeam, int index)
+    public FootballAiBlackboardFactory(IFootballAgent ownerAgent, FootballTeam ownerTeam, int index)
     {
         ownerAgent_ = ownerAgent;
         ownerTeam_ = ownerTeam;

@@ -53,13 +53,10 @@ namespace Player.Controller
         }
 
 
+
         private void CheckPlayerCollision()
         {
-            //Debug.Log(rigidbody_.linearVelocity.sqrMagnitude);
-            if ( rigidbody_.linearVelocity.sqrMagnitude > maxVelocityForAcqusition_)
-            {
-                return;
-            }
+
             
             var colliders = Physics.OverlapSphere(transform.position, playerCheckRadius_, playerCheckLayer_);
 
@@ -98,6 +95,8 @@ namespace Player.Controller
             onBallOwnerTickEvent_.Raise();
 
         }
+
+    
         public void HitBall(Vector3 direction, float shootPower)
         {
             rigidbody_.AddForce(direction * shootPower,ForceMode.VelocityChange);
