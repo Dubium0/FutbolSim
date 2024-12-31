@@ -7,11 +7,11 @@ namespace Player.Controller.States
 
     public class FreeFutbollerState : IPlayerState
     {
-        private PlayerController controller_;
+        private IFootballAgent controller_;
         private float currentAcceleration_;
 
 
-        public FreeFutbollerState(PlayerController controller)
+        public FreeFutbollerState(IFootballAgent controller)
         {
             controller_ = controller;
 
@@ -19,10 +19,10 @@ namespace Player.Controller.States
 
         public void HandleTransition()
         {
-            if (SoccerBall.Instance.IsPlayerStruggling(controller_))
+            if (Football.Instance.IsPlayerStruggling(controller_))
             {
                 controller_.SetState(new StrugglingFutbollerState(controller_));
-            }else if (SoccerBall.Instance.CurrentOwnerPlayer == controller_)
+            }else if (Football.Instance.CurrentOwnerPlayer == controller_)
             {
                 controller_.SetState(new DribblingFutbollerState(controller_));
             }
@@ -37,8 +37,9 @@ namespace Player.Controller.States
 
             if (inputVector.magnitude > 0)
             {
-                controller_.transform.forward = MathExtra.MoveTowards(controller_.transform.forward, inputVector, 1 / controller_.PlayerData.RotationTime);
+                controller_.Transform.forward = MathExtra.MoveTowards(controller_.Transform.forward, inputVector, 1 / controller_.AgentInfo.RotationTime);
             }
+            Debug.Log("I'm free!");
 
         }
 
@@ -47,18 +48,18 @@ namespace Player.Controller.States
             controller_.SprintAction.performed += context => { OnSprintEnter(); };
             controller_.SprintAction.canceled += context => { OnSprintExit(); };
 
-            controller_.Rigidbody.maxLinearVelocity = controller_.PlayerData.MaxWalkSpeed;
-            currentAcceleration_ = controller_.PlayerData.WalkingAcceleration;
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxWalkSpeed;
+            currentAcceleration_ = controller_.AgentInfo.WalkingAcceleration;
         }
 
         public void OnExit()
         {
-            controller_.Debugger.Log("Bye Bye free state");
+            Debug.Log("Bye Bye free state");
         }
 
         public void OnFixedUpdate()
         {
-           
+            HandleTransition();
         }
 
         public void OnHighActionAEnter()
@@ -103,14 +104,14 @@ namespace Player.Controller.States
 
         public void OnSprintEnter()
         {
-            controller_.Rigidbody.maxLinearVelocity = controller_.PlayerData.MaxRunSpeed;
-            currentAcceleration_ = controller_.PlayerData.RunningAcceleration;
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxRunSpeed;
+            currentAcceleration_ = controller_.AgentInfo.RunningAcceleration;
         }
         public void OnSprintExit()
         {
 
-            controller_.Rigidbody.maxLinearVelocity = controller_.PlayerData.MaxWalkSpeed;
-            currentAcceleration_ = controller_.PlayerData.WalkingAcceleration;
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxWalkSpeed;
+            currentAcceleration_ = controller_.AgentInfo.WalkingAcceleration;
 
         }
 

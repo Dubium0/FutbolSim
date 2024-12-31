@@ -1,5 +1,7 @@
 ﻿
+using Player.Controller.States;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -48,6 +50,8 @@ public class FootballTeam : MonoBehaviour
 
     private IFootballAgent currentBallOwnerTeamMate = null;
 
+    public IFootballAgent CurrentBallOwnerTeamMate { get { return currentBallOwnerTeamMate; } }
+
     private void Awake()
     {
         currentFormation = StartFormation;
@@ -77,7 +81,13 @@ public class FootballTeam : MonoBehaviour
             }
         
         );
+        var prevClosest = closestPlayerToBall_;
+      
         closestPlayerToBall_ = minDistancePlayer;
+        if (isHumanControllable && prevClosest != minDistancePlayer)
+        {
+            closestPlayerToBall_.SetAsHumanControlled();
+        }
 
 
     }
@@ -98,11 +108,12 @@ public class FootballTeam : MonoBehaviour
                 if (isHumanControllable)
                 {
                     playerControlledAgent = agent;
+                    playerControlledAgent.SetAsHumanControlled();
                 }
             };
             agentComponent.InitAISystems(this,PlayerType.Defender, index);
-            FootballAgents[index] = agentComponent;
-            homePositions_[index] = currentFormation.DefensePosition[i];
+            FootballAgents.Insert(index, agentComponent);
+            homePositions_.Insert(index, currentFormation.DefensePosition[i]);
             index++;
         }
 
@@ -115,11 +126,12 @@ public class FootballTeam : MonoBehaviour
                 if (isHumanControllable)
                 {
                     playerControlledAgent = agent;
+                    playerControlledAgent.SetAsHumanControlled();
                 }
             };
             agentComponent.InitAISystems(this, PlayerType.Midfielder, index);
-            FootballAgents[index] = agentComponent;
-            homePositions_[index] = currentFormation.MidfieldPosition[i];
+            FootballAgents.Insert(index, agentComponent);
+            homePositions_.Insert(index, currentFormation.MidfieldPosition[i]);
             index++;
         }
 
@@ -132,11 +144,13 @@ public class FootballTeam : MonoBehaviour
                 if (isHumanControllable)
                 {
                     playerControlledAgent = agent;
+                    playerControlledAgent.SetAsHumanControlled();
+                
                 }
             };
             agentComponent.InitAISystems(this, PlayerType.Forward, index);
-            FootballAgents[index] = agentComponent;
-            homePositions_[index] = currentFormation.ForwardPosition[i];
+            FootballAgents.Insert(index, agentComponent);
+            homePositions_.Insert(index, currentFormation.ForwardPosition[i]);
             index++;
         }
     }

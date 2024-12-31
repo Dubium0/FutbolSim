@@ -1,9 +1,6 @@
 using UnityEngine;
 using BT_Implementation;
 using BT_Implementation.Leaf;
-using Player.Controller;
-using Unity.VisualScripting;
-using Mono.Cecil.Cil;
 
 public class GoToTheBall : ActionNode
 {
@@ -23,14 +20,18 @@ public class GoToTheBall : ActionNode
 
         var distanceToBall = Vector3.Distance(agent.Transform.position, futureBallPosition);
 
-        if(distanceToBall > 1)
+     
+        
+        var direction = (futureBallPosition - agent.Transform.position);
+        direction.y = 0;
+        var prevY = agent.Rigidbody.linearVelocity.y;
+        agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude( direction,1 )* agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
+          
+        if(agent.IsDebugMode)
         {
-            var direction = (futureBallPosition - agent.Transform.position);
-            direction.y = 0;
-            var prevY = agent.Rigidbody.linearVelocity.y;
-            agent.Rigidbody.linearVelocity = (direction.normalized * agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
-            return BTResult.Running;
+            Debug.Log("I'm going to the ball!");
         }
+        
 
         return BTResult.Success;
     }

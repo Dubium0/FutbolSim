@@ -14,4 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxSpeed: 5
   MaxStamina: 100
-  DefenseRadius: 3
+  CloseDefenseRadius: 2
+  LongDefenseRadius: 5
+  BallAcqusitionStaminaReductionRate: 5
+  MaxBallAcqusitionStamina: 100
+  BallAcqusitionPoint: 10
+  RotationTime: 2
+  MaxWalkSpeed: 6
+  MaxRunSpeed: 12
+  WalkingAcceleration: 20
+  RunningAcceleration: 27

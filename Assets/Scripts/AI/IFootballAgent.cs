@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Player.Controller.States;
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum PlayerType
 {
@@ -24,6 +26,7 @@ public interface IFootballAgent
 
     public TeamFlag TeamFlag { get;}
 
+    public bool IsDebugMode { get; }    
     public void InitAISystems(FootballTeam team, PlayerType playerType,int index);
 
     public void TickAISystem();
@@ -35,9 +38,27 @@ public interface IFootballAgent
 
     public void OnBallPossesion()
     {
+        Debug.Log("Ball Possed By : " + this.ToSafeString());
         OnBallPossesionCallback(this);
     }
 
+    // fields for human controllable side
+
+    public void SetAsHumanControlled();
+    public void SetAsAIControlled();
+    public Vector3 MovementVector{get;}
+
+    public InputAction SprintAction { get; }
+
+    public Vector3 WorldMousePosition {  get; }
+
+
+    public void SetState(IPlayerState state);
+
+    public void ChangeToGhostLayer();
+
 
 }
+
+
 

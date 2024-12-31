@@ -28,13 +28,13 @@ public class GoToTheIntersectionPosition : ActionNode
 
         var distanceToEnemy = Vector3.Distance(agentLocation, enemyCurrentLocation);
 
-        var enemyLocationAfterTSeconds = enemyCurrentLocation + currentEnemyOwner.Rigidbody.linearVelocity * Mathf.Clamp(distanceToEnemy,0,3);
+        var enemyLocationAfterTSeconds = enemyCurrentLocation + currentEnemyOwner.Rigidbody.linearVelocity * 1;
 
 
         var myPitchZone = footballTeam.GetPicthZone();
 
         var defenseRadius = agent.AgentInfo.LongDefenseRadius;
-        if ( Football.Instance.PitchZone == myPitchZone && Football.Instance.SectorNumber < 3 )
+        if ( Football.Instance.PitchZone == myPitchZone && Football.Instance.SectorNumber < 6 )
         {
             defenseRadius = agent.AgentInfo.CloseDefenseRadius;
         }
@@ -43,22 +43,26 @@ public class GoToTheIntersectionPosition : ActionNode
 
         var goalBounds = GameManager.Instance.GetBoundsHome(agent.TeamFlag);
 
-        var distanceToGoal = Vector3.Distance(offsetFromPlayer, agentLocation);
+     
+        var direction = (enemyLocationAfterTSeconds + offsetFromPlayer - agentLocation).normalized * agent.AgentInfo.MaxSpeed;
+        direction.y = 0;
+        var prevY = agent.Rigidbody.linearVelocity.y;
+        agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude(direction, 1) * agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
+    
 
-        if(distanceToGoal > 0.2)
-        {
-            var direction = (offsetFromPlayer - agentLocation).normalized * agent.AgentInfo.MaxSpeed;
-            direction.y = 0;
-            var prevY = agent.Rigidbody.linearVelocity.y;
-            agent.Rigidbody.linearVelocity = (direction.normalized * agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
-            return BTResult.Running;
-        }
 
         if (goalBounds.Contains(offsetFromPlayer))
         {
             return BTResult.Failure;
 
         }
+
+        if (agent.IsDebugMode)
+        {
+            Debug.Log("I'm going to the Intersection!");
+            Debug.Log($"Defense radius : {defenseRadius}");
+        }
+
 
         return BTResult.Success;
     }

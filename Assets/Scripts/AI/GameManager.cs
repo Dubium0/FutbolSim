@@ -14,6 +14,12 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
+    private void OnValidate()
+    {
+        BlueGoalBounds.center = BlueGoalPosition.position;
+
+        RedGoalBounds.center = RedGoalPosition.position;
+    }
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -47,8 +53,10 @@ public class GameManager : MonoBehaviour
         switch (teamFlag)
         {
             case TeamFlag.Blue:
+                BlueGoalBounds.center = BlueGoalPosition.position;  
                 return BlueGoalBounds ;
             case TeamFlag.Red:
+                RedGoalBounds.center = RedGoalPosition.position;
                 return RedGoalBounds;
             default:
                 return BlueGoalBounds;

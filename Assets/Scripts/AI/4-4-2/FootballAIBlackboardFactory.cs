@@ -23,7 +23,7 @@ public class FootballAiBlackboardFactory : IAbstractBlackboardFactory
         blackboard.SetValue("Owner Agent", ownerAgent_);
         blackboard.SetValue("Owner Team", ownerTeam_);
         blackboard.SetValue("Team Index", teamIndex_);
-
+        
         return blackboard;
     }
 }

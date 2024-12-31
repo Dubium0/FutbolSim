@@ -154,6 +154,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agentInfo_: {fileID: 11400000, guid: 1ee8b4a0dc450604d9c8d70cd07cbe0c, type: 2}
   focusPointTransform_: {fileID: 3434801755625409023}
+  groundMask_:
+    serializedVersion: 2
+    m_Bits: 128
+  ghostLayer_:
+    serializedVersion: 2
+    m_Bits: 64
+  playerLayer_:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &8735827537453900187
 GameObject:
   m_ObjectHideFlags: 0

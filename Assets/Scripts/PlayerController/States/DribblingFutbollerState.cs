@@ -9,10 +9,10 @@ namespace Player.Controller.States
 {
     public class DribblingFutbollerState : IPlayerState
     {
-        private PlayerController controller_;
+        private IFootballAgent controller_;
         private float currentAcceleration_;
 
-        public DribblingFutbollerState(PlayerController controller)
+        public DribblingFutbollerState(IFootballAgent controller)
         {
             controller_ = controller;
         }
@@ -26,47 +26,42 @@ namespace Player.Controller.States
 
             if (inputVector.magnitude > 0)
             {
-                controller_.transform.forward = MathExtra.MoveTowards(controller_.transform.forward, inputVector, 1 / controller_.PlayerData.RotationTime);
+                controller_.Transform.forward = MathExtra.MoveTowards(controller_.Transform.forward, inputVector, 1 / controller_.AgentInfo.RotationTime);
             }
+            
+        }
 
-        }
-        private void AdjutBallPosition()
-        {
-            var targetPosition = controller_.GetFocusPoint();
-            targetPosition.y = SoccerBall.Instance.RigidBody.position.y;
-            SoccerBall.Instance.RigidBody.MovePosition(targetPosition);
-        }
         private Vector3 shootdir_;
         public void OnHighActionAEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
             shootdir_.y = .5f;
         }
 
         public void OnHighActionAExit()
         {
             controller_.ChangeToGhostLayer();
-            SoccerBall.Instance.HitBall(shootdir_, 10);
+            Football.Instance.HitBall(shootdir_, 10);
             controller_.SetState(new FreeFutbollerState(controller_));
         }
 
         public void OnHighActionBEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
             shootdir_.y = .5f;
         }
 
         public void OnHighActionBExit()
         {
             controller_.ChangeToGhostLayer();
-            SoccerBall.Instance.HitBall(shootdir_, 15);
+            Football.Instance.HitBall(shootdir_, 15);
             controller_.SetState(new FreeFutbollerState(controller_));
         }
 
        
         public void OnLowActionAEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
 
 
         }
@@ -74,7 +69,7 @@ namespace Player.Controller.States
         public void OnLowActionAExit()
         {
             controller_.ChangeToGhostLayer();
-            SoccerBall.Instance.HitBall(shootdir_, 10);
+            Football.Instance.HitBall(shootdir_, 10);
             controller_.SetState(new FreeFutbollerState(controller_));
 
 
@@ -82,49 +77,61 @@ namespace Player.Controller.States
 
         public void OnLowActionBEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
         }
 
         public void OnLowActionBExit()
         {
             controller_.ChangeToGhostLayer();
-            SoccerBall.Instance.HitBall(shootdir_, 15);
+            Football.Instance.HitBall(shootdir_, 10);
             controller_.SetState(new FreeFutbollerState(controller_));
         }
 
         public void OnSprintEnter()
         {
-            throw new System.NotImplementedException();
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxRunSpeed;
+            currentAcceleration_ = controller_.AgentInfo.RunningAcceleration;
         }
-
         public void OnSprintExit()
         {
-            throw new System.NotImplementedException();
+
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxWalkSpeed;
+            currentAcceleration_ = controller_.AgentInfo.WalkingAcceleration;
+
         }
 
         public void OnEnter()
         {
-            controller_.Rigidbody.maxLinearVelocity = controller_.PlayerData.MaxWalkSpeed;
-            currentAcceleration_ = controller_.PlayerData.WalkingAcceleration;
+            controller_.SprintAction.performed += context => { OnSprintEnter(); };
+            controller_.SprintAction.canceled += context => { OnSprintExit(); };
+
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxWalkSpeed;
+            currentAcceleration_ = controller_.AgentInfo.WalkingAcceleration;
         }
 
         public void OnExit()
         {
-            controller_.Debugger.Log("Bye bye dribbling state");
+           Debug.Log("Bye bye dribbling state");
         }
-
+        private void AdjutBallPosition()
+        {
+            var targetPosition = controller_.FocusPointTransform.position;
+            targetPosition.y = Football.Instance.RigidBody.position.y;
+            Football.Instance.RigidBody.MovePosition(targetPosition);
+        }
         public void OnFixedUpdate()
         {
             AdjutBallPosition();
+            HandleTransition();
         }
 
         public void HandleTransition()
         {
-            if (SoccerBall.Instance.IsPlayerStruggling(controller_))
+            if (Football.Instance.IsPlayerStruggling(controller_))
             {
                 controller_.SetState(new StrugglingFutbollerState(controller_));
             }
-            else if (SoccerBall.Instance.CurrentOwnerPlayer != controller_)
+            else if (Football.Instance.CurrentOwnerPlayer != controller_)
             {
                 controller_.SetState(new FreeFutbollerState(controller_));
             }

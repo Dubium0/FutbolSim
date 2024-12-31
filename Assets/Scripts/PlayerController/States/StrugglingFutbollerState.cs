@@ -8,10 +8,10 @@ namespace Player.Controller.States
 {
     public class StrugglingFutbollerState : IPlayerState
     {
-        private PlayerController controller_;
+        private IFootballAgent controller_;
 
       
-        public StrugglingFutbollerState(PlayerController controller)
+        public StrugglingFutbollerState(IFootballAgent controller)
         {
             controller_ = controller;
            
@@ -19,9 +19,9 @@ namespace Player.Controller.States
 
         public void HandleTransition()
         {
-            if(!SoccerBall.Instance.IsPlayerStruggling(controller_))
+            if(!Football.Instance.IsPlayerStruggling(controller_))
             {
-                if(SoccerBall.Instance.CurrentOwnerPlayer == controller_)
+                if(Football.Instance.CurrentOwnerPlayer == controller_)
                 {
                     controller_.SetState(new DribblingFutbollerState(controller_));
                 }

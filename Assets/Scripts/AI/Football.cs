@@ -1,6 +1,7 @@
 ﻿
 using Player.Controller;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -60,7 +61,7 @@ public class Football : MonoBehaviour
     private void FixedUpdate()
     {
         CheckPlayerCollision();
-        AdjustBallPosition();
+
     }
 
 
@@ -103,10 +104,18 @@ public class Football : MonoBehaviour
         }
 
         var prevOwner = currentOwnerPlayer_;
+        
         currentOwnerPlayer_ = playerToAssign;
-        currentOwnerPlayer_.OnBallPossesion();
+        if(currentOwnerPlayer_ != prevOwner) currentOwnerPlayer_.OnBallPossesion();
 
     }
+
+    public bool IsPlayerStruggling(IFootballAgent player)
+    {
+
+        return strugglingPlayers_.Contains(player);
+    }
+
     public Vector3 GetDropPointAfterTSeconds(float time)
     {
         Vector3 currentPosition = rigidbody_.position;
@@ -145,6 +154,12 @@ public class Football : MonoBehaviour
         return position;
     }
 
+
+    public void HitBall(Vector3 direction, float shootPower)
+    {
+        rigidbody_.AddForce(direction * shootPower, ForceMode.VelocityChange);
+        currentOwnerPlayer_ = null;
+    }
     public bool IsGrounded()
     {
         float raycastDistance = 0.1f; // Adjust based on your object's size
@@ -152,17 +167,7 @@ public class Football : MonoBehaviour
 
     }
 
-    private void AdjustBallPosition()
-    {
-        if (currentOwnerPlayer_ != null)
-        {
-            var transformedPosition = transform.position;
-            transform.position = currentOwnerPlayer_.FocusPointTransform.position;
-            transformedPosition.x = currentOwnerPlayer_.FocusPointTransform.position.x;
-            transformedPosition.z = currentOwnerPlayer_.FocusPointTransform.position.z;
-            transform.position = transformedPosition;
-        }
-    }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -173,6 +178,7 @@ public class Football : MonoBehaviour
             int number = -1;
             bool successfull = int.TryParse(pair[1], out number);
             if (successfull) sectorNumber_ = number;
+            Debug.Log($"Red ZONE!! {sectorNumber_}");
         }
         else if (other.CompareTag("BlueZone"))
         {
@@ -181,6 +187,7 @@ public class Football : MonoBehaviour
             int number = -1;
             bool successfull = int.TryParse(pair[1], out number);
             if (successfull) sectorNumber_ = number;
+            Debug.Log("Blue ZONE!!");
         }
 
     }
@@ -195,8 +202,9 @@ public class Football : MonoBehaviour
             float raycastDistance = 0.1f; // Adjust based on your object's size
             var isOnGroundNow =  Physics.Raycast(drop_point, Vector3.down, raycastDistance, groundCheckLayer_) || Physics.Raycast(drop_point, Vector3.up, 10, groundCheckLayer_);
             if (isOnGroundNow) break;
-            Gizmos.DrawSphere(drop_point, 1);
+            Gizmos.DrawSphere(drop_point, 0.5f);
         }
+        Gizmos.DrawSphere (transform.position, playerCheckRadius_);
       
     }
 }

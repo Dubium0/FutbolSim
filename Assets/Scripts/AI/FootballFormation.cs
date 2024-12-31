@@ -5,6 +5,8 @@ using UnityEngine;
 public enum FormationType
 {
     FourFourTwo,
+
+    DefenseTest
 }
 
 public class FootballFormation : MonoBehaviour
@@ -45,7 +47,7 @@ public class FootballFormation : MonoBehaviour
     {
         get { return forwardLine; }
     }
-    
+    [SerializeField]
     private FormationType formationType = FormationType.FourFourTwo;
 
     private bool isSetupDone = false;
@@ -65,17 +67,21 @@ public class FootballFormation : MonoBehaviour
 
     private void SetupFormation()
     {
+        
         if (!isSetupDone)
         {
-            switch (formationType)
-            {
-                case FormationType.FourFourTwo:
-                    defensePosition = new Transform[4];
-                    midfieldPosition = new Transform[4];
-                    forwardPosition = new Transform[2];
-                   
-                    break;
-            }
+           // switch (formationType)
+           // {
+           //     case FormationType.FourFourTwo:
+           //         defensePosition = new Transform[4];
+           //         midfieldPosition = new Transform[4];
+           //         forwardPosition = new Transform[2];
+           //        
+           //         break;
+           //     case FormationType.DefenseTest:
+           //         defensePosition = new Transform[1];
+           //         break;
+           // }
             isSetupDone = true;
         }
     }
