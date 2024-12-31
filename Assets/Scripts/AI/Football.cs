@@ -116,6 +116,7 @@ public class Football : MonoBehaviour
 
             var name = other.gameObject.name.Trim();
 
+
         }
         else if (other.CompareTag("BlueZone"))
         {
