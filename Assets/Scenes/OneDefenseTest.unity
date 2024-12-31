@@ -183,6 +183,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 989373617631052513, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
+      propertyPath: enableDebug_
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 989373617631052513, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: playerCheckRadius_
       value: 1
       objectReference: {fileID: 0}
@@ -192,7 +196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1951629378674571425, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.65
+      value: 5.53
       objectReference: {fileID: 0}
     - target: {fileID: 1951629378674571425, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_LocalPosition.z
@@ -229,7 +233,7 @@ PrefabInstance:
     - target: {fileID: 3550028597938208864, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1052318986}
+      objectReference: {fileID: 2089268379}
     - target: {fileID: 8749789280191893094, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_Name
       value: Ball
@@ -694,19 +698,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1832515534399915041, guid: ad5b94e42d99e2b4095f4fd1c73186cc, type: 3}
   m_PrefabInstance: {fileID: 856043485}
   m_PrefabAsset: {fileID: 0}
---- !u!134 &1052318986
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: ' (Instance) (Instance)'
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 0
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &1095635600
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,6 +961,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4288289837382306099, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
   m_PrefabInstance: {fileID: 2074075822}
   m_PrefabAsset: {fileID: 0}
+--- !u!134 &2089268379
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance) (Instance) (Instance) (Instance)'
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!4 &2097879474 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6659270630902011386, guid: ad5b94e42d99e2b4095f4fd1c73186cc, type: 3}
