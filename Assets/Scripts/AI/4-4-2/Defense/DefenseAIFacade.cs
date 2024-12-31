@@ -80,6 +80,7 @@ public class DefenseAIFacade : BTRoot
             }
             var distance = Vector3.Distance( Football.Instance.transform.position, agent.Transform.position );
 
+
             return  agent.AgentInfo.CloseDefenseRadius > distance;
         });
         isInReachableAreaOrSequence.AddChild(isInReachableArea);
