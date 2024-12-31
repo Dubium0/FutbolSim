@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7175482364226477010}
   - component: {fileID: 3550028597938208864}
   - component: {fileID: 3618858785015978874}
-  - component: {fileID: 2709157381850435163}
+  - component: {fileID: 989373617631052513}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -137,7 +137,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2709157381850435163
+--- !u!114 &989373617631052513
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -146,12 +146,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8749789280191893094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0cc24a9043aa5249adbc856d8828c32, type: 3}
+  m_Script: {fileID: 11500000, guid: b1932413874e8da4d9146bcb96d46eb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerCheckRadius_: 2
-  maxVelocityForAcqusition_: 14
   playerCheckLayer_:
     serializedVersion: 2
     m_Bits: 8
-  onBallOwnerTickEvent_: {fileID: 11400000, guid: cddc87613bfdd2e41a7eae19c69e0c30, type: 2}
+  groundCheckLayer_:
+    serializedVersion: 2
+    m_Bits: 128
+  rigidbody_: {fileID: 3618858785015978874}

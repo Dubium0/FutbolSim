@@ -229,7 +229,7 @@ GameObject:
   - component: {fileID: 7353526165734989079}
   - component: {fileID: 6646821623161433399}
   m_Layer: 0
-  m_Name: Sector 7
+  m_Name: Sector 1
   m_TagString: BlueZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -569,15 +569,15 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3314215556540616938}
-  - {fileID: 2487961316755609783}
-  - {fileID: 2071923897330873877}
-  - {fileID: 8109483969307761801}
-  - {fileID: 1481815151632787451}
-  - {fileID: 5822523324958215846}
   - {fileID: 3197575245025595628}
   - {fileID: 1875485755256888629}
   - {fileID: 4997389439899226942}
+  - {fileID: 8109483969307761801}
+  - {fileID: 1481815151632787451}
+  - {fileID: 5822523324958215846}
+  - {fileID: 3314215556540616938}
+  - {fileID: 2487961316755609783}
+  - {fileID: 2071923897330873877}
   m_Father: {fileID: 3501425752445965700}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3096529380044590240
@@ -882,7 +882,7 @@ GameObject:
   - component: {fileID: 5543453291901522028}
   - component: {fileID: 4643854232029253707}
   m_Layer: 0
-  m_Name: Sector 1
+  m_Name: Sector 7
   m_TagString: BlueZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1098,7 +1098,7 @@ GameObject:
   - component: {fileID: 448609081702254287}
   - component: {fileID: 4357947561550810841}
   m_Layer: 0
-  m_Name: Sector 8
+  m_Name: Sector 2
   m_TagString: BlueZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1422,7 +1422,7 @@ GameObject:
   - component: {fileID: 4939174990142987015}
   - component: {fileID: 4157188192496787210}
   m_Layer: 0
-  m_Name: Sector 0
+  m_Name: Sector 6
   m_TagString: BlueZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1530,7 +1530,7 @@ GameObject:
   - component: {fileID: 1753974642161287077}
   - component: {fileID: 5648708701792363070}
   m_Layer: 0
-  m_Name: Sector 2
+  m_Name: Sector 8
   m_TagString: BlueZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1638,7 +1638,7 @@ GameObject:
   - component: {fileID: 7056037941855583230}
   - component: {fileID: 16214346136164358}
   m_Layer: 0
-  m_Name: Sector 6
+  m_Name: Sector 0
   m_TagString: BlueZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2109,6 +2109,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Soccer Field
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4bad5ce802e5eeb43a93f1c80eaae5fe, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -2192,7 +2196,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8132209195982945557}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 53ab02bc2a4ffb543a339eed94d572cf, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

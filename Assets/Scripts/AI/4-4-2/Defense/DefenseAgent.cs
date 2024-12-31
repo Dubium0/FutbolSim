@@ -1,6 +1,7 @@
 ﻿
 using BT_Implementation;
 using Player.Controller;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -33,8 +34,11 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
     private Transform focusPointTransform_;
     public Transform FocusPointTransform => focusPointTransform_;
 
+    public Action<IFootballAgent> OnBallPossesionCallback { get; set; }
+
     private BTRoot btRoot_;
 
+    private bool isHumanControlled =false;
 
     private void Awake()
     {
@@ -100,5 +104,11 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         }
         return (currentBallAcqusitionStamina_ / agentInfo_.MaxBallAcqusitionStamina) * agentInfo_.BallAcqusitionPoint;
     }
+
+
+    
+
+
+
 }
 

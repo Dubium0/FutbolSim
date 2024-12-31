@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,12 +18,14 @@ public enum FormationPhase
 }
 public class FootballTeam : MonoBehaviour
 {
+    [SerializeField]
+    private bool isHumanControllable = false;
 
     public TeamFlag TeamFlag;
-    public IFootballAgent[] FootballAgents = new IFootballAgent[10];
+    public List<IFootballAgent> FootballAgents = new(10);
     public IFootballAgent GoalKeeper;
 
-    private Transform[] homePositions_ = new Transform[11];
+    private List<Transform> homePositions_ = new(11);
 
     public FootballFormation DefenseFormation;
     public FootballFormation StartFormation;
@@ -39,10 +41,45 @@ public class FootballTeam : MonoBehaviour
 
     private FootballFormation currentFormation;
 
+    private IFootballAgent closestPlayerToBall_ = null;
+    public IFootballAgent ClosestPlayerToBall { get { return closestPlayerToBall_; } }
+
+    private IFootballAgent playerControlledAgent = null;
+
+    private IFootballAgent currentBallOwnerTeamMate = null;
+
     private void Awake()
     {
         currentFormation = StartFormation;
         CreateAgents();
+    }
+
+    private void FixedUpdate()
+    {
+        SetClosestPlayerToBall(); 
+    }
+
+    private void SetClosestPlayerToBall()
+    {
+        //can tick this for 1 second etc
+        var ballPosition = Football.Instance.transform.position;
+        ballPosition.y = 0;
+        Vector3 minDistance = Vector3.one * 9999;
+        IFootballAgent minDistancePlayer = null;
+        FootballAgents.ForEach(agent => {
+
+            var distance = ballPosition - agent.Transform.position;
+            if (distance.magnitude < minDistance.magnitude)
+            {
+                minDistance = distance;
+                minDistancePlayer = agent;
+            }
+            }
+        
+        );
+        closestPlayerToBall_ = minDistancePlayer;
+
+
     }
 
     private void CreateAgents()
@@ -56,6 +93,13 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
             var agentComponent = agent.GetComponent<IFootballAgent>();
+            agentComponent.OnBallPossesionCallback = agent => {
+                currentBallOwnerTeamMate = agent;
+                if (isHumanControllable)
+                {
+                    playerControlledAgent = agent;
+                }
+            };
             agentComponent.InitAISystems(this,PlayerType.Defender, index);
             FootballAgents[index] = agentComponent;
             homePositions_[index] = currentFormation.DefensePosition[i];
@@ -66,6 +110,13 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
             var agentComponent = agent.GetComponent<IFootballAgent>();
+            agentComponent.OnBallPossesionCallback = agent => {
+                currentBallOwnerTeamMate = agent;
+                if (isHumanControllable)
+                {
+                    playerControlledAgent = agent;
+                }
+            };
             agentComponent.InitAISystems(this, PlayerType.Midfielder, index);
             FootballAgents[index] = agentComponent;
             homePositions_[index] = currentFormation.MidfieldPosition[i];
@@ -76,6 +127,13 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
             var agentComponent = agent.GetComponent<IFootballAgent>();
+            agentComponent.OnBallPossesionCallback = agent => {
+                currentBallOwnerTeamMate = agent;
+                if (isHumanControllable)
+                {
+                    playerControlledAgent = agent;
+                }
+            };
             agentComponent.InitAISystems(this, PlayerType.Forward, index);
             FootballAgents[index] = agentComponent;
             homePositions_[index] = currentFormation.ForwardPosition[i];
@@ -113,13 +171,26 @@ public class FootballTeam : MonoBehaviour
 
     public Vector3 GetHomePosition(int index)
     {
-        if (index < 0 || index >= FootballAgents.Length)
+        if (index < 0 || index >= FootballAgents.Count)
         {
             Debug.LogError("Index out of range");
             return Vector3.zero;
         }
         return homePositions_[index].position;
 
+    }
+
+    public PicthZone GetPicthZone()
+    {
+        switch(TeamFlag)
+        {
+            case TeamFlag.Blue:
+                return PicthZone.BlueZone;
+            case TeamFlag.Red: 
+                return PicthZone.RedZone;
+            default:
+                return PicthZone.BlueZone;
+        }
     }
 
     

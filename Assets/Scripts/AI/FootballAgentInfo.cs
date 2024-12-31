@@ -11,7 +11,9 @@ public class FootballAgentInfo : ScriptableObject
 
     public float MaxSpeed = 5.0f;
     public float MaxStamina = 100.0f;
-    public float DefenseRadius = 5.0f;
+    public float CloseDefenseRadius = 2.0f;
+
+    public float LongDefenseRadius = 5.0f;
 
     public int BallAcqusitionStaminaReductionRate = 5;
     public int  MaxBallAcqusitionStamina = 100;

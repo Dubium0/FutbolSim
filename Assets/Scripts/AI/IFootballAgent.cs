@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public enum PlayerType
 {
@@ -29,7 +31,12 @@ public interface IFootballAgent
 
     public int TryToAcquireBall();
 
-   
+    public Action<IFootballAgent> OnBallPossesionCallback { get; set; }
+
+    public void OnBallPossesion()
+    {
+        OnBallPossesionCallback(this);
+    }
 
 
 }
