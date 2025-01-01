@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Player.Controller.States
 {
     public class StrugglingFutbollerState : IPlayerState
     {
         private IFootballAgent controller_;
+        private float currentAcceleration_;
 
-      
         public StrugglingFutbollerState(IFootballAgent controller)
         {
             controller_ = controller;
@@ -34,62 +35,71 @@ namespace Player.Controller.States
 
         public void Move()
         {
-            throw new NotImplementedException();
+            var inputVector = controller_.MovementVector;
+
+            controller_.Rigidbody.AddForce(inputVector * currentAcceleration_, ForceMode.Acceleration);
+            Debug.Log(inputVector);
+            if (inputVector.magnitude > 0)
+            {
+                controller_.Transform.forward = MathExtra.MoveTowards(controller_.Transform.forward, inputVector, 1 / controller_.AgentInfo.RotationTime);
+            }
+            Debug.Log("I'm struggling :<");
         }
 
         public void OnEnter()
         {
-            throw new NotImplementedException();
+            currentAcceleration_ = controller_.AgentInfo.StrugglingAcceleration;
+            controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxStrugglingSpeed;
         }
 
         public void OnExit()
         {
-            throw new NotImplementedException();
+            Debug.Log("Bye Bye struggling state");
         }
 
         public void OnFixedUpdate()
         {
-            throw new NotImplementedException();
+            HandleTransition();
         }
 
         public void OnHighActionAEnter()
         {
-            throw new NotImplementedException();
+           //do nothing.
         }
 
         public void OnHighActionAExit()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnHighActionBEnter()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnHighActionBExit()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnLowActionAEnter()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnLowActionAExit()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnLowActionBEnter()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnLowActionBExit()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public void OnSprintEnter()
@@ -99,7 +109,7 @@ namespace Player.Controller.States
 
         public void OnSprintExit()
         {
-            throw new NotImplementedException();
+            // do nothing
         }
     }
 }

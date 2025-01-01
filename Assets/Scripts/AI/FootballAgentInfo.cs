@@ -25,8 +25,12 @@ public class FootballAgentInfo : ScriptableObject
 
     public float MaxRunSpeed = 9.0f;
 
+    public float MaxStrugglingSpeed = 1;
+
     public float WalkingAcceleration = 6.0f;
 
     public float RunningAcceleration = 12.0f;
+
+    public float StrugglingAcceleration = 3.0f;
 }
 

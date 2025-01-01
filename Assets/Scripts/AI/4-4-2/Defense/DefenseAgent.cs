@@ -1,9 +1,9 @@
 ﻿
 using BT_Implementation;
-using Player.Controller;
 using Player.Controller.States;
 using System;
 using System.Collections;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,7 +12,7 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
 {
     private PlayerType playerType_;
 
-
+    
 
     [SerializeField]
     private FootballAgentInfo agentInfo_;
@@ -46,10 +46,12 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
     private BTRoot btRoot_;
 
     private bool isHumanControlled = false;
-
+    private int currentBallAcqusitionStamina_;
     private void Awake()
     {
         rigidbody_ = GetComponent<Rigidbody>();
+
+        currentBallAcqusitionStamina_ =agentInfo_.MaxBallAcqusitionStamina;
         SetActions();
         BindActions();
 
@@ -74,6 +76,7 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
 
     private void HandleHumanInteraction()
     {
+        
         if(isHumanControlled)
         {
             currentState_.Move();
@@ -122,9 +125,10 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
 
     }
 
-    private int currentBallAcqusitionStamina_;
+ 
     public int TryToAcquireBall()
     {
+
         if (currentBallAcqusitionStamina_ - agentInfo_.BallAcqusitionStaminaReductionRate > 0)
         {
             currentBallAcqusitionStamina_ -= agentInfo_.BallAcqusitionStaminaReductionRate;
@@ -134,7 +138,8 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         {
             currentBallAcqusitionStamina_ = 0;
         }
-        return (currentBallAcqusitionStamina_ / agentInfo_.MaxBallAcqusitionStamina) * agentInfo_.BallAcqusitionPoint;
+        var dice6side =  UnityEngine.Random.Range(1, 7);
+        return (currentBallAcqusitionStamina_ / agentInfo_.MaxBallAcqusitionStamina) * agentInfo_.BallAcqusitionPoint * dice6side;
     }
     public Action<IFootballAgent> OnBallPossesionCallback { get; set; }
 
@@ -228,19 +233,21 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         sprintAction_.canceled += context => { if (isHumanControlled) currentState_.OnSprintExit(); };
     }
 
-    public void ChangeToGhostLayer()
+    public void ChangeToGhostLayer(float time)
     {
-        StartCoroutine(ChangeToGhostLayerForATime(0.4f));
+        StartCoroutine(ChangeToGhostLayerForATime(time));
     }
 
     private const int ghostLayer_ = 6;
     private const int playerLayer_ = 3;
     private IEnumerator ChangeToGhostLayerForATime(float time)
     {
-
+        var prevMaxVel = rigidbody_.maxLinearVelocity;
+        rigidbody_.maxLinearVelocity = 1;
         gameObject.layer = ghostLayer_;
         yield return new WaitForSeconds(time);
         gameObject.layer = playerLayer_;
+        rigidbody_.maxLinearVelocity = prevMaxVel;
     }
 }
 

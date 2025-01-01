@@ -17,6 +17,10 @@ public class Football : MonoBehaviour
 {
     [SerializeField]
     private float playerCheckRadius_ = 2;
+
+    [SerializeField]
+    private float struggleRadius_ = 2;
+
     [SerializeField] private LayerMask playerCheckLayer_;
 
     [SerializeField] private LayerMask groundCheckLayer_;
@@ -38,7 +42,9 @@ public class Football : MonoBehaviour
     private int sectorNumber_;
 
     public int SectorNumber { get { return sectorNumber_; } }
-
+    [SerializeField]
+    private LayerMask ballExcluded_;
+    public LayerMask BallExcludeLayers => ballExcluded_;
 
     [SerializeField]
     private bool enableDebug_ = true;
@@ -60,14 +66,51 @@ public class Football : MonoBehaviour
 
     private void FixedUpdate()
     {
+        CheckStruggle();
         CheckPlayerCollision();
 
     }
 
 
     private bool isStruggling_ = false;
+
+
+    private void CheckStruggle()
+    {
+
+        if (currentOwnerPlayer_ == null) return;
+
+        strugglingPlayers_.Clear();
+        isStruggling_ = false;
+        var colliders = Physics.OverlapSphere(transform.position, struggleRadius_, playerCheckLayer_);
+        strugglingPlayers_.Add(currentOwnerPlayer_);
+        foreach (var collider in colliders)
+        {
+            if (collider.TryGetComponent<IFootballAgent>(out var otherPlayer))
+            {
+                if(currentOwnerPlayer_.TeamFlag != otherPlayer.TeamFlag)
+                {
+                    strugglingPlayers_.Add(otherPlayer);
+                    isStruggling_ = true;
+                }
+            }
+        }
+
+        if (!isStruggling_)
+        {
+            strugglingPlayers_.Clear();
+        }
+
+    }
     private void CheckPlayerCollision()
     {
+
+        /*
+            if currentOwner == null:
+            give to ball to the highest dice thrower., put others into ghost layer for a second.
+
+         
+         */
 
 
         var colliders = Physics.OverlapSphere(transform.position, playerCheckRadius_, playerCheckLayer_);
@@ -81,13 +124,12 @@ public class Football : MonoBehaviour
 
             if (collider.TryGetComponent<IFootballAgent>(out var otherPlayer))
             {
-                strugglingPlayers_.Add(otherPlayer);
+               
                 if (playerToAssign != null && playerToAssign.TeamFlag != otherPlayer.TeamFlag)
                 {
                     var currentPlayerScore = playerToAssign.TryToAcquireBall();
                     var otherPlayerScore = otherPlayer.TryToAcquireBall();
                     playerToAssign = currentPlayerScore > otherPlayerScore ? playerToAssign : otherPlayer;
-                    isStruggling_ = true;
 
                 }
                 else
@@ -98,15 +140,19 @@ public class Football : MonoBehaviour
         }
 
 
-        if (!isStruggling_)
-        {
-            strugglingPlayers_.Clear();
-        }
+     
 
         var prevOwner = currentOwnerPlayer_;
         
         currentOwnerPlayer_ = playerToAssign;
-        if(currentOwnerPlayer_ != prevOwner) currentOwnerPlayer_.OnBallPossesion();
+        if(currentOwnerPlayer_ != prevOwner) { 
+            if(prevOwner != null)
+            {
+                prevOwner.ChangeToGhostLayer(1.5f);
+                
+            }
+            currentOwnerPlayer_.OnBallPossesion(); 
+        }
 
     }
 
@@ -205,7 +251,8 @@ public class Football : MonoBehaviour
             Gizmos.DrawSphere(drop_point, 0.5f);
         }
         Gizmos.DrawSphere (transform.position, playerCheckRadius_);
-      
+        Gizmos.DrawCube(transform.position, Vector3.one * struggleRadius_);
+
     }
 }
 

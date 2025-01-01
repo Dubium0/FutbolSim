@@ -28,7 +28,7 @@ namespace Player.Controller.States
             {
                 controller_.Transform.forward = MathExtra.MoveTowards(controller_.Transform.forward, inputVector, 1 / controller_.AgentInfo.RotationTime);
             }
-            
+           
         }
 
         private Vector3 shootdir_;
@@ -40,7 +40,7 @@ namespace Player.Controller.States
 
         public void OnHighActionAExit()
         {
-            controller_.ChangeToGhostLayer();
+            controller_.ChangeToGhostLayer(0.5f);
             Football.Instance.HitBall(shootdir_, 10);
             controller_.SetState(new FreeFutbollerState(controller_));
         }
@@ -53,7 +53,7 @@ namespace Player.Controller.States
 
         public void OnHighActionBExit()
         {
-            controller_.ChangeToGhostLayer();
+            controller_.ChangeToGhostLayer(0.5f );
             Football.Instance.HitBall(shootdir_, 15);
             controller_.SetState(new FreeFutbollerState(controller_));
         }
@@ -68,7 +68,7 @@ namespace Player.Controller.States
 
         public void OnLowActionAExit()
         {
-            controller_.ChangeToGhostLayer();
+            controller_.ChangeToGhostLayer(0.5f);
             Football.Instance.HitBall(shootdir_, 10);
             controller_.SetState(new FreeFutbollerState(controller_));
 
@@ -82,7 +82,7 @@ namespace Player.Controller.States
 
         public void OnLowActionBExit()
         {
-            controller_.ChangeToGhostLayer();
+            controller_.ChangeToGhostLayer(0.5f);
             Football.Instance.HitBall(shootdir_, 10);
             controller_.SetState(new FreeFutbollerState(controller_));
         }

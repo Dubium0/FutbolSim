@@ -24,7 +24,7 @@ public class GoToTheHomePosition : ActionNode
         var direction = (homePos - agent.Transform.position);
         direction.y = 0;
         var prevY = agent.Rigidbody.linearVelocity.y;
-        agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude(direction, 1) * agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
+        agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude(direction, 1) * agent.AgentInfo.MaxRunSpeed) + Vector3.up * prevY;
 
         if (agent.IsDebugMode)
         {

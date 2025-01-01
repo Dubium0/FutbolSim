@@ -20,7 +20,9 @@ MonoBehaviour:
   MaxBallAcqusitionStamina: 100
   BallAcqusitionPoint: 10
   RotationTime: 2
-  MaxWalkSpeed: 6
-  MaxRunSpeed: 12
+  MaxWalkSpeed: 4
+  MaxRunSpeed: 6
+  MaxStrugglingSpeed: 2
   WalkingAcceleration: 20
   RunningAcceleration: 27
+  StrugglingAcceleration: 20

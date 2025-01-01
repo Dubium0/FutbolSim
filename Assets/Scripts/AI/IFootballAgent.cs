@@ -55,7 +55,7 @@ public interface IFootballAgent
 
     public void SetState(IPlayerState state);
 
-    public void ChangeToGhostLayer();
+    public void ChangeToGhostLayer(float time);
 
 
 }

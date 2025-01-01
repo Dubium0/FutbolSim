@@ -15,7 +15,7 @@ public class GoToTheIntersectionPosition : ActionNode
     public override BTResult Execute()
     {
 
-        var futureBallPosition = Football.Instance.GetDropPointAfterTSeconds(1);
+   
 
         var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
         var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
@@ -26,7 +26,6 @@ public class GoToTheIntersectionPosition : ActionNode
 
         var homeGoalPosition = GameManager.Instance.GetGoalPositionHome(agent.TeamFlag);
 
-        var distanceToEnemy = Vector3.Distance(agentLocation, enemyCurrentLocation);
 
         var enemyLocationAfterTSeconds = enemyCurrentLocation + currentEnemyOwner.Rigidbody.linearVelocity * 1;
 
@@ -44,10 +43,16 @@ public class GoToTheIntersectionPosition : ActionNode
         var goalBounds = GameManager.Instance.GetBoundsHome(agent.TeamFlag);
 
      
-        var direction = (enemyLocationAfterTSeconds + offsetFromPlayer - agentLocation).normalized * agent.AgentInfo.MaxSpeed;
+        var direction = (enemyLocationAfterTSeconds + offsetFromPlayer - agentLocation);
         direction.y = 0;
         var prevY = agent.Rigidbody.linearVelocity.y;
-        agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude(direction, 1) * agent.AgentInfo.MaxSpeed) + Vector3.up * prevY;
+
+        var enemySpeed =  currentEnemyOwner.Rigidbody.linearVelocity.magnitude;
+
+        var followSpeed = Mathf.Clamp(enemySpeed, agent.AgentInfo.MaxWalkSpeed, agent.AgentInfo.MaxRunSpeed);
+
+
+        agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude(direction, 1) * followSpeed) + Vector3.up * prevY;
     
 
 

@@ -149,7 +149,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1932413874e8da4d9146bcb96d46eb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCheckRadius_: 2
+  playerCheckRadius_: 0.41
+  struggleRadius_: 1
   playerCheckLayer_:
     serializedVersion: 2
     m_Bits: 8
@@ -157,3 +158,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   rigidbody_: {fileID: 3618858785015978874}
+  enableDebug_: 1

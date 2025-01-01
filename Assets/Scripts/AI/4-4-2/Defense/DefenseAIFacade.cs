@@ -2,7 +2,7 @@
 using BT_Implementation;
 using BT_Implementation.Control;
 using BT_Implementation.Leaf;
-using Unity.VisualScripting;
+
 using UnityEngine;
 
 public class DefenseAIFacade : BTRoot
@@ -36,6 +36,25 @@ public class DefenseAIFacade : BTRoot
             return footballTeam.CurrentBallOwnerTeamMate == Football.Instance.CurrentOwnerPlayer; 
         });
         hasBallOrSequence.AddChild(doesTeamHasTheBall);
+
+        SelectorNode goHomeOrDriveBallSelector = new SelectorNode("Go Home Or Drive Ball ");
+        hasBallOrSequence.AddChild(goHomeOrDriveBallSelector);
+
+        SequenceNode doIHaveTheBallOrSequence = new SequenceNode("Do I have the ball or");
+        goHomeOrDriveBallSelector.AddChild(doIHaveTheBallOrSequence);
+
+        ConditionNode doIhaveTheBall = new ConditionNode("Do I have the ball", blackBoard, blackBoard =>
+        {
+
+            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+            var result = agent == Football.Instance.CurrentOwnerPlayer;
+
+            if (agent.IsDebugMode) Debug.Log($"Do I have the ball? {result}");
+            return result;
+
+        });
+        doIHaveTheBallOrSequence.AddChild(doIhaveTheBall);
+        goHomeOrDriveBallSelector.AddChild(new TryToGetInReceivingPosition("Go to the Home Position", blackBoard));
 
         SelectorNode goHomeOrDefendSelector = new SelectorNode("Go Home Or Defend");
         defenseEntrySelector.AddChild(goHomeOrDefendSelector);

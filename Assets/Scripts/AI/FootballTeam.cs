@@ -61,6 +61,7 @@ public class FootballTeam : MonoBehaviour
     private void FixedUpdate()
     {
         SetClosestPlayerToBall(); 
+        DecideStrategy();
     }
 
     private void SetClosestPlayerToBall()
@@ -92,6 +93,55 @@ public class FootballTeam : MonoBehaviour
 
     }
 
+    private void DecideStrategy()
+    {
+        if( currentBallOwnerTeamMate == Football.Instance.CurrentOwnerPlayer)
+        {
+            var sectorNumber = Football.Instance.SectorNumber;
+            if (Football.Instance.PitchZone == GetPicthZone())
+            {
+              
+                if(sectorNumber >= 3)
+                {
+                    currentFormation = DefaultFormation;
+                }
+                
+
+            }
+            else
+            {
+                if(sectorNumber < 6)
+                {
+                    currentFormation = AttackFormation;
+                }
+            }
+
+        }
+        else{
+            var sectorNumber = Football.Instance.SectorNumber;
+            if (Football.Instance.PitchZone == GetPicthZone())
+            {
+
+                if (sectorNumber < 6)
+                {
+                    currentFormation = DefenseFormation;
+                }
+                else
+                {
+                    currentFormation = DefaultFormation;
+                }
+
+
+            }
+            else
+            {
+                
+                    currentFormation = DefaultFormation;
+                
+            }
+        }
+        UpdateHomePositions();
+    }
     private void CreateAgents()
     {
         var defCount = currentFormation.DefensePosition.Length;
