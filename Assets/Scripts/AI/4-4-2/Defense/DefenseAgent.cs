@@ -239,14 +239,15 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
     }
 
     private const int ghostLayer_ = 6;
-    private const int playerLayer_ = 3;
+
     private IEnumerator ChangeToGhostLayerForATime(float time)
     {
         var prevMaxVel = rigidbody_.maxLinearVelocity;
         rigidbody_.maxLinearVelocity = 1;
+        var prevLayer = gameObject.layer;
         gameObject.layer = ghostLayer_;
         yield return new WaitForSeconds(time);
-        gameObject.layer = playerLayer_;
+        gameObject.layer = prevLayer;
         rigidbody_.maxLinearVelocity = prevMaxVel;
     }
 }

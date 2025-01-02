@@ -78,5 +78,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    [SerializeField]
+    private LayerMask blueTeamLayerMask;
+
+    [SerializeField]
+    private LayerMask redTeamLayerMask;
+
+    public LayerMask GetLayerMaskOfEnemy(TeamFlag teamFlag)
+    {
+        switch(teamFlag)
+        {
+            case TeamFlag.Red:
+                return blueTeamLayerMask;
+            case TeamFlag.Blue:
+                return redTeamLayerMask;
+            default:
+            return blueTeamLayerMask;
+
+
+        }
+
+    }
+
 }
 

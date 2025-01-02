@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3550028597938208864}
   - component: {fileID: 3618858785015978874}
   - component: {fileID: 989373617631052513}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,4 +158,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   rigidbody_: {fileID: 3618858785015978874}
+  ballExcluded_:
+    serializedVersion: 2
+    m_Bits: 255
   enableDebug_: 1

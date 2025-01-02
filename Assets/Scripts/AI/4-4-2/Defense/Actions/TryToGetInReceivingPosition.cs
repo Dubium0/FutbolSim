@@ -23,64 +23,64 @@ public class TryToGetInReceivingPosition : ActionNode
         var homePos = footballTeam.GetHomePosition(teamIndex);
 
         
-        var directionToBall = -(homePos - Football.Instance.transform.position);
+        var directionToBall = (Football.Instance.transform.position - homePos);
 
         var leftPlaneDir = new Vector3(-directionToBall.normalized.z, directionToBall.normalized.y, directionToBall.normalized.x);
         var rightPlaneDir = new Vector3(directionToBall.normalized.z, directionToBall.normalized.y, -directionToBall.normalized.x);
 
-        var currentPosOpen = !Physics.Raycast(homePos, directionToBall.normalized, directionToBall.magnitude, 3);
-        directionToBall = -(homePos + leftPlaneDir - Football.Instance.transform.position);
-        var leftCloseOpen = !Physics.Raycast(homePos + leftPlaneDir, directionToBall.normalized, directionToBall.magnitude, 3);
-        directionToBall = -(homePos + leftPlaneDir * 2 - Football.Instance.transform.position);
-        var leftWideOpen = !Physics.Raycast(homePos + leftPlaneDir *2, directionToBall.normalized, directionToBall.magnitude, 3 );
-        directionToBall = -(homePos + rightPlaneDir - Football.Instance.transform.position);
-        var rightCloseOpen = !Physics.Raycast(homePos + rightPlaneDir, directionToBall.normalized, directionToBall.magnitude, 3 );
-        directionToBall = -(homePos + rightPlaneDir*2 - Football.Instance.transform.position);
-        var rightWideOpen = !Physics.Raycast(homePos + rightPlaneDir * 2, directionToBall.normalized, directionToBall.magnitude, 3 );
+        var rayOrigin = homePos;
 
-        if (agent.IsDebugMode)
-        {
-            directionToBall = -(homePos - Football.Instance.transform.position);
-            Debug.DrawRay(homePos, directionToBall );
-            directionToBall = -(homePos + leftPlaneDir - Football.Instance.transform.position);
-            Debug.DrawRay(homePos + leftPlaneDir, directionToBall );
-            directionToBall = -(homePos + leftPlaneDir * 2 - Football.Instance.transform.position);
-            Debug.DrawRay(homePos + leftPlaneDir * 2, directionToBall);
-            directionToBall = -(homePos + rightPlaneDir - Football.Instance.transform.position);
-            Debug.DrawRay(homePos + rightPlaneDir, directionToBall);
-            directionToBall = -(homePos + rightPlaneDir * 2 - Football.Instance.transform.position);
-            Debug.DrawRay(homePos + rightPlaneDir * 2, directionToBall);
+        var layerMaskToCheck = GameManager.Instance.GetLayerMaskOfEnemy(agent.TeamFlag);
 
-        }
+        var currentPosOpen = !Physics.Raycast(rayOrigin,directionToBall.normalized, directionToBall.magnitude, layerMaskToCheck);
 
 
-        var finalDestination = homePos;
-        if (currentPosOpen)
-        {
-            //do nothing
-        }
-        else if (leftCloseOpen)
-        {
-            finalDestination += leftPlaneDir;
-        }
-        else if (rightCloseOpen)
-        {
-            finalDestination += rightPlaneDir;
-        }
-        else if (leftWideOpen)
-        {
-            finalDestination += leftPlaneDir * 2;
-        }
-        else if (rightWideOpen)
-        {
-            finalDestination += rightPlaneDir * 2;
-        }
+        rayOrigin = homePos + leftPlaneDir;
+        directionToBall = (Football.Instance.transform.position - rayOrigin);
+        var leftCloseOpen = !Physics.Raycast(rayOrigin, directionToBall.normalized, directionToBall.magnitude, layerMaskToCheck);
 
+        rayOrigin = homePos + leftPlaneDir * 1.5f;
+        directionToBall = (Football.Instance.transform.position - rayOrigin);
+        var leftWideOpen = !Physics.Raycast(rayOrigin, directionToBall.normalized, directionToBall.magnitude, layerMaskToCheck);
+
+        rayOrigin = homePos + rightPlaneDir;
+        directionToBall = (Football.Instance.transform.position - rayOrigin);
+        var rightCloseOpen = !Physics.Raycast(rayOrigin, directionToBall.normalized, directionToBall.magnitude, layerMaskToCheck);
+
+        rayOrigin = homePos + leftPlaneDir * 1.5f;
+        directionToBall = (Football.Instance.transform.position - rayOrigin);
+        var rightWideOpen = !Physics.Raycast(rayOrigin, directionToBall.normalized, directionToBall.magnitude, layerMaskToCheck);
+
+
+         
+         
+         var finalDestination = homePos;
+         if (currentPosOpen)
+         {
+             //do nothing
+         }
+         else if (leftCloseOpen)
+         {
+             finalDestination += leftPlaneDir;
+         }
+         else if (rightCloseOpen)
+         {
+             finalDestination += rightPlaneDir;
+         }
+         else if (leftWideOpen)
+         {
+             finalDestination += leftPlaneDir * 2;
+         }
+         else if (rightWideOpen)
+         {
+             finalDestination += rightPlaneDir * 2;
+         }
+        
         var direction = (finalDestination - agent.Transform.position);
         direction.y = 0;
         var prevY = agent.Rigidbody.linearVelocity.y;
         agent.Rigidbody.linearVelocity = (Vector3.ClampMagnitude(direction, 1) * agent.AgentInfo.MaxRunSpeed) + Vector3.up * prevY;
-
+        
         if (agent.IsDebugMode)
         {
             Debug.Log("I'm Trying to be in receiving Position!");

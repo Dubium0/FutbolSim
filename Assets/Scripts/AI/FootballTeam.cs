@@ -149,9 +149,13 @@ public class FootballTeam : MonoBehaviour
         var attackCount = currentFormation.ForwardPosition.Length;
 
         int index = 0;
+
+
+        int layerToSet = TeamFlag == TeamFlag.Red ? 10 : 9;
         for (var i = 0; i < defCount; i++)
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
+            agent.layer = layerToSet;
             var agentComponent = agent.GetComponent<IFootballAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
@@ -170,6 +174,7 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < midfieldCount; i++)
         {
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
+            agent.layer = layerToSet;
             var agentComponent = agent.GetComponent<IFootballAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
@@ -188,6 +193,7 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < attackCount; i++)
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
+            agent.layer = layerToSet;
             var agentComponent = agent.GetComponent<IFootballAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
