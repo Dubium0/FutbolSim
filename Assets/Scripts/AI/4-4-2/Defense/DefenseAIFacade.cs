@@ -2,7 +2,9 @@
 using BT_Implementation;
 using BT_Implementation.Control;
 using BT_Implementation.Leaf;
-
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DefenseAIFacade : BTRoot
@@ -54,6 +56,67 @@ public class DefenseAIFacade : BTRoot
 
         });
         doIHaveTheBallOrSequence.AddChild(doIhaveTheBall);
+
+        SelectorNode phaseSelector = new SelectorNode("Phase selector");
+        doIHaveTheBallOrSequence.AddChild(phaseSelector);
+
+        SequenceNode amIInDefenseOrSequence = new SequenceNode("Am I ins defense Or");
+        phaseSelector.AddChild(amIInDefenseOrSequence);
+
+        ConditionNode amIIndefense = new ConditionNode("Am I in defense", blackBoard, blackBoard =>
+        {
+            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+            var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
+            var result = footballTeam.CurrentFormationPhase == FormationPhase.Defense;
+            if (agent.IsDebugMode) Debug.Log($"Am I in defense Sequence? {result}");
+            return result;
+        });
+        amIInDefenseOrSequence.AddChild(amIIndefense);
+        amIInDefenseOrSequence.AddChild(new SendBallToEnemySideFromTheAir("Send ball to the enemy side", blackBoard));
+
+        SelectorNode attackSelector = new SelectorNode("Attack Selector");
+        phaseSelector.AddChild(attackSelector); 
+
+        SequenceNode  canIShootOrSequence = new SequenceNode("Can I shoot or");
+        attackSelector.AddChild(canIShootOrSequence);
+
+        ConditionNode canIShoot = new ConditionNode("Can I shoot", blackBoard, blackBoard =>
+        {
+            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+            var enemyGoal = GameManager.Instance.GetEnemyGoalInstance(agent.TeamFlag);
+            var enemyLayer = GameManager.Instance.GetLayerMaskOfEnemy(agent.TeamFlag);
+            var possibleLocations = enemyGoal.GetHitPointPositions();
+
+            if ( Vector3.Distance( enemyGoal.transform.position, agent.Transform.position)  < agent.AgentInfo.MaximumShootDistance)
+            {
+                Debug.Log("I am close enoguh to shoot");
+                List<Transform> shootablePositions = new();
+                foreach (var possibleLocation in possibleLocations)
+                {
+                    var direction = possibleLocation.position - agent.Transform.position;
+                    if( !Physics.Raycast(agent.Transform.position, direction.normalized, direction.magnitude, enemyLayer))
+                    {
+                        shootablePositions.Add(possibleLocation);
+                    }
+                }
+
+                if(shootablePositions.Count > 0)
+                {
+                    Debug.Log("There are possible locations to shoot");
+                    blackBoard.SetValue<List<Transform>>("Shootable Positions", shootablePositions);
+                    if (agent.IsDebugMode) Debug.Log($"I am going to shoooot?");
+                    return true;
+                }
+
+            }
+            Debug.Log($"I cant shoot");
+            return false;
+
+        });
+        canIShootOrSequence.AddChild(canIShoot);
+        canIShootOrSequence.AddChild(new ShootTheBall("Shoot the ball", blackBoard));
+
+
         goHomeOrDriveBallSelector.AddChild(new TryToGetInReceivingPosition("Go to the Home Position", blackBoard));
 
         SelectorNode goHomeOrDefendSelector = new SelectorNode("Go Home Or Defend");

@@ -52,6 +52,8 @@ public class FootballTeam : MonoBehaviour
 
     public IFootballAgent CurrentBallOwnerTeamMate { get { return currentBallOwnerTeamMate; } }
 
+    private FormationPhase currentFormationPhase;
+    public FormationPhase CurrentFormationPhase => currentFormationPhase;
     private void Awake()
     {
         currentFormation = StartFormation;
@@ -104,6 +106,12 @@ public class FootballTeam : MonoBehaviour
                 if(sectorNumber >= 3)
                 {
                     currentFormation = DefaultFormation;
+                    currentFormationPhase = FormationPhase.Default;
+                }
+                else
+                {
+                    currentFormation = DefenseFormation;
+                    currentFormationPhase = FormationPhase.Defense;
                 }
                 
 
@@ -113,6 +121,7 @@ public class FootballTeam : MonoBehaviour
                 if(sectorNumber < 6)
                 {
                     currentFormation = AttackFormation;
+                    currentFormationPhase = FormationPhase.Attack;
                 }
             }
 
@@ -122,13 +131,15 @@ public class FootballTeam : MonoBehaviour
             if (Football.Instance.PitchZone == GetPicthZone())
             {
 
-                if (sectorNumber < 6)
+                if (sectorNumber < 3)
                 {
                     currentFormation = DefenseFormation;
+                    currentFormationPhase = FormationPhase.Defense;
                 }
                 else
                 {
                     currentFormation = DefaultFormation;
+                    currentFormationPhase = FormationPhase.Default;
                 }
 
 
@@ -137,7 +148,8 @@ public class FootballTeam : MonoBehaviour
             {
                 
                     currentFormation = DefaultFormation;
-                
+                currentFormationPhase = FormationPhase.Default;
+
             }
         }
         UpdateHomePositions();

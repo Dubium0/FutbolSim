@@ -183,8 +183,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 989373617631052513, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
-      propertyPath: ballExcluded_.m_Bits
-      value: 255
+      propertyPath: playerCheckLayer_.m_Bits
+      value: 1544
       objectReference: {fileID: 0}
     - target: {fileID: 1951629378674571425, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -229,14 +229,10 @@ PrefabInstance:
     - target: {fileID: 3550028597938208864, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1402358272}
+      objectReference: {fileID: 1129241712}
     - target: {fileID: 8749789280191893094, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_Name
       value: Ball
-      objectReference: {fileID: 0}
-    - target: {fileID: 8749789280191893094, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
-      propertyPath: m_Layer
-      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -957,12 +953,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!4 &1208171570 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2836651876274546144, guid: ad5b94e42d99e2b4095f4fd1c73186cc, type: 3}
-  m_PrefabInstance: {fileID: 856043485}
-  m_PrefabAsset: {fileID: 0}
---- !u!134 &1402358272
+--- !u!134 &1129241712
 PhysicsMaterial:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -977,13 +968,19 @@ PhysicsMaterial:
     (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
     (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
     (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance)'
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)'
   serializedVersion: 2
   m_DynamicFriction: 0.6
   m_StaticFriction: 0.6
   m_Bounciness: 0
   m_FrictionCombine: 0
   m_BounceCombine: 0
+--- !u!4 &1208171570 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2836651876274546144, guid: ad5b94e42d99e2b4095f4fd1c73186cc, type: 3}
+  m_PrefabInstance: {fileID: 856043485}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1435720927
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,12 +1014,20 @@ MonoBehaviour:
   RedGoalBounds:
     m_Center: {x: 0.00031115123, y: 0.173617, z: -22.711184}
     m_Extent: {x: 1, y: 1, z: 1}
+  BlueGoal: {fileID: 2074075825}
+  RedGoal: {fileID: 2074075826}
   BlueGoalPosition: {fileID: 2074075823}
   BlueGoalBounds:
     m_Center: {x: -0.0003111781, y: 0.173617, z: 22.706404}
     m_Extent: {x: 1, y: 1, z: 1}
   RedFootballTeam: {fileID: 598758385}
   BlueFootballTeam: {fileID: 114283752}
+  blueTeamLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  redTeamLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!4 &1435720929
 Transform:
   m_ObjectHideFlags: 0
@@ -1076,6 +1081,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5801143963441875600, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5947865426945328993, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886751263977200834, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7296204109515976438, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8132209195982945557, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
       propertyPath: m_Name
       value: Soccer Field
@@ -1135,6 +1156,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4288289837382306099, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
   m_PrefabInstance: {fileID: 2074075822}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2074075825 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7613439667523627696, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
+  m_PrefabInstance: {fileID: 2074075822}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e3f6d1d973f9ee4b9101c4a3eeb5cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2074075826 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8777108122241700753, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
+  m_PrefabInstance: {fileID: 2074075822}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e3f6d1d973f9ee4b9101c4a3eeb5cd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2097879474 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6659270630902011386, guid: ad5b94e42d99e2b4095f4fd1c73186cc, type: 3}

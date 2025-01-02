@@ -22,10 +22,15 @@ public class GoToTheBall : ActionNode
         var distanceToBall = Vector3.Distance(agent.Transform.position, futureBallPosition);
         if(distanceToBall <= agent.AgentInfo.MaxRunSpeed * 2)
         {
-            Debug.Log("Can Catch the ball!");
+            if (agent.IsDebugMode)
+            {
+                Debug.Log("Can Catch the ball!");
+                Debug.Log($"Distance to Ball {distanceToBall}");
+            }
+           
         }
 
-        Debug.Log($"Distance to Ball {distanceToBall}");
+       
 
         var finalPosition = Vector3.Lerp(Football.Instance.transform.position, futureBallPosition, distanceToBall > 5 ? 1 : 0 );
         

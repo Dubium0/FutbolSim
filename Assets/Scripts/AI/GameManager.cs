@@ -5,6 +5,10 @@ public class GameManager : MonoBehaviour
     public Transform RedGoalPosition;
     public Bounds RedGoalBounds;
 
+    public Goal BlueGoal;
+    public Goal RedGoal;
+
+
     public Transform BlueGoalPosition;
     public Bounds BlueGoalBounds;
 
@@ -63,6 +67,23 @@ public class GameManager : MonoBehaviour
 
         }
     }
+
+    public Bounds GetBoundsAway(TeamFlag teamFlag)
+    {
+        switch (teamFlag)
+        {
+            case TeamFlag.Blue:
+                RedGoalBounds.center = RedGoalPosition.position;
+                return RedGoalBounds;
+              
+            case TeamFlag.Red:
+                BlueGoalBounds.center = BlueGoalPosition.position;
+                return BlueGoalBounds;
+            default:
+                return BlueGoalBounds;
+
+        }
+    }
     public Vector3 GetGoalPositionAway(TeamFlag teamFlag)
     {
         switch (teamFlag)
@@ -76,6 +97,22 @@ public class GameManager : MonoBehaviour
                 return BlueGoalPosition.position;
 
         }
+    }
+
+    public Goal GetEnemyGoalInstance( TeamFlag teamFlag)
+    {
+        switch (teamFlag)
+        {
+            case TeamFlag.Blue:
+                return RedGoal;
+
+            case TeamFlag.Red:
+                return BlueGoal;
+            default:
+                return BlueGoal;
+
+        }
+
     }
 
     [SerializeField]

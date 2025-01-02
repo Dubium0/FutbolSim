@@ -26,3 +26,5 @@ MonoBehaviour:
   WalkingAcceleration: 20
   RunningAcceleration: 27.9
   StrugglingAcceleration: 9.44
+  MaximumShootDistance: 20
+  MaximumShootPower: 10
