@@ -3,9 +3,10 @@ using BT_Implementation;
 using Player.Controller.States;
 using System;
 using System.Collections;
-
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 [RequireComponent(typeof(Rigidbody))]
 public class DefenseAgent : MonoBehaviour, IFootballAgent
@@ -47,6 +48,12 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
 
     private bool isHumanControlled = false;
     private int currentBallAcqusitionStamina_;
+
+
+    private bool enableAI = true;
+
+    [SerializeField]
+    private GameObject playerIndicator;
     private void Awake()
     {
         rigidbody_ = GetComponent<Rigidbody>();
@@ -112,11 +119,15 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         isInitialized_ = true;
         SetAsAIControlled();
 
+   
+        GetComponent<MeshRenderer>().material.color =  TeamFlag == TeamFlag.Red ? Color.red : Color.blue;
+  
+
     }
 
     public void TickAISystem()
     {
-        if(!isInitialized_ || isHumanControlled)
+        if(!isInitialized_ || isHumanControlled || !enableAI)
         {
             return;
         }
@@ -196,11 +207,12 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
     {
         
         isHumanControlled = true;
-      
+        playerIndicator.SetActive(true);
         SetState(new FreeFutbollerState(this));
     }
     public void SetAsAIControlled()
     {
+        playerIndicator.SetActive(false);
         isHumanControlled = false;
     }
     private void SetActions()
@@ -250,5 +262,50 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         gameObject.layer = prevLayer;
         rigidbody_.maxLinearVelocity = prevMaxVel;
     }
+
+    public int GetShootScore()
+    {
+        
+        var enemyGoal = GameManager.Instance.GetEnemyGoalInstance(TeamFlag);
+        var enemyLayer = GameManager.Instance.GetLayerMaskOfEnemy(TeamFlag);
+        var possibleLocations = enemyGoal.GetHitPointPositions();
+        List<Transform> shootablePositions = new();
+        if (Vector3.Distance(enemyGoal.transform.position, Transform.position) <AgentInfo.MaximumShootDistance)
+        {
+            foreach (var possibleLocation in possibleLocations)
+            {
+                var direction = possibleLocation.position - Transform.position;
+                if (!Physics.Raycast(Transform.position, direction.normalized, direction.magnitude, enemyLayer))
+                {
+                    shootablePositions.Add(possibleLocation);
+                }
+            }
+
+        }
+        
+        return shootablePositions.Count;
+
+
+    }
+
+    public void DisableAIForATime(float time)
+    {
+        StartCoroutine(DisableAIForATimeRoutine(time));
+    }
+
+     private IEnumerator DisableAIForATimeRoutine(float time)
+    {
+
+        enableAI = false;
+        var prevMaxVel = rigidbody_.maxLinearVelocity;
+        rigidbody_.maxLinearVelocity = 1;
+        var prevLayer = gameObject.layer;
+        gameObject.layer = ghostLayer_;
+        yield return new WaitForSeconds(time);
+        gameObject.layer = prevLayer;
+        rigidbody_.maxLinearVelocity = prevMaxVel;
+        enableAI = true;
+    }
+
 }
 

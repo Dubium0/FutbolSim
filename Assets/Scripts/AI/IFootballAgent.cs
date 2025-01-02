@@ -57,6 +57,9 @@ public interface IFootballAgent
 
     public void ChangeToGhostLayer(float time);
 
+    public int GetShootScore();
+
+    public void DisableAIForATime(float time);
 
 }
 

@@ -10,21 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 42aebee29d914d244bf8f5406fe9922a, type: 3}
-  m_Name: Defense Agent Info
+  m_Name: FootballAgentPreset
   m_EditorClassIdentifier: 
   MaxSpeed: 5
   MaxStamina: 100
   CloseDefenseRadius: 2
-  LongDefenseRadius: 3
+  LongDefenseRadius: 5
   BallAcqusitionStaminaReductionRate: 5
   MaxBallAcqusitionStamina: 100
   BallAcqusitionPoint: 10
   RotationTime: 2
-  MaxWalkSpeed: 4
-  MaxRunSpeed: 6
+  MaxWalkSpeed: 6
+  MaxRunSpeed: 8
   MaxStrugglingSpeed: 1
   WalkingAcceleration: 20
-  RunningAcceleration: 27.9
+  RunningAcceleration: 28
   StrugglingAcceleration: 9.44
-  MaximumShootDistance: 20
-  MaximumShootPower: 10
+  MaximumShootDistance: 15.36
+  MaximumShootPower: 14.36
+  MaximumPassPower: 8

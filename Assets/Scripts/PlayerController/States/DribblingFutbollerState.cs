@@ -34,7 +34,9 @@ namespace Player.Controller.States
         private Vector3 shootdir_;
         public void OnHighActionAEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
+            shootdir_.y = 0;
+            shootdir_.Normalize();  
             shootdir_.y = .5f;
         }
 
@@ -47,7 +49,9 @@ namespace Player.Controller.States
 
         public void OnHighActionBEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
+            shootdir_.y = 0;
+            shootdir_.Normalize();
             shootdir_.y = .5f;
         }
 
@@ -61,7 +65,9 @@ namespace Player.Controller.States
        
         public void OnLowActionAEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
+            shootdir_.y = 0;
+            shootdir_.Normalize();
 
 
         }
@@ -77,7 +83,9 @@ namespace Player.Controller.States
 
         public void OnLowActionBEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position).normalized;
+            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
+            shootdir_.y = 0;
+            shootdir_.Normalize();
         }
 
         public void OnLowActionBExit()

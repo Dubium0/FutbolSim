@@ -57,25 +57,9 @@ public class DefenseAIFacade : BTRoot
         });
         doIHaveTheBallOrSequence.AddChild(doIhaveTheBall);
 
-        SelectorNode phaseSelector = new SelectorNode("Phase selector");
-        doIHaveTheBallOrSequence.AddChild(phaseSelector);
-
-        SequenceNode amIInDefenseOrSequence = new SequenceNode("Am I ins defense Or");
-        phaseSelector.AddChild(amIInDefenseOrSequence);
-
-        ConditionNode amIIndefense = new ConditionNode("Am I in defense", blackBoard, blackBoard =>
-        {
-            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
-            var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
-            var result = footballTeam.CurrentFormationPhase == FormationPhase.Defense;
-            if (agent.IsDebugMode) Debug.Log($"Am I in defense Sequence? {result}");
-            return result;
-        });
-        amIInDefenseOrSequence.AddChild(amIIndefense);
-        amIInDefenseOrSequence.AddChild(new SendBallToEnemySideFromTheAir("Send ball to the enemy side", blackBoard));
-
+      
         SelectorNode attackSelector = new SelectorNode("Attack Selector");
-        phaseSelector.AddChild(attackSelector); 
+        doIHaveTheBallOrSequence.AddChild(attackSelector); 
 
         SequenceNode  canIShootOrSequence = new SequenceNode("Can I shoot or");
         attackSelector.AddChild(canIShootOrSequence);
@@ -116,6 +100,39 @@ public class DefenseAIFacade : BTRoot
         canIShootOrSequence.AddChild(canIShoot);
         canIShootOrSequence.AddChild(new ShootTheBall("Shoot the ball", blackBoard));
 
+        SequenceNode canIPassOrSequence = new SequenceNode("Can I Pass Or ");
+        attackSelector.AddChild(canIPassOrSequence);
+
+        ConditionNode canIPass = new ConditionNode("Can I pass", blackBoard, blackBoard =>
+        {
+            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+            var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
+            var awayGoalPosition = GameManager.Instance.GetGoalPositionAway(agent.TeamFlag);
+
+            var currentPlayerDistance =   Vector3.Distance(awayGoalPosition ,agent.Transform.position);
+
+            List<IFootballAgent> passCandidates = new List<IFootballAgent>();
+            var layermask = GameManager.Instance.GetLayerMaskOfEnemy(agent.TeamFlag);
+            foreach (var mate in footballTeam.FootballAgents)
+            {
+                var distance = Vector3.Distance(awayGoalPosition , mate.Transform.position);
+                if(Mathf.Abs(distance) < currentPlayerDistance ) { 
+                    var direction = mate.Transform.position - agent.Transform.position;
+                    if(!Physics.Raycast(agent.Transform.position, direction.normalized, direction.magnitude, layermask))
+                    {
+                        passCandidates.Add(mate);
+                    }   
+                }
+            }
+
+            blackBoard.SetValue<List<IFootballAgent>>("Pass Candidates", passCandidates);
+            var result = passCandidates.Count > 0;
+            return result;
+        });
+        canIPassOrSequence.AddChild(canIPass);
+        canIPassOrSequence.AddChild(new PassTheBall("Pass the ball", blackBoard));
+
+        attackSelector.AddChild(new DribbleTheNextAvailablePosition("Dribble The Next Available Position",blackBoard));
 
         goHomeOrDriveBallSelector.AddChild(new TryToGetInReceivingPosition("Go to the Home Position", blackBoard));
 

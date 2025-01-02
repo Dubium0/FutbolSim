@@ -148,7 +148,7 @@ public class Football : MonoBehaviour
         if(currentOwnerPlayer_ != prevOwner) { 
             if(prevOwner != null)
             {
-                prevOwner.ChangeToGhostLayer(1.5f);
+                prevOwner.DisableAIForATime(1f);
                 
             }
             currentOwnerPlayer_.OnBallPossesion(); 

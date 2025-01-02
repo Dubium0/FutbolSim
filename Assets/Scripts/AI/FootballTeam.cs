@@ -54,6 +54,7 @@ public class FootballTeam : MonoBehaviour
 
     private FormationPhase currentFormationPhase;
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
+    private bool isOnStart = true;
     private void Awake()
     {
         currentFormation = StartFormation;
@@ -63,9 +64,13 @@ public class FootballTeam : MonoBehaviour
     private void FixedUpdate()
     {
         SetClosestPlayerToBall(); 
+       
         DecideStrategy();
     }
-
+    private void Update()
+    {
+        CycleToClosestPlayer();
+    }
     private void SetClosestPlayerToBall()
     {
         //can tick this for 1 second etc
@@ -87,14 +92,30 @@ public class FootballTeam : MonoBehaviour
         var prevClosest = closestPlayerToBall_;
       
         closestPlayerToBall_ = minDistancePlayer;
-        if (isHumanControllable && prevClosest != minDistancePlayer)
+        if (isHumanControllable && prevClosest != minDistancePlayer && isOnStart)
         {
-            closestPlayerToBall_.SetAsHumanControlled();
+            isOnStart = false;
+            playerControlledAgent = closestPlayerToBall_;
+            playerControlledAgent.SetAsHumanControlled();
         }
 
 
     }
 
+    private void CycleToClosestPlayer()
+    {
+        if(Input.GetKeyDown(KeyCode.C) && isHumanControllable) {
+            var prevAgent = playerControlledAgent;
+            if (prevAgent != null)
+            {
+                prevAgent.SetAsAIControlled();
+            }
+            playerControlledAgent = closestPlayerToBall_;
+            playerControlledAgent.SetAsHumanControlled();
+
+        }
+
+    }
     private void DecideStrategy()
     {
         if( currentBallOwnerTeamMate == Football.Instance.CurrentOwnerPlayer)
@@ -103,7 +124,7 @@ public class FootballTeam : MonoBehaviour
             if (Football.Instance.PitchZone == GetPicthZone())
             {
               
-                if(sectorNumber >= 3)
+                if(sectorNumber >= 6)
                 {
                     currentFormation = DefaultFormation;
                     currentFormationPhase = FormationPhase.Default;
@@ -130,8 +151,9 @@ public class FootballTeam : MonoBehaviour
             var sectorNumber = Football.Instance.SectorNumber;
             if (Football.Instance.PitchZone == GetPicthZone())
             {
+                
 
-                if (sectorNumber < 3)
+                if (sectorNumber < 6)
                 {
                     currentFormation = DefenseFormation;
                     currentFormationPhase = FormationPhase.Defense;
@@ -168,11 +190,17 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
             agent.layer = layerToSet;
+          
             var agentComponent = agent.GetComponent<IFootballAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
                 {
+                    var prevAgent = playerControlledAgent;
+                    if (prevAgent != null)
+                    {
+                        prevAgent.SetAsAIControlled();
+                    }
                     playerControlledAgent = agent;
                     playerControlledAgent.SetAsHumanControlled();
                 }
@@ -186,12 +214,18 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < midfieldCount; i++)
         {
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
+          
             agent.layer = layerToSet;
             var agentComponent = agent.GetComponent<IFootballAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
                 {
+                    var prevAgent = playerControlledAgent;
+                    if (prevAgent != null)
+                    {
+                        prevAgent.SetAsAIControlled();
+                    }
                     playerControlledAgent = agent;
                     playerControlledAgent.SetAsHumanControlled();
                 }
@@ -206,11 +240,17 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
             agent.layer = layerToSet;
+           
             var agentComponent = agent.GetComponent<IFootballAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
                 {
+                    var prevAgent = playerControlledAgent;
+                    if(prevAgent != null)
+                    {
+                        prevAgent.SetAsAIControlled();
+                    }
                     playerControlledAgent = agent;
                     playerControlledAgent.SetAsHumanControlled();
                 

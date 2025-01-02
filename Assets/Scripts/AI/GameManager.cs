@@ -137,5 +137,22 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public LayerMask GetLayerMaskOfTeamMate(TeamFlag teamFlag)
+    {
+        switch (teamFlag)
+        {
+            case TeamFlag.Red:
+                return redTeamLayerMask;
+              
+            case TeamFlag.Blue:
+                return blueTeamLayerMask;
+            default:
+                return blueTeamLayerMask;
+
+
+        }
+
+    }
+
 }
 

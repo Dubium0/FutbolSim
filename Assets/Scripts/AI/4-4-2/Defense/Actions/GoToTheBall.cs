@@ -32,7 +32,7 @@ public class GoToTheBall : ActionNode
 
        
 
-        var finalPosition = Vector3.Lerp(Football.Instance.transform.position, futureBallPosition, distanceToBall > 5 ? 1 : 0 );
+        var finalPosition = Vector3.Lerp(Football.Instance.transform.position, futureBallPosition, distanceToBall > 10 ? 1 : 0 );
         
         
         var direction = (finalPosition - agent.Transform.position);

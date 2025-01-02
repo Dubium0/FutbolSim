@@ -21,6 +21,8 @@ public class ShootTheBall : ActionNode
 
         Football.Instance.HitBall(direction.normalized, agent.AgentInfo.MaximumShootPower);
 
+        agent.DisableAIForATime(1);
+
         return BTResult.Success;
     }
 }

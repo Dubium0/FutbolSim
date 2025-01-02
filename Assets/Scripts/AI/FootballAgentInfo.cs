@@ -37,5 +37,7 @@ public class FootballAgentInfo : ScriptableObject
 
     public float MaximumShootPower = 10;
 
+    public float MaximumPassPower = 10;
+
 }
 
