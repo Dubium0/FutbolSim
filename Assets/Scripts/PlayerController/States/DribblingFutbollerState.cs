@@ -34,8 +34,9 @@ namespace Player.Controller.States
         private Vector3 shootdir_;
         public void OnHighActionAEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
-            shootdir_.y = 0;
+            var mousePos = controller_.WorldMousePosition;
+            mousePos.y = controller_.Transform.position.y;
+            shootdir_ = (mousePos - controller_.Transform.position);
             shootdir_.Normalize();  
             shootdir_.y = .5f;
         }
@@ -49,8 +50,9 @@ namespace Player.Controller.States
 
         public void OnHighActionBEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
-            shootdir_.y = 0;
+            var mousePos = controller_.WorldMousePosition;
+            mousePos.y = controller_.Transform.position.y;
+            shootdir_ = (mousePos - controller_.Transform.position);
             shootdir_.Normalize();
             shootdir_.y = .5f;
         }
@@ -65,9 +67,12 @@ namespace Player.Controller.States
        
         public void OnLowActionAEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
-            shootdir_.y = 0;
+       
+            var mousePos = controller_.WorldMousePosition;
+            mousePos.y = controller_.Transform.position.y;
+            shootdir_ = (mousePos - controller_.Transform.position);
             shootdir_.Normalize();
+        
 
 
         }
@@ -75,24 +80,28 @@ namespace Player.Controller.States
         public void OnLowActionAExit()
         {
             controller_.ChangeToGhostLayer(0.5f);
-            Football.Instance.HitBall(shootdir_, 10);
+            Football.Instance.HitBall(shootdir_, 15);
             controller_.SetState(new FreeFutbollerState(controller_));
-
+            Debug.Log(shootdir_);
 
         }
 
         public void OnLowActionBEnter()
         {
-            shootdir_ = (controller_.WorldMousePosition - controller_.Transform.position);
-            shootdir_.y = 0;
+
+            var mousePos = controller_.WorldMousePosition;
+            mousePos.y = controller_.Transform.position.y;
+            shootdir_ = (mousePos - controller_.Transform.position);
             shootdir_.Normalize();
         }
 
         public void OnLowActionBExit()
         {
+          
             controller_.ChangeToGhostLayer(0.5f);
-            Football.Instance.HitBall(shootdir_, 10);
+            Football.Instance.HitBall(shootdir_, 15);
             controller_.SetState(new FreeFutbollerState(controller_));
+            Debug.Log(shootdir_);
         }
 
         public void OnSprintEnter()

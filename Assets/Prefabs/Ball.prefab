@@ -153,7 +153,7 @@ MonoBehaviour:
   struggleRadius_: 1
   playerCheckLayer_:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 1544
   groundCheckLayer_:
     serializedVersion: 2
     m_Bits: 128
