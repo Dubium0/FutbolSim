@@ -78,7 +78,8 @@ public class FootballTeam : MonoBehaviour
         ballPosition.y = 0;
         Vector3 minDistance = Vector3.one * 9999;
         IFootballAgent minDistancePlayer = null;
-        FootballAgents.ForEach(agent => {
+        FootballAgents.ForEach(agent => 
+        {
 
             var distance = ballPosition - agent.Transform.position;
             if (distance.magnitude < minDistance.magnitude)
@@ -86,7 +87,7 @@ public class FootballTeam : MonoBehaviour
                 minDistance = distance;
                 minDistancePlayer = agent;
             }
-            }
+        }
         
         );
         var prevClosest = closestPlayerToBall_;
