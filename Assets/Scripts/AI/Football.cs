@@ -73,7 +73,6 @@ public class Football : MonoBehaviour
         CheckStruggle();
         CheckPlayerCollision();
         
-        // if ball falls down to the ground, stop it and start from the center
         if(this.transform.position.y < -1)
         {
             MatchManager.Instance.RestartFromCenter();
@@ -269,6 +268,13 @@ public class Football : MonoBehaviour
         Gizmos.DrawCube(transform.position, Vector3.one * struggleRadius_);
 
     }
+
+    public void ClearOwner()
+    {
+        currentOwnerPlayer_ = null;
+        lastTouchTeam_ = TeamFlag.None; 
+    }
+
 }
 
 

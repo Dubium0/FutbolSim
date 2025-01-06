@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -11,8 +12,8 @@ public class MatchManager : MonoBehaviour
     [SerializeField] private Transform[] cornerPositionsRed;
     [SerializeField] private Transform[] cornerPositionsBlue;
 
-    [SerializeField] private TextMeshProUGUI redScoreText; // home
-    [SerializeField] private TextMeshProUGUI blueScoreText; // away -> player controlled 
+    [SerializeField] private TextMeshProUGUI redScoreText; // Home Team
+    [SerializeField] private TextMeshProUGUI blueScoreText; // Away Team (player controlled)
 
     public int RedTeamScore { get; private set; }
     public int BlueTeamScore { get; private set; }
@@ -66,6 +67,23 @@ public class MatchManager : MonoBehaviour
         }
 
         UpdateScoreUI();
+
+        // Slow down time briefly after a goal
+        StartCoroutine(SlowTimeAndRestart());
+    }
+
+    private IEnumerator SlowTimeAndRestart()
+    {
+        isMatchPaused = true;
+
+        // Slow down time
+        Time.timeScale = 0.5f;
+        yield return new WaitForSecondsRealtime(1f);
+
+        // Reset time scale to normal
+        Time.timeScale = 1f;
+
+        // Restart the match from the center
         RestartFromCenter();
     }
 
@@ -83,7 +101,6 @@ public class MatchManager : MonoBehaviour
 
     public void RestartFromCenter()
     {
-        isMatchPaused = true;
         ResetFootball(centerSpot.position);
         ResetPlayersToFormation();
         Invoke(nameof(ResumeMatch), 1f);
@@ -102,7 +119,10 @@ public class MatchManager : MonoBehaviour
     {
         football.RigidBody.linearVelocity = Vector3.zero;
         football.RigidBody.angularVelocity = Vector3.zero;
-        football.transform.position = new Vector3(0,1,0);
+        football.transform.position = position;
+
+        // Free the ball from any owner
+        football.ClearOwner();
     }
 
     private void ResetPlayersToFormation()
