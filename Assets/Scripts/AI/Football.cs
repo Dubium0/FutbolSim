@@ -48,13 +48,15 @@ public class Football : MonoBehaviour
 
     [SerializeField]
     private bool enableDebug_ = true;
+    
+    private TeamFlag lastTouchTeam_ = TeamFlag.None;
+    public TeamFlag LastTouchTeam => lastTouchTeam_;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
         {
-
             Destroy(this);
-
         }
         else
         {
@@ -62,12 +64,20 @@ public class Football : MonoBehaviour
         }
 
         rigidbody_ = GetComponent<Rigidbody>();
+        if (rigidbody_ == null) Debug.LogError("Rigidbody component is missing from Football.");
     }
+
 
     private void FixedUpdate()
     {
         CheckStruggle();
         CheckPlayerCollision();
+        
+        // if ball falls down to the ground, stop it and start from the center
+        if(this.transform.position.y < -1)
+        {
+            MatchManager.Instance.RestartFromCenter();
+        }
 
     }
 
@@ -146,14 +156,12 @@ public class Football : MonoBehaviour
         
         currentOwnerPlayer_ = playerToAssign;
         if(currentOwnerPlayer_ != prevOwner) { 
+            lastTouchTeam_ = currentOwnerPlayer_.TeamFlag;
             if(prevOwner != null)
-            {
                 prevOwner.DisableAIForATime(1f);
-                
-            }
+            
             currentOwnerPlayer_.OnBallPossesion(); 
         }
-
     }
 
     public bool IsPlayerStruggling(IFootballAgent player)
@@ -167,15 +175,15 @@ public class Football : MonoBehaviour
         Vector3 currentPosition = rigidbody_.position;
         Vector3 currentVelocity = rigidbody_.linearVelocity;
         
-        Vector3 acceleration = Physics.gravity; // Example: gravity
+        Vector3 acceleration = Physics.gravity;
 
-        float deltaTime = 0.02f; // Small time step
+        float deltaTime = 0.02f; 
         Vector3 position = currentPosition;
         Vector3 velocity = currentVelocity;
         var collider = GetComponent<Collider>();
         var physicsMaterial = collider.material;
 
-        float raycastDistance = 0.1f; // Adjust based on your object's size
+        float raycastDistance = 0.1f;
 
         for (float t = 0; t < time; t += deltaTime)
         {
@@ -186,13 +194,13 @@ public class Football : MonoBehaviour
 
             if (isOnGroundNow)
             {
-                velocity.y = 0; // Stop vertical motion
+                velocity.y = 0;
                 acceleration.y = 0;
-                velocity *= Mathf.Clamp01(1 - physicsMaterial.dynamicFriction * deltaTime); // Apply friction
+                velocity *= Mathf.Clamp01(1 - physicsMaterial.dynamicFriction * deltaTime);
             }
            
 
-            velocity += acceleration * deltaTime; // Apply gravity or other forces
+            velocity += acceleration * deltaTime;
 
             position += velocity * deltaTime;
         }
@@ -208,13 +216,11 @@ public class Football : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        float raycastDistance = 0.1f; // Adjust based on your object's size
+        float raycastDistance = 0.1f;
         return Physics.Raycast(rigidbody_.position, Vector3.down, raycastDistance,groundCheckLayer_);
 
     }
-
-
-
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("RedZone"))
@@ -222,22 +228,31 @@ public class Football : MonoBehaviour
             pitchZone_ = PicthZone.RedZone;
             var pair = other.gameObject.name.Trim().Split(' ');
             int number = -1;
-            bool successfull = int.TryParse(pair[1], out number);
-            if (successfull) sectorNumber_ = number;
-            // Debug.Log($"Red ZONE!! {sectorNumber_}");
+            if (int.TryParse(pair[1], out number)) sectorNumber_ = number;
         }
         else if (other.CompareTag("BlueZone"))
         {
             pitchZone_ = PicthZone.BlueZone;
             var pair = other.gameObject.name.Trim().Split(' ');
             int number = -1;
-            bool successfull = int.TryParse(pair[1], out number);
-            if (successfull) sectorNumber_ = number;
-            // Debug.Log("Blue ZONE!!");
+            if (int.TryParse(pair[1], out number)) sectorNumber_ = number;
         }
-
+        else if (other.CompareTag("Out"))
+        {
+            MatchManager.Instance.HandleOut(lastTouchTeam_);
+        }
+        else if (other.CompareTag("GoalAway"))
+        {
+            MatchManager.Instance.HandleGoal(TeamFlag.Red);
+            Debug.Log("Goal Away");
+        }
+        else if (other.CompareTag("GoalHome"))
+        {
+            MatchManager.Instance.HandleGoal(TeamFlag.Blue);
+            Debug.Log("Goal Home");
+        }
     }
-
+    
     private void OnDrawGizmos()
     {
         if (!enableDebug_) return;
@@ -245,7 +260,7 @@ public class Football : MonoBehaviour
         for ( float t = 0 ; t < 2; t += 0.2f)
         {
             var drop_point = GetDropPointAfterTSeconds(t);
-            float raycastDistance = 0.1f; // Adjust based on your object's size
+            float raycastDistance = 0.1f;
             var isOnGroundNow =  Physics.Raycast(drop_point, Vector3.down, raycastDistance, groundCheckLayer_) || Physics.Raycast(drop_point, Vector3.up, 10, groundCheckLayer_);
             if (isOnGroundNow) break;
             Gizmos.DrawSphere(drop_point, 0.5f);

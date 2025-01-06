@@ -188,7 +188,7 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundMask_))
             {
                 Vector3 worldPosition = hit.point;
-                Debug.Log("Mouse World Position: " + worldPosition);
+                // Debug.Log("Mouse World Position: " + worldPosition);
                 return worldPosition;
             }
             return Vector3.zero;

@@ -8,7 +8,8 @@ using UnityEngine;
 public enum TeamFlag
 {
     Red,
-    Blue
+    Blue,
+    None
 }
 
 public enum FormationPhase
@@ -337,5 +338,10 @@ public class FootballTeam : MonoBehaviour
         }
     }
 
-    
+
+    public void ResetToFormation()
+    {
+        
+        
+    }
 }

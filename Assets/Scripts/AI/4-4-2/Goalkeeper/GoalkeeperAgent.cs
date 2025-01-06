@@ -99,7 +99,6 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         switch (playerType_)
         {
             case PlayerType.Goalkeeper:
-                Debug.Log("aa");
                 btRoot_ = new GoalkeeperAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Defender:

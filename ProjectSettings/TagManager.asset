@@ -8,6 +8,10 @@ TagManager:
   - SoccerBall
   - RedZone
   - BlueZone
+  - Out
+  - GoalHome
+  - GoalAway
+  - Throw-in
   layers:
   - Default
   - TransparentFX

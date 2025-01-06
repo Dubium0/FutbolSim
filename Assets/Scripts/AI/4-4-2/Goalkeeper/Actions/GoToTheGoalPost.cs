@@ -9,21 +9,20 @@ public class GoToTheGoalPost : ActionNode
     public override BTResult Execute()
     {
         var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
-        var zPosition = agent.TeamFlag == TeamFlag.Red ? -20 : 20;
-        var targetPosition = new Vector3(0, 0, zPosition);
+        var ballPosition = Football.Instance.transform.position;
+
+        var zPosition = agent.TeamFlag == TeamFlag.Red ? -21 : 21;
+        var adjustedX = Mathf.Clamp(ballPosition.x, -5f, 5f);
+        var targetPosition = new Vector3(adjustedX, 0, zPosition);
+
         var direction = targetPosition - agent.Transform.position;
-
         direction.y = 0;
-        agent.Rigidbody.linearVelocity = Vector3.ClampMagnitude(direction, agent.AgentInfo.MaxRunSpeed);
 
-        if (agent.IsDebugMode)
-            // Debug.Log($"Team: {agent.TeamFlag}, Moving to {targetPosition}, Current: {agent.Transform.position}, Direction: {direction}");
+        agent.Rigidbody.linearVelocity = Vector3.ClampMagnitude(direction, agent.AgentInfo.MaxRunSpeed);
 
         if (direction.magnitude < 0.5f)
         {
             agent.Rigidbody.linearVelocity = Vector3.zero;
-            if (agent.IsDebugMode)
-                // Debug.Log($"Team: {agent.TeamFlag}, Reached {targetPosition}.");
             return BTResult.Success;
         }
 

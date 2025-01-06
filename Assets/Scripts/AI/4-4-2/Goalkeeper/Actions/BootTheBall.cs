@@ -16,11 +16,14 @@ public class BootTheBall : ActionNode
             if (agent.IsDebugMode) Debug.Log("Cannot boot the ball. Either no ball or no possession.");
             return BTResult.Failure;
         }
-
-        Vector3 bootDirection = (GameManager.Instance.GetGoalPositionAway(agent.TeamFlag) - agent.Transform.position).normalized;
-        ball.HitBall(bootDirection, agent.AgentInfo.MaximumShootPower);
-
-        if (agent.IsDebugMode) Debug.Log("Ball booted away.");
+        
+        // get if agent red or blue. based on that set direction + or -
+        var direction = agent.TeamFlag == TeamFlag.Red ? Vector3.right : Vector3.left;
+        var power = Random.Range(1, 3);
+        
+        ball.HitBall(direction, power);
+        agent.DisableAIForATime(0.5f);
+        
         return BTResult.Success;
     }
 }

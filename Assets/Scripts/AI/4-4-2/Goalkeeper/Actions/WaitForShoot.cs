@@ -22,16 +22,13 @@ public class WaitForShoot : ActionNode
 
         Vector3 ballPosition = ball.transform.position;
 
-        // Calculate horizontal alignment
         Vector3 targetPosition = new Vector3(ballPosition.x, agent.Transform.position.y, agent.Transform.position.z);
 
-        // Smoothly adjust position to align with the ball
         Vector3 direction = targetPosition - agent.Transform.position;
         direction.y = 0;
 
         agent.Rigidbody.linearVelocity = Vector3.ClampMagnitude(direction, agent.AgentInfo.MaxRunSpeed);
 
-        // Face the ball
         agent.Transform.LookAt(new Vector3(ballPosition.x, agent.Transform.position.y, ballPosition.z));
 
         if (agent.IsDebugMode)
@@ -39,10 +36,9 @@ public class WaitForShoot : ActionNode
             Debug.Log($"Waiting for shoot. Aligning with ball at {ballPosition}. Current Position: {agent.Transform.position}");
         }
 
-        // Check if goalkeeper is aligned with the ball
-        if (Mathf.Abs(direction.x) < 0.1f) // Close enough on X-axis
+        if (Mathf.Abs(direction.x) < 0.1f) 
         {
-            agent.Rigidbody.linearVelocity = Vector3.zero; // Stop movement
+            agent.Rigidbody.linearVelocity = Vector3.zero; // Stop
             if (agent.IsDebugMode)
             {
                 Debug.Log("Aligned with the ball. Waiting for the shoot.");

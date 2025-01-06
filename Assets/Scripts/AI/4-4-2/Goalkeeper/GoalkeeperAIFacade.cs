@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BT_Implementation;
 using BT_Implementation.Control;
 using BT_Implementation.Leaf;
@@ -5,56 +6,209 @@ using UnityEngine;
 
 public class GoalkeeperAIFacade : BTRoot
 {
-    private BTNode entryPoint = new NullBTNode();
+    private BTNode entryPoint;
 
     public GoalkeeperAIFacade(Blackboard blackBoard) : base(blackBoard) { }
 
     public override void ConstructBT()
     {
-        SelectorNode rootSelector = new SelectorNode("Goalkeeper AI");
+        var defenseEntrySelector = new SelectorNode("Defense AI Entry Selector");
 
-        // 1. If the team has the ball, go to the home position
-        SequenceNode hasTeamPossession = new SequenceNode("Team Has Possession");
-        rootSelector.AddChild(hasTeamPossession);
+        defenseEntrySelector.AddChild(CreateHasBallOrSequence());
+        defenseEntrySelector.AddChild(CreateGoHomeOrDefendSelector());
 
-        ConditionNode doesTeamHaveTheBall = new ConditionNode("Does Team Have the Ball?", blackBoard, bb =>
+        entryPoint = defenseEntrySelector;
+    }
+
+    private SequenceNode CreateHasBallOrSequence()
+    {
+        var hasBallOrSequence = new SequenceNode("Has Ball Or Sequence");
+
+        hasBallOrSequence.AddChild(new ConditionNode("Does team has the ball", blackBoard, DoesTeamHaveBall));
+
+        var goHomeOrDriveBallSelector = new SelectorNode("Go Home Or Drive Ball");
+        goHomeOrDriveBallSelector.AddChild(CreateDoIHaveTheBallOrSequence());
+        goHomeOrDriveBallSelector.AddChild(new GoToTheGoalPost("Go to the Home Position", blackBoard));
+
+        hasBallOrSequence.AddChild(goHomeOrDriveBallSelector);
+        return hasBallOrSequence;
+    }
+
+    private SequenceNode CreateDoIHaveTheBallOrSequence()
+    {
+        var doIHaveTheBallOrSequence = new SequenceNode("Do I Have the Ball Or Sequence");
+
+        doIHaveTheBallOrSequence.AddChild(new ConditionNode("Do I have the ball", blackBoard, DoIHaveTheBall));
+        doIHaveTheBallOrSequence.AddChild(CreateAttackSelector());
+
+        return doIHaveTheBallOrSequence;
+    }
+
+    private SelectorNode CreateAttackSelector()
+    {
+        var attackSelector = new SelectorNode("Attack Selector");
+
+        attackSelector.AddChild(CreateCanIShootOrSequence());
+        attackSelector.AddChild(CreateCanIPassOrSequence());
+        attackSelector.AddChild(new GoToTheGoalPost("Dribble The Next Available Position", blackBoard));
+
+        return attackSelector;
+    }
+
+    private SequenceNode CreateCanIShootOrSequence()
+    {
+        var canIShootOrSequence = new SequenceNode("Can I Shoot Or Sequence");
+
+        canIShootOrSequence.AddChild(new ConditionNode("Can I shoot", blackBoard, CanIShoot));
+        canIShootOrSequence.AddChild(new ShootTheBall("Shoot the ball", blackBoard));
+
+        return canIShootOrSequence;
+    }
+
+    private SequenceNode CreateCanIPassOrSequence()
+    {
+        var canIPassOrSequence = new SequenceNode("Can I Pass Or Sequence");
+
+        canIPassOrSequence.AddChild(new ConditionNode("Can I pass", blackBoard, CanIPass));
+        canIPassOrSequence.AddChild(new PassTheBall("Pass the ball", blackBoard));
+
+        return canIPassOrSequence;
+    }
+
+    private SelectorNode CreateGoHomeOrDefendSelector()
+    {
+        var goHomeOrDefendSelector = new SelectorNode("Go Home Or Defend Selector");
+
+        var amIClosestToBallOrSequence = new SequenceNode("Am I Closest To The Ball Sequence");
+        amIClosestToBallOrSequence.AddChild(new ConditionNode("Am I Closest To Ball", blackBoard, AmIClosestToBall));
+        amIClosestToBallOrSequence.AddChild(CreateIntersectOrRushSelector());
+
+        goHomeOrDefendSelector.AddChild(amIClosestToBallOrSequence);
+        goHomeOrDefendSelector.AddChild(new GoToTheGoalPost("Go to the Home Position", blackBoard));
+
+        return goHomeOrDefendSelector;
+    }
+
+    private SelectorNode CreateIntersectOrRushSelector()
+    {
+        var intersectOrRushSelector = new SelectorNode("Intersect Or Rush Selector");
+
+        var isInReachableAreaOrSequence = new SequenceNode("Is In Reachable Area Or Sequence");
+        isInReachableAreaOrSequence.AddChild(new ConditionNode("Is In Reachable Area", blackBoard, IsInReachableArea));
+        isInReachableAreaOrSequence.AddChild(new GoToTheBall("Go to the Ball", blackBoard));
+
+        intersectOrRushSelector.AddChild(isInReachableAreaOrSequence);
+        intersectOrRushSelector.AddChild(new GoToTheGoalPost("Go to the Intersection Position", blackBoard));
+
+        return intersectOrRushSelector;
+    }
+
+    private bool DoesTeamHaveBall(Blackboard blackBoard)
+    {
+        var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+        if (footballTeam.CurrentBallOwnerTeamMate == null)
         {
-            var footballTeam = bb.GetValue<FootballTeam>("Owner Team");
-            return footballTeam.CurrentBallOwnerTeamMate != null &&
-                   footballTeam.CurrentBallOwnerTeamMate.TeamFlag == footballTeam.TeamFlag;
-        });
-        hasTeamPossession.AddChild(doesTeamHaveTheBall);
-        hasTeamPossession.AddChild(new GoToTheGoalPost("Go to Home Position", blackBoard));
+            if (agent.IsDebugMode)
+                Debug.Log("Team has no ball");
 
-        // 2. If the goalkeeper has the ball, clear it (boot it away)
-        SequenceNode hasPossession = new SequenceNode("Goalkeeper Has Possession");
-        rootSelector.AddChild(hasPossession);
+            return false;
+        }
+        return footballTeam.CurrentBallOwnerTeamMate == Football.Instance.CurrentOwnerPlayer;
+    }
 
-        ConditionNode doesGoalkeeperHaveTheBall = new ConditionNode("Do I Have the Ball?", blackBoard, bb =>
+    private bool DoIHaveTheBall(Blackboard blackBoard)
+    {
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+        var result = agent == Football.Instance.CurrentOwnerPlayer;
+
+        if (agent.IsDebugMode)
+            Debug.Log($"Do I have the ball? {result}");
+
+        return result;
+    }
+
+    private bool CanIShoot(Blackboard blackBoard)
+    {
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+        var enemyGoal = GameManager.Instance.GetEnemyGoalInstance(agent.TeamFlag);
+        var enemyLayer = GameManager.Instance.GetLayerMaskOfEnemy(agent.TeamFlag);
+        var possibleLocations = enemyGoal.GetHitPointPositions();
+
+        if (Vector3.Distance(enemyGoal.transform.position, agent.Transform.position) < agent.AgentInfo.MaximumShootDistance)
         {
-            var agent = bb.GetValue<IFootballAgent>("Owner Agent");
-            return Football.Instance.CurrentOwnerPlayer == agent;
-        });
-        hasPossession.AddChild(doesGoalkeeperHaveTheBall);
-        hasPossession.AddChild(new BootTheBall("Boot the Ball", blackBoard));
+            var shootablePositions = new List<Transform>();
+            foreach (var location in possibleLocations)
+            {
+                var direction = location.position - agent.Transform.position;
+                if (!Physics.Raycast(agent.Transform.position, direction.normalized, direction.magnitude, enemyLayer))
+                {
+                    shootablePositions.Add(location);
+                }
+            }
 
-        // 3. If the ball is nearby, try to block or intercept
-        SequenceNode ballIsNearby = new SequenceNode("Ball Is Nearby");
-        rootSelector.AddChild(ballIsNearby);
+            if (shootablePositions.Count > 0)
+            {
+                blackBoard.SetValue("Shootable Positions", shootablePositions);
+                if (agent.IsDebugMode)
+                    Debug.Log("There are possible locations to shoot");
 
-        ConditionNode isBallClose = new ConditionNode("Is Ball Close?", blackBoard, bb =>
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool CanIPass(Blackboard blackBoard)
+    {
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+        var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
+        var awayGoalPosition = GameManager.Instance.GetGoalPositionAway(agent.TeamFlag);
+        var currentPlayerDistance = Vector3.Distance(awayGoalPosition, agent.Transform.position);
+
+        var passCandidates = new List<IFootballAgent>();
+        var layerMask = GameManager.Instance.GetLayerMaskOfEnemy(agent.TeamFlag);
+
+        foreach (var mate in footballTeam.FootballAgents)
         {
-            var agent = bb.GetValue<IFootballAgent>("Owner Agent");
-            var ballPosition = Football.Instance.transform.position;
-            return Vector3.Distance(agent.Transform.position, ballPosition) < agent.AgentInfo.CloseDefenseRadius;
-        });
-        ballIsNearby.AddChild(isBallClose);
-        ballIsNearby.AddChild(new GoToTheBall("Move to Ball", blackBoard));
+            var distance = Vector3.Distance(awayGoalPosition, mate.Transform.position);
+            if (distance < currentPlayerDistance)
+            {
+                var direction = mate.Transform.position - agent.Transform.position;
+                if (!Physics.Raycast(agent.Transform.position, direction.normalized, direction.magnitude, layerMask))
+                {
+                    passCandidates.Add(mate);
+                }
+            }
+        }
 
-        // 4. Default action: Return to home position
-        rootSelector.AddChild(new GoToTheGoalPost("Return to Home", blackBoard));
+        blackBoard.SetValue("Pass Candidates", passCandidates);
+        return passCandidates.Count > 0;
+    }
 
-        entryPoint = rootSelector;
+    private bool AmIClosestToBall(Blackboard blackBoard)
+    {
+        var footballTeam = blackBoard.GetValue<FootballTeam>("Owner Team");
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+        var result = footballTeam.ClosestPlayerToBall == agent;
+
+        if (agent.IsDebugMode)
+            Debug.Log($"Am I closest to the ball? {result}");
+
+        return result;
+    }
+
+    private bool IsInReachableArea(Blackboard blackBoard)
+    {
+        var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
+        var currentEnemyOwner = Football.Instance.CurrentOwnerPlayer;
+
+        if (currentEnemyOwner == null)
+            return true;
+
+        var distance = Vector3.Distance(Football.Instance.transform.position, agent.Transform.position);
+        return agent.AgentInfo.CloseDefenseRadius > distance;
     }
 
     public override void ExecuteBT()
