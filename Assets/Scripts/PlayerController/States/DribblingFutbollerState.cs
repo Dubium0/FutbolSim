@@ -82,7 +82,7 @@ namespace Player.Controller.States
             controller_.ChangeToGhostLayer(0.5f);
             Football.Instance.HitBall(shootdir_, 15);
             controller_.SetState(new FreeFutbollerState(controller_));
-            Debug.Log(shootdir_);
+            // Debug.Log(shootdir_);
 
         }
 
@@ -101,7 +101,7 @@ namespace Player.Controller.States
             controller_.ChangeToGhostLayer(0.5f);
             Football.Instance.HitBall(shootdir_, 15);
             controller_.SetState(new FreeFutbollerState(controller_));
-            Debug.Log(shootdir_);
+            // Debug.Log(shootdir_);
         }
 
         public void OnSprintEnter()
@@ -128,7 +128,7 @@ namespace Player.Controller.States
 
         public void OnExit()
         {
-           Debug.Log("Bye bye dribbling state");
+           // Debug.Log("Bye bye dribbling state");
         }
         private void AdjutBallPosition()
         {

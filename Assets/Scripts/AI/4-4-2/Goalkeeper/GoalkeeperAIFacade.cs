@@ -7,56 +7,54 @@ public class GoalkeeperAIFacade : BTRoot
 {
     private BTNode entryPoint = new NullBTNode();
 
-    public GoalkeeperAIFacade(Blackboard blackBoard) : base(blackBoard)
-    {
-    }
+    public GoalkeeperAIFacade(Blackboard blackBoard) : base(blackBoard) { }
 
     public override void ConstructBT()
     {
-        SelectorNode goalkeeperSelector = new SelectorNode("Goalkeeper AI Selector");
+        SelectorNode rootSelector = new SelectorNode("Goalkeeper AI");
 
-        SequenceNode ballInDangerousAreaSequence = new SequenceNode("Ball in Dangerous Area Sequence");
-        goalkeeperSelector.AddChild(ballInDangerousAreaSequence);
+        // 1. If the team has the ball, go to the home position
+        SequenceNode hasTeamPossession = new SequenceNode("Team Has Possession");
+        rootSelector.AddChild(hasTeamPossession);
 
-        ConditionNode isBallNearGoal = new ConditionNode("Is Ball Near Goal", blackBoard, blackBoard =>
+        ConditionNode doesTeamHaveTheBall = new ConditionNode("Does Team Have the Ball?", blackBoard, bb =>
         {
-            var goal = GameManager.Instance.GetGoalPositionHome(blackBoard.GetValue<TeamFlag>("Team Flag"));
+            var footballTeam = bb.GetValue<FootballTeam>("Owner Team");
+            return footballTeam.CurrentBallOwnerTeamMate != null &&
+                   footballTeam.CurrentBallOwnerTeamMate.TeamFlag == footballTeam.TeamFlag;
+        });
+        hasTeamPossession.AddChild(doesTeamHaveTheBall);
+        hasTeamPossession.AddChild(new GoToTheGoalPost("Go to Home Position", blackBoard));
+
+        // 2. If the goalkeeper has the ball, clear it (boot it away)
+        SequenceNode hasPossession = new SequenceNode("Goalkeeper Has Possession");
+        rootSelector.AddChild(hasPossession);
+
+        ConditionNode doesGoalkeeperHaveTheBall = new ConditionNode("Do I Have the Ball?", blackBoard, bb =>
+        {
+            var agent = bb.GetValue<IFootballAgent>("Owner Agent");
+            return Football.Instance.CurrentOwnerPlayer == agent;
+        });
+        hasPossession.AddChild(doesGoalkeeperHaveTheBall);
+        hasPossession.AddChild(new BootTheBall("Boot the Ball", blackBoard));
+
+        // 3. If the ball is nearby, try to block or intercept
+        SequenceNode ballIsNearby = new SequenceNode("Ball Is Nearby");
+        rootSelector.AddChild(ballIsNearby);
+
+        ConditionNode isBallClose = new ConditionNode("Is Ball Close?", blackBoard, bb =>
+        {
+            var agent = bb.GetValue<IFootballAgent>("Owner Agent");
             var ballPosition = Football.Instance.transform.position;
-            float dangerRadius = 10f;
-            return Vector3.Distance(goal, ballPosition) < dangerRadius;
+            return Vector3.Distance(agent.Transform.position, ballPosition) < agent.AgentInfo.CloseDefenseRadius;
         });
-        ballInDangerousAreaSequence.AddChild(isBallNearGoal);
+        ballIsNearby.AddChild(isBallClose);
+        ballIsNearby.AddChild(new GoToTheBall("Move to Ball", blackBoard));
 
-        SelectorNode dangerResponseSelector = new SelectorNode("Danger Response Selector");
-        ballInDangerousAreaSequence.AddChild(dangerResponseSelector);
+        // 4. Default action: Return to home position
+        rootSelector.AddChild(new GoToTheGoalPost("Return to Home", blackBoard));
 
-        SequenceNode blockBallSequence = new SequenceNode("Block Ball Sequence");
-        dangerResponseSelector.AddChild(blockBallSequence);
-
-        ConditionNode canBlockBall = new ConditionNode("Can Block Ball", blackBoard, blackBoard =>
-        {
-            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
-            var ballPosition = Football.Instance.transform.position;
-            return Vector3.Distance(agent.Transform.position, ballPosition) < agent.AgentInfo.MaxRunSpeed;
-        });
-        blockBallSequence.AddChild(canBlockBall);
-        blockBallSequence.AddChild(new SaveTheBall("Save the Ball", blackBoard));
-
-        dangerResponseSelector.AddChild(new ClearTheBall("Clear the Ball", blackBoard));
-
-        SequenceNode goToHomeSequence = new SequenceNode("Go To Home Position Sequence");
-        goalkeeperSelector.AddChild(goToHomeSequence);
-
-        ConditionNode shouldGoHome = new ConditionNode("Should Go Home", blackBoard, blackBoard =>
-        {
-            var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
-            var homePosition = GameManager.Instance.GetGoalPositionHome(agent.TeamFlag);
-            return Vector3.Distance(agent.Transform.position, homePosition) > 1;
-        });
-        goToHomeSequence.AddChild(shouldGoHome);
-        goToHomeSequence.AddChild(new GoToTheHomePosition("Go to Home Position", blackBoard));
-
-        entryPoint = goalkeeperSelector;
+        entryPoint = rootSelector;
     }
 
     public override void ExecuteBT()

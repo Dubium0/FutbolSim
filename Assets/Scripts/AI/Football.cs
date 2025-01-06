@@ -224,7 +224,7 @@ public class Football : MonoBehaviour
             int number = -1;
             bool successfull = int.TryParse(pair[1], out number);
             if (successfull) sectorNumber_ = number;
-            Debug.Log($"Red ZONE!! {sectorNumber_}");
+            // Debug.Log($"Red ZONE!! {sectorNumber_}");
         }
         else if (other.CompareTag("BlueZone"))
         {
@@ -233,7 +233,7 @@ public class Football : MonoBehaviour
             int number = -1;
             bool successfull = int.TryParse(pair[1], out number);
             if (successfull) sectorNumber_ = number;
-            Debug.Log("Blue ZONE!!");
+            // Debug.Log("Blue ZONE!!");
         }
 
     }

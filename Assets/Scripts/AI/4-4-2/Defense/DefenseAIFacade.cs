@@ -73,7 +73,7 @@ public class DefenseAIFacade : BTRoot
 
             if ( Vector3.Distance( enemyGoal.transform.position, agent.Transform.position)  < agent.AgentInfo.MaximumShootDistance)
             {
-                Debug.Log("I am close enoguh to shoot");
+                // Debug.Log("I am close enoguh to shoot");
                 List<Transform> shootablePositions = new();
                 foreach (var possibleLocation in possibleLocations)
                 {
@@ -86,14 +86,14 @@ public class DefenseAIFacade : BTRoot
 
                 if(shootablePositions.Count > 0)
                 {
-                    Debug.Log("There are possible locations to shoot");
+                    // Debug.Log("There are possible locations to shoot");
                     blackBoard.SetValue<List<Transform>>("Shootable Positions", shootablePositions);
                     if (agent.IsDebugMode) Debug.Log($"I am going to shoooot?");
                     return true;
                 }
 
             }
-            Debug.Log($"I cant shoot");
+            // Debug.Log($"I cant shoot");
             return false;
 
         });

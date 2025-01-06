@@ -187,6 +187,27 @@ public class FootballTeam : MonoBehaviour
 
 
         int layerToSet = TeamFlag == TeamFlag.Red ? 10 : 9;
+        
+        GameObject goalkeeper = Instantiate(GoalKeeperAgentPrefab, currentFormation.GoalKeeperPosition.position, currentFormation.GoalKeeperPosition.rotation);
+        goalkeeper.layer = layerToSet;
+        var goalkeeperComponent = goalkeeper.GetComponent<IFootballAgent>();
+        goalkeeperComponent.OnBallPossesionCallback = agent =>
+        {
+            currentBallOwnerTeamMate = agent;
+            if (isHumanControllable)
+            {
+                var prevAgent = playerControlledAgent;
+                if (prevAgent != null)
+                {
+                    prevAgent.SetAsAIControlled();
+                }
+                playerControlledAgent = agent;
+                playerControlledAgent.SetAsHumanControlled();
+            }
+        };
+        goalkeeperComponent.InitAISystems(this, PlayerType.Goalkeeper, index);
+        FootballAgents.Insert(index, goalkeeperComponent);
+        
         for (var i = 0; i < defCount; i++)
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);

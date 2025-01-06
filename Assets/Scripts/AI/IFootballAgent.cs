@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public enum PlayerType
 {
-    GoalKeeper,
+    Goalkeeper,
     Defender,
     Midfielder,
     Forward
@@ -38,7 +38,7 @@ public interface IFootballAgent
 
     public void OnBallPossesion()
     {
-        Debug.Log("Ball Possed By : " + this.ToSafeString());
+        // Debug.Log("Ball Possed By : " + this.ToSafeString());
         OnBallPossesionCallback(this);
     }
 

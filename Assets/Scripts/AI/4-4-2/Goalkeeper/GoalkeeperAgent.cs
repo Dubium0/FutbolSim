@@ -1,4 +1,3 @@
-﻿
 using BT_Implementation;
 using Player.Controller.States;
 using System;
@@ -7,9 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 [RequireComponent(typeof(Rigidbody))]
-public class DefenseAgent : MonoBehaviour, IFootballAgent
+public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
 {
     private PlayerType playerType_;
 
@@ -101,6 +99,7 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         switch (playerType_)
         {
             case PlayerType.Goalkeeper:
+                Debug.Log("aa");
                 btRoot_ = new GoalkeeperAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Defender:
@@ -262,6 +261,7 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
         yield return new WaitForSeconds(time);
         gameObject.layer = prevLayer;
         rigidbody_.maxLinearVelocity = prevMaxVel;
+        
     }
 
     public int GetShootScore()
@@ -309,4 +309,3 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
     }
 
 }
-

@@ -39,7 +39,7 @@ namespace Player.Controller.States
             {
                 controller_.Transform.forward = MathExtra.MoveTowards(controller_.Transform.forward, inputVector, 1 / controller_.AgentInfo.RotationTime);
             }
-            Debug.Log("I'm free!");
+            // Debug.Log("I'm free!");
 
         }
 
@@ -54,7 +54,7 @@ namespace Player.Controller.States
 
         public void OnExit()
         {
-            Debug.Log("Bye Bye free state");
+            // Debug.Log("Bye Bye free state");
         }
 
         public void OnFixedUpdate()

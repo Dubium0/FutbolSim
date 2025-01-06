@@ -12,6 +12,10 @@ public enum FormationType
 public class FootballFormation : MonoBehaviour
 {
     [SerializeField]
+    private Transform goalKeeperPosition;
+    public Transform GoalKeeperPosition => goalKeeperPosition;
+    
+    [SerializeField]
     private Transform[] defensePosition;
     public Transform[] DefensePosition
     {
@@ -88,7 +92,7 @@ public class FootballFormation : MonoBehaviour
 
     private void FillPositions()
     {
-        if(defenseLine == null || midfieldLine == null || forwardLine == null)
+        if(defenseLine == null || midfieldLine == null || forwardLine == null || goalKeeperPosition == null)
         {
             Debug.LogError("Please assign all the lines");
             return;

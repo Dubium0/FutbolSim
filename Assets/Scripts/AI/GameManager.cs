@@ -154,5 +154,19 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public List<GameObject> GetPlayersInGoalArea(TeamFlag agentTeamFlag)
+    {
+        List<GameObject> playersInGoalArea = new List<GameObject>();
+        Bounds goalBounds = GetBoundsHome(agentTeamFlag);
+        Collider[] colliders = Physics.OverlapBox(goalBounds.center, goalBounds.extents, Quaternion.identity);
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Player"))
+                playersInGoalArea.Add(collider.gameObject);
+        }
+
+        return playersInGoalArea;
+    }
 }
 

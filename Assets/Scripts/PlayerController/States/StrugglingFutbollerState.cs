@@ -38,12 +38,12 @@ namespace Player.Controller.States
             var inputVector = controller_.MovementVector;
 
             controller_.Rigidbody.AddForce(inputVector * currentAcceleration_, ForceMode.Acceleration);
-            Debug.Log(inputVector);
+            // Debug.Log(inputVector);
             if (inputVector.magnitude > 0)
             {
                 controller_.Transform.forward = MathExtra.MoveTowards(controller_.Transform.forward, inputVector, 1 / controller_.AgentInfo.RotationTime);
             }
-            Debug.Log("I'm struggling :<");
+            // Debug.Log("I'm struggling :<");
         }
 
         public void OnEnter()
@@ -54,7 +54,7 @@ namespace Player.Controller.States
 
         public void OnExit()
         {
-            Debug.Log("Bye Bye struggling state");
+            // Debug.Log("Bye Bye struggling state");
         }
 
         public void OnFixedUpdate()
