@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DefenseAIFacade : BTRoot
+public class GenericAIFacade : BTRoot
 {
     private BTNode entryPoint = new NullBTNode();
-    public DefenseAIFacade(Blackboard blackBoard) : base(blackBoard)
+    public GenericAIFacade(Blackboard blackBoard) : base(blackBoard)
     {
     }
 

@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 
 
 [RequireComponent(typeof(Rigidbody))]
-public class DefenseAgent : MonoBehaviour, IFootballAgent
+public class GenericAgent : MonoBehaviour, IFootballAgent
 {
     private PlayerType playerType_;
 
@@ -104,13 +104,13 @@ public class DefenseAgent : MonoBehaviour, IFootballAgent
                 btRoot_ = new GoalkeeperAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Defender:
-                btRoot_ = new DefenseAIFacade(blackboardFactory.GetBlackboard());
+                btRoot_ = new GenericAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Midfielder:
-                btRoot_ = new DefenseAIFacade(blackboardFactory.GetBlackboard());
+                btRoot_ = new GenericAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Forward:
-                btRoot_ = new DefenseAIFacade(blackboardFactory.GetBlackboard());
+                btRoot_ = new GenericAIFacade(blackboardFactory.GetBlackboard());
                 break;
 
         }

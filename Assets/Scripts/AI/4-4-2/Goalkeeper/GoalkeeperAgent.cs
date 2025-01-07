@@ -102,13 +102,13 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
                 btRoot_ = new GoalkeeperAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Defender:
-                btRoot_ = new DefenseAIFacade(blackboardFactory.GetBlackboard());
+                btRoot_ = new GenericAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Midfielder:
-                btRoot_ = new DefenseAIFacade(blackboardFactory.GetBlackboard());
+                btRoot_ = new GenericAIFacade(blackboardFactory.GetBlackboard());
                 break;
             case PlayerType.Forward:
-                btRoot_ = new DefenseAIFacade(blackboardFactory.GetBlackboard());
+                btRoot_ = new GenericAIFacade(blackboardFactory.GetBlackboard());
                 break;
 
         }
