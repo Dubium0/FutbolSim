@@ -22,11 +22,11 @@ public class SelectSideManager : MonoBehaviour
     [SerializeField] private Transform player2LTarget;
     [SerializeField] private Transform player3LTarget;
     
-    [SerializeField] private GameObject player1Ready;
-    [SerializeField] private GameObject player2Ready;
+    [SerializeField] private GameObject leftReady;
+    [SerializeField] private GameObject rightReady;
     
-    private bool player1ReadyState = false;
-    private bool player2ReadyState = false;
+    private bool leftSideReadyState = false;
+    private bool rightSideReadyState = false;
     
     // Class to track players and their devices
     private class PlayerInfo
@@ -35,16 +35,14 @@ public class SelectSideManager : MonoBehaviour
         public string DeviceType;
         public int PlayerIndex;
         public bool IsReady;
-        public GameObject ReadyIndicator;
         public Transform CurrentPosition;
         
-        public PlayerInfo(InputDevice device, string deviceType, int playerIndex, GameObject readyIndicator)
+        public PlayerInfo(InputDevice device, string deviceType, int playerIndex)
         {
             Device = device;
             DeviceType = deviceType;
             PlayerIndex = playerIndex;
             IsReady = false;
-            ReadyIndicator = readyIndicator;
         }
     }
     
@@ -74,8 +72,8 @@ public class SelectSideManager : MonoBehaviour
         if (player3Side) player3Side.SetActive(false);
         
         // Hide ready indicators
-        if (player1Ready) player1Ready.SetActive(false);
-        if (player2Ready) player2Ready.SetActive(false);
+        if (leftReady) leftReady.SetActive(false);
+        if (rightReady) rightReady.SetActive(false);
         
         // Initialize analog states
         for (int i = 0; i < 3; i++)
@@ -179,12 +177,9 @@ public class SelectSideManager : MonoBehaviour
         
         // Assign to next available player slot
         int playerIndex = connectedPlayers.Count;
-        GameObject readyIndicator = null;
         
-        if (playerIndex == 0) readyIndicator = player1Ready;
-        else if (playerIndex == 1) readyIndicator = player2Ready;
-        
-        connectedPlayers.Add(new PlayerInfo(device, deviceType, playerIndex, readyIndicator));
+        // Create player info without ready indicator
+        connectedPlayers.Add(new PlayerInfo(device, deviceType, playerIndex));
         
         // Show the appropriate controller image
         UpdateControllerVisuals();
@@ -195,12 +190,23 @@ public class SelectSideManager : MonoBehaviour
         PlayerInfo player = connectedPlayers.Find(p => p.Device == device);
         if (player != null)
         {
-            int removedIndex = player.PlayerIndex;
-            connectedPlayers.Remove(player);
+            // Check if the player was ready, and if so, update the ready state
+            if (player.IsReady)
+            {
+                string position = GetPositionName(player.CurrentPosition);
+                if (position == "Left")
+                {
+                    leftSideReadyState = false;
+                    if (leftReady) leftReady.SetActive(false);
+                }
+                else if (position == "Right")
+                {
+                    rightSideReadyState = false;
+                    if (rightReady) rightReady.SetActive(false);
+                }
+            }
             
-            // Reset ready state if it was one of the first two players
-            if (removedIndex == 0) player1ReadyState = false;
-            else if (removedIndex == 1) player2ReadyState = false;
+            connectedPlayers.Remove(player);
             
             // Reassign player indices
             for (int i = 0; i < connectedPlayers.Count; i++)
@@ -309,12 +315,27 @@ public class SelectSideManager : MonoBehaviour
         if (leftStick.x < -analogThreshold && !analogLeftState[player.PlayerIndex])
         {
             analogLeftState[player.PlayerIndex] = true;
-            MovePlayerLeft(player);
+            // If the current position is the middle, move left
+            if (player.CurrentPosition == player1MTarget || player.CurrentPosition == player2MTarget || player.CurrentPosition == player3MTarget)
+            {
+                MovePlayerLeft(player);
+            }
+            else if (player.CurrentPosition == player1RTarget || player.CurrentPosition == player2RTarget || player.CurrentPosition == player3RTarget)
+            {
+                MovePlayerMiddle(player);
+            }
         }
         else if (leftStick.x > analogThreshold && !analogRightState[player.PlayerIndex])
         {
             analogRightState[player.PlayerIndex] = true;
-            MovePlayerRight(player);
+            if (player.CurrentPosition == player1MTarget || player.CurrentPosition == player2MTarget || player.CurrentPosition == player3MTarget)
+            {
+                MovePlayerRight(player);
+            }
+            else if (player.CurrentPosition == player1LTarget || player.CurrentPosition == player2LTarget || player.CurrentPosition == player3LTarget)
+            {
+                MovePlayerMiddle(player);
+            }
         }
         else if (Mathf.Abs(leftStick.x) < 0.2f)
         {
@@ -335,17 +356,60 @@ public class SelectSideManager : MonoBehaviour
         // Left/right movement with arrow keys
         if (keyboard.leftArrowKey.wasPressedThisFrame)
         {
-            MovePlayerLeft(player);
+            if (player.CurrentPosition == player1MTarget || player.CurrentPosition == player2MTarget || player.CurrentPosition == player3MTarget)
+            {
+                MovePlayerLeft(player);
+            }
+            else if (player.CurrentPosition == player1RTarget || player.CurrentPosition == player2RTarget || player.CurrentPosition == player3RTarget)
+            {
+                MovePlayerMiddle(player);
+            }
         }
         else if (keyboard.rightArrowKey.wasPressedThisFrame)
         {
-            MovePlayerRight(player);
+            if (player.CurrentPosition == player1MTarget || player.CurrentPosition == player2MTarget || player.CurrentPosition == player3MTarget)
+            {
+                MovePlayerRight(player);
+            }
+            else if (player.CurrentPosition == player1LTarget || player.CurrentPosition == player2LTarget || player.CurrentPosition == player3LTarget)
+            {
+                MovePlayerMiddle(player);
+            }
         }
         
         // Ready with spacebar or enter
         if (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame)
         {
             TogglePlayerReady(player);
+        }
+    }
+    
+    private void MovePlayerMiddle(PlayerInfo player)
+    {
+        GameObject playerSide = null;
+        Transform middleTarget = null;
+        
+        switch (player.PlayerIndex)
+        {
+            case 0:
+                playerSide = player1Side;
+                middleTarget = player1MTarget;
+                break;
+            case 1:
+                playerSide = player2Side;
+                middleTarget = player2MTarget;
+                break;
+            case 2:
+                playerSide = player3Side;
+                middleTarget = player3MTarget;
+                break;
+        }
+        
+        if (playerSide != null && middleTarget != null && player.CurrentPosition != middleTarget)
+        {
+            // Move to middle position
+            playerSide.transform.DOMove(middleTarget.position, moveAnimationDuration);
+            player.CurrentPosition = middleTarget;
         }
     }
     
@@ -372,6 +436,13 @@ public class SelectSideManager : MonoBehaviour
         
         if (playerSide != null && leftTarget != null && player.CurrentPosition != leftTarget)
         {
+            // Check if ANY player is ready on the left side
+            if (IsSideOccupiedByReadyPlayer("Left"))
+            {
+                Debug.Log($"Player {player.PlayerIndex + 1} cannot move to left position - LEFT side is already chosen by a ready player");
+                return;
+            }
+            
             // Move to left position
             playerSide.transform.DOMove(leftTarget.position, moveAnimationDuration);
             player.CurrentPosition = leftTarget;
@@ -401,6 +472,13 @@ public class SelectSideManager : MonoBehaviour
         
         if (playerSide != null && rightTarget != null && player.CurrentPosition != rightTarget)
         {
+            // Check if ANY player is ready on the right side
+            if (IsSideOccupiedByReadyPlayer("Right"))
+            {
+                Debug.Log($"Player {player.PlayerIndex + 1} cannot move to right position - RIGHT side is already chosen by a ready player");
+                return;
+            }
+            
             // Move to right position
             playerSide.transform.DOMove(rightTarget.position, moveAnimationDuration);
             player.CurrentPosition = rightTarget;
@@ -409,23 +487,88 @@ public class SelectSideManager : MonoBehaviour
     
     private void TogglePlayerReady(PlayerInfo player)
     {
-        // Toggle ready state
-        player.IsReady = !player.IsReady;
+        // Only allow toggling ready state when player is at a side position (not middle)
+        Transform currentPos = player.CurrentPosition;
+        bool isAtSidePosition = IsAtSidePosition(currentPos);
         
-        // Update ready indicator and ready state variables
-        if (player.PlayerIndex == 0)
+        if (!isAtSidePosition)
         {
-            player1ReadyState = player.IsReady;
-            if (player1Ready) player1Ready.SetActive(player.IsReady);
-        }
-        else if (player.PlayerIndex == 1)
-        {
-            player2ReadyState = player.IsReady;
-            if (player2Ready) player2Ready.SetActive(player.IsReady);
+            Debug.Log($"Player {player.PlayerIndex + 1} must be at left or right side to mark ready");
+            return;
         }
         
-        // Log player ready state
-        Debug.Log($"Player {player.PlayerIndex + 1} ready state: {player.IsReady}");
+        // Get position name (Left or Right)
+        string position = GetPositionName(currentPos);
+        
+        // Toggle ready state based on position
+        if (position == "Left")
+        {
+            // Toggle the left side ready state
+            leftSideReadyState = !leftSideReadyState;
+            player.IsReady = leftSideReadyState;
+            
+            // Update visual indicator
+            if (leftReady) leftReady.SetActive(leftSideReadyState);
+            
+            Debug.Log($"LEFT side ready state: {leftSideReadyState} (Player {player.PlayerIndex + 1})");
+        }
+        else if (position == "Right")
+        {
+            // Toggle the right side ready state
+            rightSideReadyState = !rightSideReadyState;
+            player.IsReady = rightSideReadyState;
+            
+            // Update visual indicator
+            if (rightReady) rightReady.SetActive(rightSideReadyState);
+            
+            Debug.Log($"RIGHT side ready state: {rightSideReadyState} (Player {player.PlayerIndex + 1})");
+        }
+    }
+    
+    // Helper method to check if a position is a side position (not middle)
+    private bool IsAtSidePosition(Transform position)
+    {
+        // Check if position is any of the left or right targets
+        return position == player1LTarget || position == player1RTarget || 
+               position == player2LTarget || position == player2RTarget || 
+               position == player3LTarget || position == player3RTarget;
+    }
+    
+    // Helper method to get position name for debugging
+    private string GetPositionName(Transform position)
+    {
+        if (position == player1LTarget || position == player2LTarget || position == player3LTarget)
+            return "Left";
+        else if (position == player1RTarget || position == player2RTarget || position == player3RTarget)
+            return "Right";
+        else
+            return "Middle";
+    }
+    
+    // Helper method to check if a position is occupied by a ready player
+    private bool IsPositionOccupiedByReadyPlayer(Transform position)
+    {
+        foreach (var p in connectedPlayers)
+        {
+            if (p.CurrentPosition == position && p.IsReady)
+                return true;
+        }
+        return false;
+    }
+    
+    // Helper method to check if a side (left or right) is already chosen by a ready player
+    private bool IsSideOccupiedByReadyPlayer(string side)
+    {
+        foreach (var p in connectedPlayers)
+        {
+            if (p.IsReady)
+            {
+                string playerSide = GetPositionName(p.CurrentPosition);
+                if (playerSide == side)
+                    return true;
+            }
+        }
+        return false;
     }
     
     private void LogInputSystemDevices()
