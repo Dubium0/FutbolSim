@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Text;
-using DG.Tweening; // Make sure DOTween is imported in your project
+using DG.Tweening;
+using UnityEditor; // Make sure DOTween is imported in your project
 
 public class SelectSideManager : MonoBehaviour
 {
@@ -28,7 +29,6 @@ public class SelectSideManager : MonoBehaviour
     private bool leftSideReadyState = false;
     private bool rightSideReadyState = false;
     
-    // Class to track players and their devices
     private class PlayerInfo
     {
         public InputDevice Device;
@@ -47,6 +47,7 @@ public class SelectSideManager : MonoBehaviour
     }
     
     private List<PlayerInfo> connectedPlayers = new List<PlayerInfo>();
+    private List<PlayerInfo> readyPlayers = new List<PlayerInfo>();
     private float moveAnimationDuration = 0.5f;
     private float analogThreshold = 0.5f;
     private bool[] analogLeftState = new bool[3];
@@ -54,41 +55,37 @@ public class SelectSideManager : MonoBehaviour
     
     private void OnEnable()
     {
-        // Subscribe to device change events
         InputSystem.onDeviceChange += OnInputDeviceChange;
     }
 
     private void OnDisable()
     {
-        // Unsubscribe when disabled
         InputSystem.onDeviceChange -= OnInputDeviceChange;
     }
     
     void Start()
     {
-        // Hide all player sides initially
         if (player1Side) player1Side.SetActive(false);
         if (player2Side) player2Side.SetActive(false);
         if (player3Side) player3Side.SetActive(false);
         
-        // Hide ready indicators
         if (leftReady) leftReady.SetActive(false);
         if (rightReady) rightReady.SetActive(false);
         
-        // Initialize analog states
         for (int i = 0; i < 3; i++)
         {
             analogLeftState[i] = false;
             analogRightState[i] = false;
         }
         
-        // Detect initial devices
         DetectInputDevices();
+        
+        // time dilation for slow motion
+        // Time.timeScale = 0f;
     }
 
     void Update()
     {
-        // Process input for all connected players
         ProcessPlayerInput();
     }
 
@@ -124,15 +121,12 @@ public class SelectSideManager : MonoBehaviour
         }
         else if (device is Gamepad)
         {
-            // Default to generic controller
             deviceType = "Generic Controller";
             
-            // Detect Xbox controllers
             if (displayName.Contains("xbox") || displayName.Contains("microsoft"))
             {
                 deviceType = "Xbox Controller";
             }
-            // Detect PS5 controllers
             else if (displayName.Contains("dualsense") || 
                     (displayName.Contains("playstation") && displayName.Contains("5")))
             {
@@ -164,24 +158,18 @@ public class SelectSideManager : MonoBehaviour
     
     private void AssignDeviceToPlayer(InputDevice device, string deviceType)
     {
-        // Don't assign if already assigned
         if (connectedPlayers.Exists(p => p.Device == device))
             return;
             
-        // Check if we already have 3 players
         if (connectedPlayers.Count >= 3)
         {
             Debug.Log("Maximum number of players reached. Ignoring new device.");
             return;
         }
         
-        // Assign to next available player slot
         int playerIndex = connectedPlayers.Count;
-        
-        // Create player info without ready indicator
         connectedPlayers.Add(new PlayerInfo(device, deviceType, playerIndex));
         
-        // Show the appropriate controller image
         UpdateControllerVisuals();
     }
     
@@ -487,7 +475,6 @@ public class SelectSideManager : MonoBehaviour
     
     private void TogglePlayerReady(PlayerInfo player)
     {
-        // Only allow toggling ready state when player is at a side position (not middle)
         Transform currentPos = player.CurrentPosition;
         bool isAtSidePosition = IsAtSidePosition(currentPos);
         
@@ -497,44 +484,58 @@ public class SelectSideManager : MonoBehaviour
             return;
         }
         
-        // Get position name (Left or Right)
         string position = GetPositionName(currentPos);
         
-        // Toggle ready state based on position
         if (position == "Left")
         {
-            // Toggle the left side ready state
             leftSideReadyState = !leftSideReadyState;
             player.IsReady = leftSideReadyState;
             
-            // Update visual indicator
             if (leftReady) leftReady.SetActive(leftSideReadyState);
             
             Debug.Log($"LEFT side ready state: {leftSideReadyState} (Player {player.PlayerIndex + 1})");
         }
         else if (position == "Right")
         {
-            // Toggle the right side ready state
             rightSideReadyState = !rightSideReadyState;
             player.IsReady = rightSideReadyState;
             
-            // Update visual indicator
             if (rightReady) rightReady.SetActive(rightSideReadyState);
             
             Debug.Log($"RIGHT side ready state: {rightSideReadyState} (Player {player.PlayerIndex + 1})");
         }
+        
+        bool bothSidesReady = leftSideReadyState && rightSideReadyState;
+        TeamFlag controlledTeamFlag = TeamFlag.Blue; // default value
+    
+        if (!bothSidesReady)
+        {
+            controlledTeamFlag = leftSideReadyState ? TeamFlag.Red : TeamFlag.Blue;
+        }
+    
+        if (!readyPlayers.Contains(player))
+        {
+            readyPlayers.Add(player);
+        }
+        else
+        {
+            readyPlayers.Remove(player);
+        }
+    
+        if (readyPlayers.Count == connectedPlayers.Count)
+        {
+            GameManager.Instance.StartGame(bothSidesReady, controlledTeamFlag);
+            gameObject.SetActive(false);
+        }
     }
     
-    // Helper method to check if a position is a side position (not middle)
     private bool IsAtSidePosition(Transform position)
     {
-        // Check if position is any of the left or right targets
         return position == player1LTarget || position == player1RTarget || 
                position == player2LTarget || position == player2RTarget || 
                position == player3LTarget || position == player3RTarget;
     }
     
-    // Helper method to get position name for debugging
     private string GetPositionName(Transform position)
     {
         if (position == player1LTarget || position == player2LTarget || position == player3LTarget)
@@ -545,7 +546,6 @@ public class SelectSideManager : MonoBehaviour
             return "Middle";
     }
     
-    // Helper method to check if a position is occupied by a ready player
     private bool IsPositionOccupiedByReadyPlayer(Transform position)
     {
         foreach (var p in connectedPlayers)
@@ -556,7 +556,6 @@ public class SelectSideManager : MonoBehaviour
         return false;
     }
     
-    // Helper method to check if a side (left or right) is already chosen by a ready player
     private bool IsSideOccupiedByReadyPlayer(string side)
     {
         foreach (var p in connectedPlayers)

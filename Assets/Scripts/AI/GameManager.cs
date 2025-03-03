@@ -1,18 +1,28 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+
+public enum GameState
+{
+    Start,
+    Playing,
+    RedWin,
+    BlueWin,
+    Draw
+}
+
 public class GameManager : MonoBehaviour
 {
+    public GameState state = GameState.Start;
+    
     public Transform RedGoalPosition;
     public Bounds RedGoalBounds;
 
     public Goal BlueGoal;
     public Goal RedGoal;
-
-
+    
     public Transform BlueGoalPosition;
     public Bounds BlueGoalBounds;
-
-
+    
     public FootballTeam RedFootballTeam;
     public FootballTeam BlueFootballTeam;
 
@@ -37,6 +47,33 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
+    
+    private void Start()
+    {
+        state = GameState.Start;
+        RedFootballTeam.enabled = false;
+        BlueFootballTeam.enabled = false;
+    }
+
+    public void StartGame(bool isBothTeamsControlled, TeamFlag teamFlag = TeamFlag.Blue)
+    {
+        bool isRedControlled = teamFlag == TeamFlag.Red;
+        RedFootballTeam.enabled = true;
+        BlueFootballTeam.enabled = true;
+        state = GameState.Playing;
+    
+        if (!isBothTeamsControlled)
+        {   
+            RedFootballTeam.isHumanControllable = isRedControlled;
+            BlueFootballTeam.isHumanControllable = !isRedControlled;
+        }
+        else
+        {
+            RedFootballTeam.isHumanControllable = true;
+            BlueFootballTeam.isHumanControllable = true;
+        }
+    }
+
 
     public Vector3 GetGoalPositionHome(TeamFlag teamFlag)
     {

@@ -1,5 +1,4 @@
-﻿
-using Player.Controller.States;
+﻿using Player.Controller.States;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -21,9 +20,7 @@ public enum FormationPhase
 }
 public class FootballTeam : MonoBehaviour
 {
-    [SerializeField]
-    private bool isHumanControllable = false;
-
+    public bool isHumanControllable = false;
     public TeamFlag TeamFlag;
     public List<IFootballAgent> FootballAgents = new(10);
     public IFootballAgent GoalKeeper;
@@ -341,7 +338,5 @@ public class FootballTeam : MonoBehaviour
 
     public void ResetToFormation()
     {
-        
-        
     }
 }
