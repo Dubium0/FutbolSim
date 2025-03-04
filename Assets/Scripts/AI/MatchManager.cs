@@ -127,8 +127,8 @@ public class MatchManager : MonoBehaviour
 
     private void ResetPlayersToFormation()
     {
-        GameManager.Instance.RedFootballTeam.ResetToFormation();
-        GameManager.Instance.BlueFootballTeam.ResetToFormation();
+        GameManager.Instance.homeFootballTeam.ResetToFormation();
+        GameManager.Instance.awayFootballTeam.ResetToFormation();
     }
 
     private void ResumeMatch()

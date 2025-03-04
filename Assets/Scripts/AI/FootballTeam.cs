@@ -1,27 +1,29 @@
 ﻿
-using Player.Controller.States;
+
 using System.Collections.Generic;
-using UnityEditor;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Android;
 
 
 public enum TeamFlag
 {
-    Red,
-    Blue,
-    None
+    Red = 0,
+    Blue = 1,
+    None = 2
 }
 
 public enum FormationPhase
 {
-    Defense,
-    Start,
-    Default,
-    Attack
+    Defense = 0,
+    Start = 1,
+    Default = 2,
+    Attack = 3
 }
-public class FootballTeam : MonoBehaviour
+public class FootballTeam : NetworkBehaviour
 {
-    [SerializeField]
+
     private bool isHumanControllable = false;
 
     public TeamFlag TeamFlag;
@@ -56,21 +58,78 @@ public class FootballTeam : MonoBehaviour
     private FormationPhase currentFormationPhase;
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
     private bool isOnStart = true;
+
+    private bool isInitialized = false;
+
+    private NetworkObject networkObject;
+    private bool isInitWithOwner = false;
     private void Awake()
     {
+        networkObject = GetComponent<NetworkObject>();
+    }
+    public void init(bool t_isHumanControlled, bool isHome, ulong? ownerId = null)
+    {
+      
+      
+        if (ownerId != null && IsServer)
+        {
+
+            networkObject.ChangeOwnership((ulong)ownerId);
+            isInitWithOwner = true;
+
+            if (IsServer && IsOwner)
+            {
+                Debug.Log("This football team is ownded by server");
+
+            }
+            else { 
+            
+                NotifyClientItIsTheOwnerRpc();
+            }
+        }
+        if (IsClient) return;
+        isHumanControllable = t_isHumanControlled;
         currentFormation = StartFormation;
+     
+      
         CreateAgents();
+        
+
+        isInitialized = true;
     }
 
+    [Rpc(SendTo.ClientsAndHost)]
+
+    private void NotifyClientItIsTheOwnerRpc()
+    {
+        if( IsClient  && IsOwner) {
+            Debug.Log("This football team is ownded by client");
+        }
+    }
+ 
     private void FixedUpdate()
     {
-        SetClosestPlayerToBall(); 
+        if (IsClient) return;
+        if( isInitialized && GameManager.Instance.GameState == EGameState.Running)
+        {
+
+            SetClosestPlayerToBall(); 
        
-        DecideStrategy();
+            DecideStrategy();
+        }
     }
     private void Update()
     {
-        CycleToClosestPlayer();
+        if(IsOwner && IsClient)
+        {
+            if(Input.GetKeyDown(KeyCode.C))
+            {
+                CycleToClosestPlayerRpc();
+            }
+            return;
+        }
+        if (isInitialized && GameManager.Instance.GameState == EGameState.Running && IsOwner)  CycleToClosestPlayer();
+
     }
     private void SetClosestPlayerToBall()
     {
@@ -79,42 +138,60 @@ public class FootballTeam : MonoBehaviour
         ballPosition.y = 0;
         Vector3 minDistance = Vector3.one * 9999;
         IFootballAgent minDistancePlayer = null;
-        FootballAgents.ForEach(agent => 
-        {
 
+        int chosenPlayerIndex = 0;
+        for( int i = 0; i < FootballAgents.Count; i++ )
+        {
+            var agent  = FootballAgents[i];
             var distance = ballPosition - agent.Transform.position;
             if (distance.magnitude < minDistance.magnitude)
             {
                 minDistance = distance;
                 minDistancePlayer = agent;
+                chosenPlayerIndex = i;
             }
         }
-        
-        );
         var prevClosest = closestPlayerToBall_;
       
         closestPlayerToBall_ = minDistancePlayer;
+      
         if (isHumanControllable && prevClosest != minDistancePlayer && isOnStart)
         {
             isOnStart = false;
             playerControlledAgent = closestPlayerToBall_;
             playerControlledAgent.SetAsHumanControlled();
+           
         }
 
+
+    }
+
+    [Rpc(SendTo.Server)]
+    private void CycleToClosestPlayerRpc()
+    {
+        
+         CycleToClosestPlayerLogic();
+        
+    }
+
+    private void CycleToClosestPlayerLogic()
+    {
+        var prevAgent = playerControlledAgent;
+        if (prevAgent != null)
+        {
+            prevAgent.SetAsAIControlled();
+        }
+        playerControlledAgent = closestPlayerToBall_;
+        playerControlledAgent.SetAsHumanControlled();  
+
+      
 
     }
 
     private void CycleToClosestPlayer()
     {
         if(Input.GetKeyDown(KeyCode.C) && isHumanControllable) {
-            var prevAgent = playerControlledAgent;
-            if (prevAgent != null)
-            {
-                prevAgent.SetAsAIControlled();
-            }
-            playerControlledAgent = closestPlayerToBall_;
-            playerControlledAgent.SetAsHumanControlled();
-
+            CycleToClosestPlayerLogic();
         }
 
     }
@@ -177,9 +254,11 @@ public class FootballTeam : MonoBehaviour
             }
         }
         UpdateHomePositions();
+
     }
     private void CreateAgents()
     {
+
         var defCount = currentFormation.DefensePosition.Length;
         var midfieldCount = currentFormation.MidfieldPosition.Length;
         var attackCount = currentFormation.ForwardPosition.Length;
@@ -190,8 +269,22 @@ public class FootballTeam : MonoBehaviour
         int layerToSet = TeamFlag == TeamFlag.Red ? 10 : 9;
         
         GameObject goalkeeper = Instantiate(GoalKeeperAgentPrefab, currentFormation.GoalKeeperPosition.position, currentFormation.GoalKeeperPosition.rotation);
+        if(IsServer)
+        {
+
+        goalkeeper.GetComponent<NetworkObject>().Spawn();
+        }
         goalkeeper.layer = layerToSet;
         var goalkeeperComponent = goalkeeper.GetComponent<IFootballAgent>();
+        if (isInitWithOwner)
+        {
+            goalkeeperComponent.init(networkObject.OwnerClientId);
+
+        }
+        else
+        {
+            goalkeeperComponent.init();
+        }
         goalkeeperComponent.OnBallPossesionCallback = agent =>
         {
             currentBallOwnerTeamMate = agent;
@@ -212,9 +305,21 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < defCount; i++)
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
+            if (IsServer)  agent.GetComponent<NetworkObject>().Spawn();
             agent.layer = layerToSet;
           
             var agentComponent = agent.GetComponent<IFootballAgent>();
+           
+
+            if (isInitWithOwner)
+            {
+                agentComponent.init(networkObject.OwnerClientId);
+
+            }
+            else
+            {
+                agentComponent.init();
+            }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -240,6 +345,17 @@ public class FootballTeam : MonoBehaviour
           
             agent.layer = layerToSet;
             var agentComponent = agent.GetComponent<IFootballAgent>();
+            if (IsServer) agent.GetComponent<NetworkObject>().Spawn();
+
+            if (isInitWithOwner)
+            {
+                agentComponent.init(networkObject.OwnerClientId);
+
+            }
+            else
+            {
+                agentComponent.init();
+            }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -262,9 +378,20 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < attackCount; i++)
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
+            if (IsServer) agent.GetComponent<NetworkObject>().Spawn();
             agent.layer = layerToSet;
            
             var agentComponent = agent.GetComponent<IFootballAgent>();
+
+            if (isInitWithOwner)
+            {
+                agentComponent.init(networkObject.OwnerClientId);
+
+            }
+            else
+            {
+                agentComponent.init();
+            }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -337,7 +464,6 @@ public class FootballTeam : MonoBehaviour
                 return PicthZone.BlueZone;
         }
     }
-
 
     public void ResetToFormation()
     {

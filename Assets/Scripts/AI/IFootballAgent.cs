@@ -36,11 +36,7 @@ public interface IFootballAgent
 
     public Action<IFootballAgent> OnBallPossesionCallback { get; set; }
 
-    public void OnBallPossesion()
-    {
-        // Debug.Log("Ball Possed By : " + this.ToSafeString());
-        OnBallPossesionCallback(this);
-    }
+    public void OnBallPossesion();
 
     // fields for human controllable side
 
@@ -60,6 +56,8 @@ public interface IFootballAgent
     public int GetShootScore();
 
     public void DisableAIForATime(float time);
+
+    public void init(ulong? ownerId=null);
 
 }
 

@@ -106,12 +106,13 @@ namespace Player.Controller.States
 
         public void OnSprintEnter()
         {
+           
             controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxRunSpeed;
             currentAcceleration_ = controller_.AgentInfo.RunningAcceleration;
         }
         public void OnSprintExit()
         {
-
+           
             controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxWalkSpeed;
             currentAcceleration_ = controller_.AgentInfo.WalkingAcceleration;
 
@@ -119,9 +120,6 @@ namespace Player.Controller.States
 
         public void OnEnter()
         {
-            controller_.SprintAction.performed += context => { OnSprintEnter(); };
-            controller_.SprintAction.canceled += context => { OnSprintExit(); };
-
             controller_.Rigidbody.maxLinearVelocity = controller_.AgentInfo.MaxWalkSpeed;
             currentAcceleration_ = controller_.AgentInfo.WalkingAcceleration;
         }

@@ -1,6 +1,20 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
-public class GameManager : MonoBehaviour
+
+public struct GameStartConfig
+{
+    public int homePlayerCount;
+    public int awayPlayerCount;
+    public bool isOnline;
+    public ulong clientId;
+}
+
+public enum EGameState
+{
+    NotStarted,Running,Freeze, Finished
+}
+public class GameManager : NetworkBehaviour
 {
     public Transform RedGoalPosition;
     public Bounds RedGoalBounds;
@@ -13,10 +27,13 @@ public class GameManager : MonoBehaviour
     public Bounds BlueGoalBounds;
 
 
-    public FootballTeam RedFootballTeam;
-    public FootballTeam BlueFootballTeam;
+    public FootballTeam homeFootballTeam;
+    public FootballTeam awayFootballTeam;
 
     public static GameManager Instance;
+
+    private EGameState state_;
+    public EGameState GameState {  get { return state_; } }
 
     private void OnValidate()
     {
@@ -26,16 +43,69 @@ public class GameManager : MonoBehaviour
     }
     private void Awake()
     {
+        if(IsClient) Destroy(gameObject);
+
         if (Instance != null && Instance != this)
         {
-
-            Destroy(this);
+            Destroy(gameObject);
 
         }
         else
         {
             Instance = this;
+            state_ = EGameState.NotStarted;
         }
+    }
+    private void Start()
+    {
+        //GameStartConfig config = new GameStartConfig();
+        //config.awayPlayerCount = 0;
+        //config.homePlayerCount = 1;
+        //
+        //
+        //StartGame(config);
+    }
+    
+    public void StartGame(GameStartConfig config)
+    {
+        if (config.isOnline)
+        {
+            awayFootballTeam.init(true, false, config.clientId);
+            homeFootballTeam.init(true, true, NetworkManager.ServerClientId);
+            state_ = EGameState.Running;
+            return;
+        }
+
+        if (config.homePlayerCount > 0)
+        {
+
+            homeFootballTeam.init(true, true);
+        }
+        else
+        {
+            homeFootballTeam.init(false, true);
+        }
+        if (config.awayPlayerCount > 0)
+        {
+
+            awayFootballTeam.init(true, false);
+        }
+        else
+        {
+            awayFootballTeam.init(false, false);
+        }
+        state_ = EGameState.Running;
+    }
+    // probably temporary
+    public void PauseGame()
+    {
+        state_ = EGameState.Freeze;
+        Time.timeScale = 0;
+    }
+    public void ResumeGame()
+    {
+        state_ = EGameState.Running;
+        Time.timeScale = 1;
     }
 
     public Vector3 GetGoalPositionHome(TeamFlag teamFlag)

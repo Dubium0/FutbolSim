@@ -286,6 +286,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 114283753}
+  - component: {fileID: 114283754}
   - component: {fileID: 114283752}
   m_Layer: 0
   m_Name: BlueFootballTeam
@@ -306,7 +307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 803884f064ea3a24f9c68aafb2c26bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isHumanControllable: 1
+  ShowTopMostFoldoutHeaderGroup: 1
   TeamFlag: 1
   DefenseFormation: {fileID: 894053737}
   StartFormation: {fileID: 894053736}
@@ -332,6 +333,31 @@ Transform:
   - {fileID: 894053734}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &114283754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114283751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 636394759
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &120885876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1118,6 +1144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 598758384}
+  - component: {fileID: 598758386}
   - component: {fileID: 598758385}
   m_Layer: 0
   m_Name: RedFootballTeam
@@ -1154,7 +1181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 803884f064ea3a24f9c68aafb2c26bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isHumanControllable: 0
+  ShowTopMostFoldoutHeaderGroup: 1
   TeamFlag: 0
   DefenseFormation: {fileID: 856043490}
   StartFormation: {fileID: 856043489}
@@ -1164,6 +1191,31 @@ MonoBehaviour:
   MidfieldAgentPrefab: {fileID: 1735108021080809503, guid: a8bef7db305a1894ea71b959f9ebaefe, type: 3}
   ForwardAgentPrefab: {fileID: 1735108021080809503, guid: 632dc83e536d3634d95902500cf422d9, type: 3}
   GoalKeeperAgentPrefab: {fileID: 4035693329678699024, guid: b8f00d08f94386f49bd1a4a1bd685168, type: 3}
+--- !u!114 &598758386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598758383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3741365778
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &625110476
 GameObject:
   m_ObjectHideFlags: 0
@@ -2998,6 +3050,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Menu
       objectReference: {fileID: 0}
+    - target: {fileID: 7402514088342984981, guid: 23d2ddbb2084fbd4185475ac1bfd2944, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8869611461335335310, guid: 23d2ddbb2084fbd4185475ac1bfd2944, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -3051,6 +3107,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1435720929}
+  - component: {fileID: 1435720930}
   - component: {fileID: 1435720928}
   m_Layer: 0
   m_Name: GameManager
@@ -3071,6 +3128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e9c34800cac58342a1436d4f4cf65c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   RedGoalPosition: {fileID: 2074075824}
   RedGoalBounds:
     m_Center: {x: 0, y: 0.19361699, z: -25}
@@ -3081,8 +3139,8 @@ MonoBehaviour:
   BlueGoalBounds:
     m_Center: {x: 0, y: 0.19361699, z: 25}
     m_Extent: {x: 1, y: 1, z: 1}
-  RedFootballTeam: {fileID: 598758385}
-  BlueFootballTeam: {fileID: 114283752}
+  homeFootballTeam: {fileID: 114283752}
+  awayFootballTeam: {fileID: 598758385}
   blueTeamLayerMask:
     serializedVersion: 2
     m_Bits: 512
@@ -3104,6 +3162,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1435720930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435720927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2998256315
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!4 &1446272621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5181444344613004418, guid: ad5b94e42d99e2b4095f4fd1c73186cc, type: 3}

@@ -1,5 +1,4 @@
-using Unity.Mathematics;
-using UnityEditor.ShaderGraph.Internal;
+
 using UnityEngine;
 
 public static class MathExtra 
