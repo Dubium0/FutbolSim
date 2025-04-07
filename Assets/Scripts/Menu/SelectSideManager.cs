@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DG.Tweening;
 using UnityEditor; // Make sure DOTween is imported in your project
@@ -29,24 +30,6 @@ public class SelectSideManager : MonoBehaviour
     private bool leftSideReadyState = false;
     private bool rightSideReadyState = false;
     
-    private class PlayerInfo
-    {
-        public InputDevice Device;
-        public string DeviceType;
-        public int PlayerIndex;
-        public bool IsReady;
-        public Transform CurrentPosition;
-        
-        public PlayerInfo(InputDevice device, string deviceType, int playerIndex)
-        {
-            Device = device;
-            DeviceType = deviceType;
-            PlayerIndex = playerIndex;
-            IsReady = false;
-        }
-    }
-    
-    private List<PlayerInfo> connectedPlayers = new List<PlayerInfo>();
     private List<PlayerInfo> readyPlayers = new List<PlayerInfo>();
     private float moveAnimationDuration = 0.5f;
     private float analogThreshold = 0.5f;
@@ -93,19 +76,13 @@ public class SelectSideManager : MonoBehaviour
     {
         if (change == InputDeviceChange.Added)
         {
-            // A new device was connected
             string deviceType = GetDeviceType(device);
             Debug.Log($"Device connected: {deviceType} (\"{device.displayName}\")");
-            
-            // Assign the device to a player
             AssignDeviceToPlayer(device, deviceType);
         }
         else if (change == InputDeviceChange.Removed)
         {
-            // A device was disconnected
             Debug.Log($"Device disconnected: (\"{device.displayName}\")");
-            
-            // Remove the device from players
             RemoveDevice(device);
         }
     }
@@ -140,7 +117,7 @@ public class SelectSideManager : MonoBehaviour
     private void DetectInputDevices()
     {
         // Clear existing players
-        connectedPlayers.Clear();
+        InputManager.Instance.ConnectedPlayers.Clear();
         
         // Detect and assign all current devices
         foreach (var device in InputSystem.devices)
@@ -158,24 +135,34 @@ public class SelectSideManager : MonoBehaviour
     
     private void AssignDeviceToPlayer(InputDevice device, string deviceType)
     {
-        if (connectedPlayers.Exists(p => p.Device == device))
+        if (InputManager.Instance.ConnectedPlayers.Exists(p => p.Device == device))
             return;
             
-        if (connectedPlayers.Count >= 3)
+        if (InputManager.Instance.ConnectedPlayers.Count >= 3)
         {
             Debug.Log("Maximum number of players reached. Ignoring new device.");
             return;
         }
         
-        int playerIndex = connectedPlayers.Count;
-        connectedPlayers.Add(new PlayerInfo(device, deviceType, playerIndex));
-        
+        int playerIndex = InputManager.Instance.ConnectedPlayers.Count;
+        PlayerInfo player = new PlayerInfo(device, deviceType, playerIndex);
+        InputManager.Instance.ConnectedPlayers.Add(player);
+        if (player.CurrentPosition == player1LTarget || player.CurrentPosition == player2LTarget || player.CurrentPosition == player3LTarget)
+        {
+            player.Team = TeamFlag.Red;
+            print("Red team");
+        }
+        else if (player.CurrentPosition == player1RTarget || player.CurrentPosition == player2RTarget || player.CurrentPosition == player3RTarget)
+        {
+            player.Team = TeamFlag.Blue;
+            print("Blue team");
+        }
         UpdateControllerVisuals();
     }
     
     private void RemoveDevice(InputDevice device)
     {
-        PlayerInfo player = connectedPlayers.Find(p => p.Device == device);
+        PlayerInfo player = InputManager.Instance.ConnectedPlayers.Find(p => p.Device == device);
         if (player != null)
         {
             // Check if the player was ready, and if so, update the ready state
@@ -194,12 +181,12 @@ public class SelectSideManager : MonoBehaviour
                 }
             }
             
-            connectedPlayers.Remove(player);
+            InputManager.Instance.ConnectedPlayers.Remove(player);
             
             // Reassign player indices
-            for (int i = 0; i < connectedPlayers.Count; i++)
+            for (int i = 0; i < InputManager.Instance.ConnectedPlayers.Count; i++)
             {
-                connectedPlayers[i].PlayerIndex = i;
+                InputManager.Instance.ConnectedPlayers[i].PlayerIndex = i;
             }
             
             // Update visuals
@@ -215,7 +202,7 @@ public class SelectSideManager : MonoBehaviour
         if (player3Side) player3Side.SetActive(false);
         
         // Loop through connected players and show appropriate visuals
-        foreach (var player in connectedPlayers)
+        foreach (var player in InputManager.Instance.ConnectedPlayers)
         {
             GameObject playerSide = null;
             Transform middleTarget = null;
@@ -279,7 +266,7 @@ public class SelectSideManager : MonoBehaviour
     
     private void ProcessPlayerInput()
     {
-        foreach (var player in connectedPlayers)
+        foreach (var player in InputManager.Instance.ConnectedPlayers)
         {
             if (player.Device is Gamepad gamepad)
             {
@@ -398,6 +385,7 @@ public class SelectSideManager : MonoBehaviour
             // Move to middle position
             playerSide.transform.DOMove(middleTarget.position, moveAnimationDuration);
             player.CurrentPosition = middleTarget;
+            player.Team = TeamFlag.None;
         }
     }
     
@@ -424,16 +412,15 @@ public class SelectSideManager : MonoBehaviour
         
         if (playerSide != null && leftTarget != null && player.CurrentPosition != leftTarget)
         {
-            // Check if ANY player is ready on the left side
             if (IsSideOccupiedByReadyPlayer("Left"))
             {
                 Debug.Log($"Player {player.PlayerIndex + 1} cannot move to left position - LEFT side is already chosen by a ready player");
                 return;
             }
             
-            // Move to left position
             playerSide.transform.DOMove(leftTarget.position, moveAnimationDuration);
             player.CurrentPosition = leftTarget;
+            player.Team = TeamFlag.Red;
         }
     }
     
@@ -470,6 +457,7 @@ public class SelectSideManager : MonoBehaviour
             // Move to right position
             playerSide.transform.DOMove(rightTarget.position, moveAnimationDuration);
             player.CurrentPosition = rightTarget;
+            player.Team = TeamFlag.Blue;
         }
     }
     
@@ -492,8 +480,6 @@ public class SelectSideManager : MonoBehaviour
             player.IsReady = leftSideReadyState;
             
             if (leftReady) leftReady.SetActive(leftSideReadyState);
-            
-            Debug.Log($"LEFT side ready state: {leftSideReadyState} (Player {player.PlayerIndex + 1})");
         }
         else if (position == "Right")
         {
@@ -501,8 +487,6 @@ public class SelectSideManager : MonoBehaviour
             player.IsReady = rightSideReadyState;
             
             if (rightReady) rightReady.SetActive(rightSideReadyState);
-            
-            Debug.Log($"RIGHT side ready state: {rightSideReadyState} (Player {player.PlayerIndex + 1})");
         }
         
         bool bothSidesReady = leftSideReadyState && rightSideReadyState;
@@ -522,9 +506,12 @@ public class SelectSideManager : MonoBehaviour
             readyPlayers.Remove(player);
         }
     
-        if (readyPlayers.Count == connectedPlayers.Count)
+        if (readyPlayers.Count == InputManager.Instance.ConnectedPlayers.Count)
         {
-            GameManager.Instance.StartGame(bothSidesReady, controlledTeamFlag);
+            GameManager.Instance.StartGame(
+                bothSidesReady,
+                controlledTeamFlag
+            );
             gameObject.SetActive(false);
         }
     }
@@ -548,7 +535,7 @@ public class SelectSideManager : MonoBehaviour
     
     private bool IsPositionOccupiedByReadyPlayer(Transform position)
     {
-        foreach (var p in connectedPlayers)
+        foreach (var p in InputManager.Instance.ConnectedPlayers)
         {
             if (p.CurrentPosition == position && p.IsReady)
                 return true;
@@ -558,7 +545,7 @@ public class SelectSideManager : MonoBehaviour
     
     private bool IsSideOccupiedByReadyPlayer(string side)
     {
-        foreach (var p in connectedPlayers)
+        foreach (var p in InputManager.Instance.ConnectedPlayers)
         {
             if (p.IsReady)
             {

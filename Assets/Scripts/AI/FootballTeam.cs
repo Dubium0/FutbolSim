@@ -56,7 +56,7 @@ public class FootballTeam : MonoBehaviour
     private void Awake()
     {
         currentFormation = StartFormation;
-        CreateAgents();
+        // CreateAgents();
     }
 
     private void FixedUpdate()
@@ -175,7 +175,7 @@ public class FootballTeam : MonoBehaviour
         }
         UpdateHomePositions();
     }
-    private void CreateAgents()
+    public void CreateAgents()
     {
         var defCount = currentFormation.DefensePosition.Length;
         var midfieldCount = currentFormation.MidfieldPosition.Length;
@@ -201,7 +201,9 @@ public class FootballTeam : MonoBehaviour
                 }
                 playerControlledAgent = agent;
                 playerControlledAgent.SetAsHumanControlled();
+                playerControlledAgent.TeamFlag = TeamFlag;
             }
+            agent.TeamFlag = TeamFlag;
         };
         goalkeeperComponent.InitAISystems(this, PlayerType.Goalkeeper, index);
         FootballAgents.Insert(index, goalkeeperComponent);
@@ -224,6 +226,7 @@ public class FootballTeam : MonoBehaviour
                     playerControlledAgent = agent;
                     playerControlledAgent.SetAsHumanControlled();
                 }
+                agent.TeamFlag = TeamFlag;
             };
             agentComponent.InitAISystems(this,PlayerType.Defender, index);
             FootballAgents.Insert(index, agentComponent);
@@ -248,7 +251,9 @@ public class FootballTeam : MonoBehaviour
                     }
                     playerControlledAgent = agent;
                     playerControlledAgent.SetAsHumanControlled();
+                    playerControlledAgent.TeamFlag = TeamFlag;
                 }
+                agent.TeamFlag = TeamFlag;
             };
             agentComponent.InitAISystems(this, PlayerType.Midfielder, index);
             FootballAgents.Insert(index, agentComponent);
@@ -273,8 +278,9 @@ public class FootballTeam : MonoBehaviour
                     }
                     playerControlledAgent = agent;
                     playerControlledAgent.SetAsHumanControlled();
-                
+                    playerControlledAgent.TeamFlag = TeamFlag;
                 }
+                agent.TeamFlag = TeamFlag;
             };
             agentComponent.InitAISystems(this, PlayerType.Forward, index);
             FootballAgents.Insert(index, agentComponent);

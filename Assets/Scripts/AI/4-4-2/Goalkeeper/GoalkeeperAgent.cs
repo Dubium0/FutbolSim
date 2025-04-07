@@ -32,7 +32,11 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
     public Transform Transform => transform;
 
     private TeamFlag teamFlag_;
-    public TeamFlag TeamFlag => teamFlag_;
+    public TeamFlag TeamFlag
+    {
+        get => teamFlag_;
+        set => teamFlag_ = value;
+    }
 
     [SerializeField]
     private Transform focusPointTransform_;

@@ -60,7 +60,6 @@ public class GameManager : MonoBehaviour
         bool isRedControlled = teamFlag == TeamFlag.Red;
         RedFootballTeam.enabled = true;
         BlueFootballTeam.enabled = true;
-        state = GameState.Playing;
     
         if (!isBothTeamsControlled)
         {   
@@ -72,6 +71,10 @@ public class GameManager : MonoBehaviour
             RedFootballTeam.isHumanControllable = true;
             BlueFootballTeam.isHumanControllable = true;
         }
+        
+        RedFootballTeam.CreateAgents();
+        BlueFootballTeam.CreateAgents();
+        state = GameState.Playing;
     }
 
 

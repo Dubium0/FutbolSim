@@ -34,8 +34,8 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     public Transform Transform => transform;
 
     private TeamFlag teamFlag_;
-    public TeamFlag TeamFlag => teamFlag_;
-
+    public TeamFlag TeamFlag { get => teamFlag_; set => teamFlag_ = value; }
+    
     [SerializeField]
     private Transform focusPointTransform_;
     public Transform FocusPointTransform => focusPointTransform_;
@@ -57,7 +57,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     private void Awake()
     {
         rigidbody_ = GetComponent<Rigidbody>();
-
         currentBallAcqusitionStamina_ =agentInfo_.MaxBallAcqusitionStamina;
         SetActions();
         BindActions();
@@ -122,8 +121,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
 
    
         GetComponent<MeshRenderer>().material.color =  TeamFlag == TeamFlag.Red ? Color.red : Color.blue;
-  
-
     }
 
     public void TickAISystem()
@@ -133,8 +130,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
             return;
         }
         btRoot_.ExecuteBT();
-
-
     }
 
  
@@ -218,14 +213,14 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     }
     private void SetActions()
     {
-        moveAction_ = InputSystem.actions.FindAction("Move");
-        lookAction_ = InputSystem.actions.FindAction("Look");
-        lowActionA_ = InputSystem.actions.FindAction("LowActionA");
-        lowActionB_ = InputSystem.actions.FindAction("LowActionB");
-        highActionA_ = InputSystem.actions.FindAction("HighActionA");
-        highActionB_ = InputSystem.actions.FindAction("HighActionB");
-        sprintAction_ = InputSystem.actions.FindAction("Sprint");
-        lookAction_ = InputSystem.actions.FindAction("Look");
+        var inputManager = InputManager.Instance;
+        moveAction_ = inputManager.GetAction(teamFlag_, "Move");
+        lookAction_ = inputManager.GetAction(teamFlag_, "Look");
+        lowActionA_ = inputManager.GetAction(teamFlag_, "LowActionA");
+        lowActionB_ = inputManager.GetAction(teamFlag_, "LowActionB");
+        highActionA_ = inputManager.GetAction(teamFlag_, "HighActionA");
+        highActionB_ = inputManager.GetAction(teamFlag_, "HighActionB");
+        sprintAction_ = inputManager.GetAction(teamFlag_, "Sprint");
     }
     private void BindActions()
     {

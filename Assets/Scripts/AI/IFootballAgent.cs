@@ -24,7 +24,7 @@ public interface IFootballAgent
 
     public bool IsInitialized { get; }
 
-    public TeamFlag TeamFlag { get;}
+    public TeamFlag TeamFlag { get; set; }
 
     public bool IsDebugMode { get; }    
     public void InitAISystems(FootballTeam team, PlayerType playerType,int index);
