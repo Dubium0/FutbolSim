@@ -52,6 +52,7 @@ public class FootballTeam : MonoBehaviour
 
     private FormationPhase currentFormationPhase;
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
+    
     private bool isOnStart = true;
     private void Awake()
     {

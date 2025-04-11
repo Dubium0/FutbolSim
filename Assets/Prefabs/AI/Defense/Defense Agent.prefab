@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 4173365972393902170}
   - component: {fileID: 7119296889028265957}
   - component: {fileID: 7396656423745687626}
+  - component: {fileID: 6194629619424497693}
   m_Layer: 3
   m_Name: Defense Agent
   m_TagString: Futboller
@@ -65,6 +66,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5746173337276603807}
   - {fileID: 7711826146743832231}
   - {fileID: 1791649533769528701}
   m_Father: {fileID: 0}
@@ -84,7 +86,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1735108021080809503}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -188,9 +190,31 @@ MonoBehaviour:
   focusPointTransform_: {fileID: 7711826146743832231}
   isDebugMode_: 0
   playerIndicator: {fileID: 5768851073142149272}
+  redMaterial: {fileID: 0}
+  blueMaterial: {fileID: 0}
   groundMask_:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &6194629619424497693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735108021080809503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f06fd23d0abe5499b2e6082bc39dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 6965158200228825252}
+  genericAgent: {fileID: 7396656423745687626}
+  idleAnimation: Offensive Idle
+  runAnimation: Running
+  shootAnimation: Soccer Pass
+  runSpeedThreshold: 0.2
+  minRunMultiplier: 0.5
+  maxRunMultiplier: 2
 --- !u!1 &5768851073142149272
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,3 +301,74 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &7035748816754073279
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7381816792006279900}
+    m_Modifications:
+    - target: {fileID: 621046007850695622, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: genericAgent_
+      value: 
+      objectReference: {fileID: 7396656423745687626}
+    - target: {fileID: 643268661172074306, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_Name
+      value: Footballer
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.1314628
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.8374432
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.9313464
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+--- !u!4 &5746173337276603807 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+  m_PrefabInstance: {fileID: 7035748816754073279}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &6965158200228825252 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 75776415068952091, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+  m_PrefabInstance: {fileID: 7035748816754073279}
+  m_PrefabAsset: {fileID: 0}

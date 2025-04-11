@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4173365972393902170}
   - component: {fileID: 7119296889028265957}
   - component: {fileID: 3294158761605411476}
+  - component: {fileID: 2804168416544821693}
   m_Layer: 3
   m_Name: Midfield Agent
   m_TagString: Futboller
@@ -34,6 +35,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3334889018206168855}
   - {fileID: 3794087133276047705}
   - {fileID: 8046176244359863716}
   m_Father: {fileID: 0}
@@ -53,7 +55,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1735108021080809503}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -160,6 +162,20 @@ MonoBehaviour:
   groundMask_:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &2804168416544821693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735108021080809503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10f06fd23d0abe5499b2e6082bc39dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 94667585487843884}
+  genericAgent: {fileID: 3294158761605411476}
 --- !u!1 &2175765187691484131
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,3 +293,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7381816792006279900}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &26288866180113463
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7381816792006279900}
+    m_Modifications:
+    - target: {fileID: 621046007850695622, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: genericAgent_
+      value: 
+      objectReference: {fileID: 3294158761605411476}
+    - target: {fileID: 643268661172074306, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_Name
+      value: Footballer
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.1314628
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.8374432
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.9313464
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+--- !u!95 &94667585487843884 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 75776415068952091, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+  m_PrefabInstance: {fileID: 26288866180113463}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3334889018206168855 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+  m_PrefabInstance: {fileID: 26288866180113463}
+  m_PrefabAsset: {fileID: 0}

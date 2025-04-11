@@ -54,6 +54,11 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
 
     [SerializeField]
     private GameObject playerIndicator;
+    
+    //color
+    [SerializeField] private Material redMaterial;
+    [SerializeField] private Material blueMaterial;
+    
     private void Awake()
     {
         rigidbody_ = GetComponent<Rigidbody>();
@@ -61,7 +66,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
         currentBallAcqusitionStamina_ =agentInfo_.MaxBallAcqusitionStamina;
         SetActions();
         BindActions();
-
     }
 
     private void FixedUpdate()
@@ -229,7 +233,15 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     }
     private void BindActions()
     {
-        lowActionA_.performed += context => {if(isHumanControlled)  currentState_.OnLowActionAEnter(); };
+        lowActionA_.performed += context =>
+        {
+            if(isHumanControlled)  currentState_.OnLowActionAEnter(); 
+            FootballerAnimator footballerAnimator = GetComponent<FootballerAnimator>();
+            if (footballerAnimator != null && currentState_ is DribblingFutbollerState)
+            {
+                footballerAnimator.PlayShootAnimation();
+            }
+        };
         lowActionA_.canceled += context => { if (isHumanControlled) currentState_.OnLowActionAExit(); };
 
         lowActionB_.performed += context => { if (isHumanControlled) currentState_.OnLowActionBEnter(); };
