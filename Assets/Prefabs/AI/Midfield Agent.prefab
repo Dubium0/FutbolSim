@@ -159,6 +159,8 @@ MonoBehaviour:
   focusPointTransform_: {fileID: 8046176244359863716}
   isDebugMode_: 0
   playerIndicator: {fileID: 2175765187691484131}
+  redMaterial: {fileID: 0}
+  blueMaterial: {fileID: 0}
   groundMask_:
     serializedVersion: 2
     m_Bits: 128
@@ -176,6 +178,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 94667585487843884}
   genericAgent: {fileID: 3294158761605411476}
+  idleAnimation: Offensive Idle
+  runAnimation: Running
+  shootAnimation: Soccer Pass
+  runSpeedThreshold: 0.1
+  minRunMultiplier: 0.5
+  maxRunMultiplier: 2
 --- !u!1 &2175765187691484131
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,6 +309,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7381816792006279900}
     m_Modifications:
+    - target: {fileID: 75776415068952091, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 621046007850695622, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
       propertyPath: genericAgent_
       value: 
@@ -311,7 +323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.1314628
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
       propertyPath: m_LocalPosition.y
@@ -319,7 +331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.9313464
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
       propertyPath: m_LocalRotation.w
@@ -347,6 +359,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3322111098017088288, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6335749851626884193, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6335749851626884193, guid: e49cb4ce6e2649947a69f9ecd71b8861, type: 3}
+      propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

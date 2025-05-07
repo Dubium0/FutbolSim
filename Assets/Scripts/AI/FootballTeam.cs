@@ -190,7 +190,7 @@ public class FootballTeam : MonoBehaviour
         GameObject goalkeeper = Instantiate(GoalKeeperAgentPrefab, currentFormation.GoalKeeperPosition.position, currentFormation.GoalKeeperPosition.rotation);
         goalkeeper.layer = layerToSet;
         var goalkeeperComponent = goalkeeper.GetComponent<IFootballAgent>();
-        goalkeeperComponent.OnBallPossesionCallback = agent =>
+        goalkeeperComponent.OnBallPossesionCallback = agent => 
         {
             currentBallOwnerTeamMate = agent;
             if (isHumanControllable)
