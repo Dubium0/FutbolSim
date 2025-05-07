@@ -54,11 +54,11 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
 
     [SerializeField]
     private GameObject playerIndicator;
-    
-    //color
-    [SerializeField] private Material redMaterial;
-    [SerializeField] private Material blueMaterial;
-    
+
+    [Header("Team Materials")]
+    [SerializeField] private Material redTeamMaterial;
+    [SerializeField] private Material blueTeamMaterial;
+
     private void Awake()
     {
         rigidbody_ = GetComponent<Rigidbody>();
@@ -100,6 +100,7 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     {
         playerType_ = playerType;
         teamFlag_ = team.TeamFlag;
+
         var blackboardFactory = new FootballAiBlackboardFactory(this,team,index);
 
         switch (playerType_)
@@ -123,11 +124,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
 
         isInitialized_ = true;
         SetAsAIControlled();
-
-   
-        GetComponent<MeshRenderer>().material.color =  TeamFlag == TeamFlag.Red ? Color.red : Color.blue;
-  
-
     }
 
     public void TickAISystem()
@@ -318,6 +314,29 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
         gameObject.layer = prevLayer;
         rigidbody_.maxLinearVelocity = prevMaxVel;
         enableAI = true;
+    }
+
+    public void AssignTeamMaterial(TeamFlag tf)
+    {
+        GameObject child1 = transform.GetChild(0).gameObject;
+        GameObject child2 = child1.transform.GetChild(0).gameObject;
+        GameObject child3 = child2.transform.GetChild(0).gameObject;
+
+        SkinnedMeshRenderer agentRenderer = child3.GetComponent<SkinnedMeshRenderer>();
+        if (agentRenderer != null)
+        {
+            Material teamMaterial = tf == TeamFlag.Red ? redTeamMaterial : blueTeamMaterial;
+
+            Debug.Log($"Assigning {(tf == TeamFlag.Red ? "Red" : "Blue")} Team Material to {gameObject.name}");
+
+            Material[] currentMaterials = agentRenderer.materials;
+            currentMaterials[4] = teamMaterial; // Only change the first material  
+            agentRenderer.materials = currentMaterials;
+        }
+        else
+        {
+            Debug.LogError($"SkinnedMeshRenderer component not found in children of {gameObject.name}");
+        }
     }
 
 }

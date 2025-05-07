@@ -64,42 +64,42 @@ namespace Player.Controller.States
 
         public void OnHighActionAEnter()
         {
-            Debug.Log("High A en");
+            //Debug.Log("High A en");
         }
 
         public void OnHighActionAExit()
         {
-            Debug.Log("High A ex");
+            //Debug.Log("High A ex");
         }
 
         public void OnHighActionBEnter()
         {
-            Debug.Log("High B en");
+            //Debug.Log("High B en");
         }
 
         public void OnHighActionBExit()
         {
-            Debug.Log("High B ex");
+            //Debug.Log("High B ex");
         }
 
         public void OnLowActionAEnter()
         {
-            Debug.Log("low A en");
+            //Debug.Log("low A en");
         }
 
         public void OnLowActionAExit()
         {
-            Debug.Log("low A ex");
+            //Debug.Log("low A ex");
         }
 
         public void OnLowActionBEnter()
         {
-            Debug.Log("low B en");
+            //Debug.Log("low B en");
         }
 
         public void OnLowActionBExit()
         {
-            Debug.Log("low  B ex");
+            //Debug.Log("low  B ex");
         }
 
         public void OnSprintEnter()

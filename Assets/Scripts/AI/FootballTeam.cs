@@ -211,8 +211,8 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
             agent.layer = layerToSet;
-          
-            var agentComponent = agent.GetComponent<IFootballAgent>();
+
+            var agentComponent = agent.GetComponent<GenericAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -227,6 +227,7 @@ public class FootballTeam : MonoBehaviour
                 }
             };
             agentComponent.InitAISystems(this,PlayerType.Defender, index);
+            agentComponent.AssignTeamMaterial(TeamFlag);
             FootballAgents.Insert(index, agentComponent);
             homePositions_.Insert(index, currentFormation.DefensePosition[i]);
             index++;
@@ -237,7 +238,7 @@ public class FootballTeam : MonoBehaviour
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
           
             agent.layer = layerToSet;
-            var agentComponent = agent.GetComponent<IFootballAgent>();
+            var agentComponent = agent.GetComponent<GenericAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -252,6 +253,7 @@ public class FootballTeam : MonoBehaviour
                 }
             };
             agentComponent.InitAISystems(this, PlayerType.Midfielder, index);
+            agentComponent.AssignTeamMaterial(TeamFlag);
             FootballAgents.Insert(index, agentComponent);
             homePositions_.Insert(index, currentFormation.MidfieldPosition[i]);
             index++;
@@ -261,8 +263,8 @@ public class FootballTeam : MonoBehaviour
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
             agent.layer = layerToSet;
-           
-            var agentComponent = agent.GetComponent<IFootballAgent>();
+
+            var agentComponent = agent.GetComponent<GenericAgent>();
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -278,6 +280,7 @@ public class FootballTeam : MonoBehaviour
                 }
             };
             agentComponent.InitAISystems(this, PlayerType.Forward, index);
+            agentComponent.AssignTeamMaterial(TeamFlag);
             FootballAgents.Insert(index, agentComponent);
             homePositions_.Insert(index, currentFormation.ForwardPosition[i]);
             index++;

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7381816792006279900}
   - component: {fileID: 4476250375051655483}
-  - component: {fileID: 1688689670626690269}
   - component: {fileID: 4173365972393902170}
   - component: {fileID: 7119296889028265957}
   - component: {fileID: 3294158761605411476}
@@ -48,51 +47,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1735108021080809503}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1688689670626690269
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1735108021080809503}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: f4564e1330562b94d9403738d95eaef6, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &4173365972393902170
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -159,8 +113,8 @@ MonoBehaviour:
   focusPointTransform_: {fileID: 8046176244359863716}
   isDebugMode_: 0
   playerIndicator: {fileID: 2175765187691484131}
-  redMaterial: {fileID: 0}
-  blueMaterial: {fileID: 0}
+  redTeamMaterial: {fileID: 2100000, guid: 24de6fecdc130c44abf603b0ede1872f, type: 2}
+  blueTeamMaterial: {fileID: 2100000, guid: 5785205bc44bb1c448ac1ccfaec4ba6b, type: 2}
   groundMask_:
     serializedVersion: 2
     m_Bits: 128
