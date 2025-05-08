@@ -1,5 +1,4 @@
-﻿
-using BT_Implementation;
+﻿using BT_Implementation;
 using Player.Controller.States;
 using System;
 using System.Collections;
@@ -49,6 +48,7 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     private bool isHumanControlled = false;
     private int currentBallAcqusitionStamina_;
 
+    public bool IsHumanControlled => isHumanControlled;
 
     private bool enableAI = true;
 
@@ -293,8 +293,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
         }
         
         return shootablePositions.Count;
-
-
     }
 
     public void DisableAIForATime(float time)
@@ -304,7 +302,6 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
 
      private IEnumerator DisableAIForATimeRoutine(float time)
     {
-
         enableAI = false;
         var prevMaxVel = rigidbody_.maxLinearVelocity;
         rigidbody_.maxLinearVelocity = 1;

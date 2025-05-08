@@ -52,7 +52,6 @@ public interface IFootballAgent
 
     public Vector3 WorldMousePosition {  get; }
 
-
     public void SetState(IPlayerState state);
 
     public void ChangeToGhostLayer(float time);

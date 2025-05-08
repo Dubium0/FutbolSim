@@ -45,10 +45,10 @@ public class FootballerAnimator : MonoBehaviour
 
     private void Update()
     {
-        if (isShooting)
+        if (isShooting || genericAgent == null)
             return;
 
-        float speed = genericAgent != null ? genericAgent.MovementVector.magnitude : 0f;
+        float speed = genericAgent.Rigidbody.linearVelocity.magnitude;
 
         if (speed > runSpeedThreshold)
         {
@@ -71,7 +71,6 @@ public class FootballerAnimator : MonoBehaviour
     private IEnumerator ShootRoutine()
     {
         isShooting = true;
-        //set speed to 10
         animator.speed = 3f;
         animator.Play(shootAnimation);
         yield return new WaitForSeconds(GetAnimationClipLength(shootAnimation));

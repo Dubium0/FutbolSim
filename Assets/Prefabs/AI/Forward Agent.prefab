@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 975420319031375217}
   - component: {fileID: 6586883101533531915}
   m_Layer: 0
-  m_Name: fb@Running
+  m_Name: forward_fb@Running
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

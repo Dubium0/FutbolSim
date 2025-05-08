@@ -883,7 +883,7 @@ GameObject:
   - component: {fileID: 3911687087794164446}
   - component: {fileID: 6965158200228825252}
   m_Layer: 0
-  m_Name: fb@Running
+  m_Name: defender_fb@Running
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
