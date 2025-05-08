@@ -45,6 +45,7 @@ public class FootballTeam : MonoBehaviour
     public IFootballAgent ClosestPlayerToBall { get { return closestPlayerToBall_; } }
 
     private IFootballAgent playerControlledAgent = null;
+    private List<int> playerIndices_ = new List<int>();
 
     private IFootballAgent currentBallOwnerTeamMate = null;
 
@@ -54,6 +55,30 @@ public class FootballTeam : MonoBehaviour
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
     
     private bool isOnStart = true;
+
+    public void SetPlayerIndices(List<int> indices)
+    {
+        // Debug.Log($"[Team Setup] SetPlayerIndices called with {indices.Count} indices for {TeamFlag} team");
+        if (indices == null || indices.Count == 0)
+        {
+            Debug.LogError("[Team Setup] SetPlayerIndices received null or empty indices list!");
+            return;
+        }
+
+        playerIndices_ = indices;
+        // Assign player indices to all agents in the team
+        for (int i = 0; i < FootballAgents.Count; i++)
+        {
+            if (FootballAgents[i] is GenericAgent agent)
+            {
+                // Simply use the first index for all agents
+                int playerIndex = indices[0];
+                // Debug.Log($"[Team Setup] Setting player index {playerIndex} for {TeamFlag} team agent {i}");
+                agent.SetPlayerIndex(playerIndex);
+            }
+        }
+    }
+
     private void Awake()
     {
         currentFormation = StartFormation;

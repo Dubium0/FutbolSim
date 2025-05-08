@@ -12,5 +12,5 @@ EditorBuildSettings:
     path: Assets/Scenes/GoalkeeperTest.unity
     guid: 33b2028ec9340fa43aeb7681e3681d44
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 24a9c3e56e3dd3a4eb4e1785fa652de4, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 16bf1eb789e02e84e970512bf1162fa5, type: 3}
   m_UseUCBPForAssetBundles: 0
