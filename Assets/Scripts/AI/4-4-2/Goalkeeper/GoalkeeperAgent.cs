@@ -116,11 +116,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         btRoot_.ConstructBT();
 
         isInitialized_ = true;
-        SetAsAIControlled();
-
-   
-        GetComponent<MeshRenderer>().material.color =  TeamFlag == TeamFlag.Red ? Color.red : Color.blue;
-  
+        SetAsAIControlled();  
 
     }
 

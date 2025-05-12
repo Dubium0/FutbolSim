@@ -55,8 +55,10 @@ public class GameManager : MonoBehaviour
         BlueFootballTeam.enabled = false;
     }
 
-    public void StartGame(bool isBothTeamsControlled, TeamFlag teamFlag = TeamFlag.Blue)
+    public void StartGame(bool isBothTeamsControlled, TeamFlag teamFlag = TeamFlag.Blue, Dictionary<TeamFlag, List<int>> teamPlayerIndices = null)
     {
+        Debug.Log($"[Game Start] Starting game with isBothTeamsControlled={isBothTeamsControlled}, teamFlag={teamFlag}");
+        
         bool isRedControlled = teamFlag == TeamFlag.Red;
         RedFootballTeam.enabled = true;
         BlueFootballTeam.enabled = true;
@@ -66,11 +68,37 @@ public class GameManager : MonoBehaviour
         {   
             RedFootballTeam.isHumanControllable = isRedControlled;
             BlueFootballTeam.isHumanControllable = !isRedControlled;
+            Debug.Log($"[Team Control] Red Team human controlled: {isRedControlled}, Blue Team human controlled: {!isRedControlled}");
         }
         else
         {
             RedFootballTeam.isHumanControllable = true;
             BlueFootballTeam.isHumanControllable = true;
+            Debug.Log("[Team Control] Both teams are human controlled");
+        }
+
+        // Get controller types and input map state from SelectSideManager
+        var selectSideManager = FindObjectOfType<SelectSideManager>();
+        if (selectSideManager != null)
+        {
+            var controllerTypes = selectSideManager.GetPlayerControllerTypes();
+            bool isInputMapSwapped = selectSideManager.IsInputMapSwapped();
+            Debug.Log($"[Controller Types] Got controller types: {string.Join(", ", controllerTypes)}");
+            Debug.Log($"[Input Map] Input map swapped: {isInputMapSwapped}");
+            
+            // Set indices based on input map swap state
+            List<int> redIndices = new List<int> { isInputMapSwapped ? 1 : 0 };
+            List<int> blueIndices = new List<int> { isInputMapSwapped ? 0 : 1 };
+            
+            Debug.Log($"[Team Assignment] Setting team indices - Red Team: Player {redIndices[0]}, Blue Team: Player {blueIndices[0]}");
+            RedFootballTeam.SetPlayerIndices(redIndices);
+            BlueFootballTeam.SetPlayerIndices(blueIndices);
+        }
+        else
+        {
+            Debug.LogWarning("[Team Assignment] SelectSideManager not found, using default player indices");
+            RedFootballTeam.SetPlayerIndices(new List<int> { 0 });
+            BlueFootballTeam.SetPlayerIndices(new List<int> { 1 });
         }
     }
 

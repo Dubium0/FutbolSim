@@ -55,6 +55,8 @@ MonoBehaviour:
   MidfieldAgentPrefab: {fileID: 1735108021080809503, guid: a8bef7db305a1894ea71b959f9ebaefe, type: 3}
   ForwardAgentPrefab: {fileID: 1735108021080809503, guid: 632dc83e536d3634d95902500cf422d9, type: 3}
   GoalKeeperAgentPrefab: {fileID: 4035693329678699024, guid: b8f00d08f94386f49bd1a4a1bd685168, type: 3}
+  redMaterial: {fileID: 2100000, guid: 24de6fecdc130c44abf603b0ede1872f, type: 2}
+  blueMaterial: {fileID: 2100000, guid: 5785205bc44bb1c448ac1ccfaec4ba6b, type: 2}
 --- !u!1001 &6325326654481593898
 PrefabInstance:
   m_ObjectHideFlags: 0
