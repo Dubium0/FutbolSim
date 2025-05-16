@@ -1,5 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+
+public struct GameStartConfig
+{
+    public int homePlayerCount;
+    public int awayPlayerCount;
+    public bool isOnline;
+    public ulong clientId;
+}
 
 public enum GameState
 {
@@ -10,7 +19,7 @@ public enum GameState
     Draw
 }
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public GameState state = GameState.Start;
     
@@ -22,11 +31,14 @@ public class GameManager : MonoBehaviour
     
     public Transform BlueGoalPosition;
     public Bounds BlueGoalBounds;
-    
-    public FootballTeam RedFootballTeam;
-    public FootballTeam BlueFootballTeam;
+
+    public FootballTeam homeFootballTeam;
+    public FootballTeam awayFootballTeam;
 
     public static GameManager Instance;
+
+    private EGameState state_;
+    public EGameState GameState {  get { return state_; } }
 
     private void OnValidate()
     {
@@ -36,71 +48,117 @@ public class GameManager : MonoBehaviour
     }
     private void Awake()
     {
+        if(IsClient) Destroy(gameObject);
+
         if (Instance != null && Instance != this)
         {
-
-            Destroy(this);
+            Destroy(gameObject);
 
         }
         else
         {
             Instance = this;
+            state_ = EGameState.NotStarted;
         }
     }
-    
     private void Start()
     {
-        state = GameState.Start;
-        RedFootballTeam.enabled = false;
-        BlueFootballTeam.enabled = false;
+        //GameStartConfig config = new GameStartConfig();
+        //config.awayPlayerCount = 0;
+        //config.homePlayerCount = 1;
+        //
+        //
+        //StartGame(config);
     }
-
-    public void StartGame(bool isBothTeamsControlled, TeamFlag teamFlag = TeamFlag.Blue, Dictionary<TeamFlag, List<int>> teamPlayerIndices = null)
-    {
-        Debug.Log($"[Game Start] Starting game with isBothTeamsControlled={isBothTeamsControlled}, teamFlag={teamFlag}");
-        
-        bool isRedControlled = teamFlag == TeamFlag.Red;
-        RedFootballTeam.enabled = true;
-        BlueFootballTeam.enabled = true;
-        state = GameState.Playing;
     
-        if (!isBothTeamsControlled)
-        {   
-            RedFootballTeam.isHumanControllable = isRedControlled;
-            BlueFootballTeam.isHumanControllable = !isRedControlled;
-            Debug.Log($"[Team Control] Red Team human controlled: {isRedControlled}, Blue Team human controlled: {!isRedControlled}");
-        }
-        else
+    public void StartGame(GameStartConfig config)
+    {
+        if (config.isOnline)
         {
-            RedFootballTeam.isHumanControllable = true;
-            BlueFootballTeam.isHumanControllable = true;
-            Debug.Log("[Team Control] Both teams are human controlled");
+            awayFootballTeam.init(true, false, config.clientId);
+            homeFootballTeam.init(true, true, NetworkManager.ServerClientId);
+            state_ = EGameState.Running;
+            return;
         }
 
-        // Get controller types and input map state from SelectSideManager
-        var selectSideManager = FindObjectOfType<SelectSideManager>();
-        if (selectSideManager != null)
+        if (config.homePlayerCount > 0)
         {
-            var controllerTypes = selectSideManager.GetPlayerControllerTypes();
-            bool isInputMapSwapped = selectSideManager.IsInputMapSwapped();
-            Debug.Log($"[Controller Types] Got controller types: {string.Join(", ", controllerTypes)}");
-            Debug.Log($"[Input Map] Input map swapped: {isInputMapSwapped}");
-            
-            // Set indices based on input map swap state
-            List<int> redIndices = new List<int> { isInputMapSwapped ? 1 : 0 };
-            List<int> blueIndices = new List<int> { isInputMapSwapped ? 0 : 1 };
-            
-            Debug.Log($"[Team Assignment] Setting team indices - Red Team: Player {redIndices[0]}, Blue Team: Player {blueIndices[0]}");
-            RedFootballTeam.SetPlayerIndices(redIndices);
-            BlueFootballTeam.SetPlayerIndices(blueIndices);
+
+            homeFootballTeam.init(true, true);
         }
         else
         {
-            Debug.LogWarning("[Team Assignment] SelectSideManager not found, using default player indices");
-            RedFootballTeam.SetPlayerIndices(new List<int> { 0 });
-            BlueFootballTeam.SetPlayerIndices(new List<int> { 1 });
+            homeFootballTeam.init(false, true);
         }
+        if (config.awayPlayerCount > 0)
+        {
+            awayFootballTeam.init(true, false);
+        }
+        else
+        {
+            awayFootballTeam.init(false, false);
+        }
+        state_ = EGameState.Running;
     }
+    // probably temporary
+    public void PauseGame()
+    {
+        state_ = EGameState.Freeze;
+        Time.timeScale = 0;
+    }
+    public void ResumeGame()
+    {
+        state_ = EGameState.Running;
+        Time.timeScale = 1;
+    }
+    
+
+   // public void StartGame()
+   // {
+   //     Debug.Log($"[Game Start] Starting game with isBothTeamsControlled={isBothTeamsControlled}, teamFlag={teamFlag}");
+   //     
+   //     bool isRedControlled = teamFlag == TeamFlag.Red;
+   //     RedFootballTeam.enabled = true;
+   //     BlueFootballTeam.enabled = true;
+   //     state = GameState.Playing;
+   // 
+   //     if (!isBothTeamsControlled)
+   //     {   
+   //         RedFootballTeam.isHumanControllable = isRedControlled;
+   //         BlueFootballTeam.isHumanControllable = !isRedControlled;
+   //         Debug.Log($"[Team Control] Red Team human controlled: {isRedControlled}, Blue Team human controlled: {!isRedControlled}");
+   //     }
+   //     else
+   //     {
+   //         RedFootballTeam.isHumanControllable = true;
+   //         BlueFootballTeam.isHumanControllable = true;
+   //         Debug.Log("[Team Control] Both teams are human controlled");
+   //     }
+//
+   //     // Get controller types and input map state from SelectSideManager
+   //     var selectSideManager = FindObjectOfType<SelectSideManager>();
+   //     if (selectSideManager != null)
+   //     {
+   //         var controllerTypes = selectSideManager.GetPlayerControllerTypes();
+   //         bool isInputMapSwapped = selectSideManager.IsInputMapSwapped();
+   //         Debug.Log($"[Controller Types] Got controller types: {string.Join(", ", controllerTypes)}");
+   //         Debug.Log($"[Input Map] Input map swapped: {isInputMapSwapped}");
+   //         
+   //         // Set indices based on input map swap state
+   //         List<int> redIndices = new List<int> { isInputMapSwapped ? 1 : 0 };
+   //         List<int> blueIndices = new List<int> { isInputMapSwapped ? 0 : 1 };
+   //         
+   //         Debug.Log($"[Team Assignment] Setting team indices - Red Team: Player {redIndices[0]}, Blue Team: Player {blueIndices[0]}");
+   //         RedFootballTeam.SetPlayerIndices(redIndices);
+   //         BlueFootballTeam.SetPlayerIndices(blueIndices);
+   //     }
+   //     else
+   //     {
+   //         Debug.LogWarning("[Team Assignment] SelectSideManager not found, using default player indices");
+   //         RedFootballTeam.SetPlayerIndices(new List<int> { 0 });
+   //         BlueFootballTeam.SetPlayerIndices(new List<int> { 1 });
+   //     }
+   // }
 
 
     public Vector3 GetGoalPositionHome(TeamFlag teamFlag)

@@ -2,6 +2,7 @@
 using Player.Controller;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ public enum PicthZone
 
 [RequireComponent(typeof(Rigidbody),typeof(Collider))]
 
-public class Football : MonoBehaviour
+public class Football : NetworkBehaviour
 {
     [SerializeField]
     private float playerCheckRadius_ = 2;
@@ -54,6 +55,7 @@ public class Football : MonoBehaviour
     
     private void Awake()
     {
+        
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -61,6 +63,7 @@ public class Football : MonoBehaviour
         else
         {
             Instance = this;
+
         }
 
         rigidbody_ = GetComponent<Rigidbody>();
@@ -70,6 +73,7 @@ public class Football : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (IsClient) return;
         CheckStruggle();
         CheckPlayerCollision();
         
@@ -222,6 +226,7 @@ public class Football : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
+        if (IsClient) return;
         if (other.CompareTag("RedZone"))
         {
             pitchZone_ = PicthZone.RedZone;
