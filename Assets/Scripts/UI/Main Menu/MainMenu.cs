@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Netcode.Transports.Facepunch;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -100,13 +101,14 @@ public class MainMenu : MonoBehaviour
     public void OnHostButtonPressed()
     {
 
-        NetworkManager.Singleton.StartServer();
+        SteamNetworkManager.Instance.StartHost(2);
+        Debug.Log("In host");
         NetworkManager.Singleton.SceneManager.LoadScene("Networked Player Vs Player",LoadSceneMode.Single);
     }
     public void OnConnectButtonPressed()
     {
-
-        NetworkManager.Singleton.StartClient();
+        var id =  NetworkManager.Singleton.GetComponent<FacepunchTransport>().targetSteamId;
+        SteamNetworkManager.Instance.StartClient(id );
        
     }
 

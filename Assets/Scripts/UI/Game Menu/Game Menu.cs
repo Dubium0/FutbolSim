@@ -1,3 +1,4 @@
+using Netcode.Transports.Facepunch;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,7 +16,9 @@ public class GameMenu : NetworkBehaviour
 
     private void Awake()
     {
-        if (NetworkManager.Singleton.IsClient)
+        var fp= NetworkManager.Singleton.GetComponent<FacepunchTransport>();
+       
+        if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
             Debug.Log("Hello from client");
             infoText.text = "Waiting for host to start the game";
@@ -31,7 +34,7 @@ public class GameMenu : NetworkBehaviour
     [Rpc(SendTo.ClientsAndHost,RequireOwnership = false)]
     private void ClientInformGameIsStartedRpc()
     {
-        if (NetworkManager.Singleton.IsClient)
+        if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
         {
             gameMenuCanvas.gameObject.SetActive(false);
 

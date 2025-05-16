@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Netcode.Transports.Facepunch;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -31,6 +33,12 @@ public class NetworkManagerCLI : MonoBehaviour
                     break;
             }
         }
+        if (args.TryGetValue("-steamHostId", out string id))
+        {
+           var  damn = netManager.GetComponent<FacepunchTransport>();
+           damn.targetSteamId = Convert.ToUInt64(id);
+        }
+
     }
 
     private Dictionary<string, string> GetCommandlineArgs()
