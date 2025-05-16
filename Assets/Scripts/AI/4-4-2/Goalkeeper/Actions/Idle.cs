@@ -2,7 +2,6 @@ using BT_Implementation;
 using BT_Implementation.Leaf;
 using UnityEngine;
 
-using UnityEngine;
 
 public class Idle : ActionNode
 {

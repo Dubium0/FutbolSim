@@ -125,7 +125,7 @@ public class GoalkeeperAgent : NetworkBehaviour, IFootballAgent
 
     private void AdjustBallPosition()
     {
-        if ( Football.Instance.CurrentOwnerPlayer == this )
+        if ( Football.Instance.CurrentOwnerPlayer == (IFootballAgent)this )
         {
             var targetPosition = FocusPointTransform.position;
             targetPosition.y = Football.Instance.RigidBody.position.y;

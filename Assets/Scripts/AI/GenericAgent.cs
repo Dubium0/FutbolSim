@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -53,8 +53,6 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
 
     private bool enableAI = true;
 
-    private bool isClientOwnded = false;
-    private bool isNetworkEnabled = false;
     private bool isHumanControlled { get { return isHumanControlledSync.Value; } }
     [SerializeField]
     private GameObject playerIndicator;
@@ -139,7 +137,7 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
    
     private void AdjustBallPosition()
     {
-        if ( Football.Instance.CurrentOwnerPlayer == this )
+        if ( Football.Instance.CurrentOwnerPlayer ==   (IFootballAgent)this)
         {
             var targetPosition = FocusPointTransform.position;
             targetPosition.y = Football.Instance.RigidBody.position.y;
