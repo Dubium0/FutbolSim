@@ -1,5 +1,4 @@
-﻿
-
+﻿using Player.Controller.States;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Netcode;
@@ -23,9 +22,7 @@ public enum FormationPhase
 }
 public class FootballTeam : NetworkBehaviour
 {
-
-    private bool isHumanControllable = false;
-
+    public bool isHumanControllable = false;
     public TeamFlag TeamFlag;
     public List<IFootballAgent> FootballAgents = new(10);
     public IFootballAgent GoalKeeper;
@@ -50,6 +47,7 @@ public class FootballTeam : NetworkBehaviour
     public IFootballAgent ClosestPlayerToBall { get { return closestPlayerToBall_; } }
 
     private IFootballAgent playerControlledAgent = null;
+    private List<int> playerIndices_ = new List<int>();
 
     private IFootballAgent currentBallOwnerTeamMate = null;
 
@@ -57,12 +55,36 @@ public class FootballTeam : NetworkBehaviour
 
     private FormationPhase currentFormationPhase;
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
+    
     private bool isOnStart = true;
 
     private bool isInitialized = false;
 
-    private NetworkObject networkObject;
+    private NetworkObject ;
     private bool isInitWithOwner = false;
+    public void SetPlayerIndices(List<int> indices)
+    {
+        // Debug.Log($"[Team Setup] SetPlayerIndices called with {indices.Count} indices for {TeamFlag} team");
+        if (indices == null || indices.Count == 0)
+        {
+            Debug.LogError("[Team Setup] SetPlayerIndices received null or empty indices list!");
+            return;
+        }
+
+        playerIndices_ = indices;
+        // Assign player indices to all agents in the team
+        for (int i = 0; i < FootballAgents.Count; i++)
+        {
+            if (FootballAgents[i] is GenericAgent agent)
+            {
+                // Simply use the first index for all agents
+                int playerIndex = indices[0];
+                // Debug.Log($"[Team Setup] Setting player index {playerIndex} for {TeamFlag} team agent {i}");
+                agent.SetPlayerIndex(playerIndex);
+            }
+        }
+    }
+
     private void Awake()
     {
         networkObject = GetComponent<NetworkObject>();
@@ -285,7 +307,8 @@ public class FootballTeam : NetworkBehaviour
         {
             goalkeeperComponent.init();
         }
-        goalkeeperComponent.OnBallPossesionCallback = agent =>
+      
+        goalkeeperComponent.OnBallPossesionCallback = agent => 
         {
             currentBallOwnerTeamMate = agent;
             if (isHumanControllable)
@@ -308,7 +331,7 @@ public class FootballTeam : NetworkBehaviour
             if (IsServer)  agent.GetComponent<NetworkObject>().Spawn();
             agent.layer = layerToSet;
           
-            var agentComponent = agent.GetComponent<IFootballAgent>();
+            var agentComponent = agent.GetComponent<GenericAgent>();
            
 
             if (isInitWithOwner)
@@ -334,6 +357,7 @@ public class FootballTeam : NetworkBehaviour
                 }
             };
             agentComponent.InitAISystems(this,PlayerType.Defender, index);
+            agentComponent.AssignTeamMaterial(TeamFlag);
             FootballAgents.Insert(index, agentComponent);
             homePositions_.Insert(index, currentFormation.DefensePosition[i]);
             index++;
@@ -344,7 +368,7 @@ public class FootballTeam : NetworkBehaviour
             GameObject agent = Instantiate(MidfieldAgentPrefab, currentFormation.MidfieldPosition[i].position, currentFormation.MidfieldPosition[i].rotation);
           
             agent.layer = layerToSet;
-            var agentComponent = agent.GetComponent<IFootballAgent>();
+            var agentComponent = agent.GetComponent<GenericAgent>();
             if (IsServer) agent.GetComponent<NetworkObject>().Spawn();
 
             if (isInitWithOwner)
@@ -370,6 +394,7 @@ public class FootballTeam : NetworkBehaviour
                 }
             };
             agentComponent.InitAISystems(this, PlayerType.Midfielder, index);
+            agentComponent.AssignTeamMaterial(TeamFlag);
             FootballAgents.Insert(index, agentComponent);
             homePositions_.Insert(index, currentFormation.MidfieldPosition[i]);
             index++;
@@ -381,7 +406,7 @@ public class FootballTeam : NetworkBehaviour
             if (IsServer) agent.GetComponent<NetworkObject>().Spawn();
             agent.layer = layerToSet;
            
-            var agentComponent = agent.GetComponent<IFootballAgent>();
+            var agentComponent = agent.GetComponent<GenericAgent>();
 
             if (isInitWithOwner)
             {
@@ -407,6 +432,7 @@ public class FootballTeam : NetworkBehaviour
                 }
             };
             agentComponent.InitAISystems(this, PlayerType.Forward, index);
+            agentComponent.AssignTeamMaterial(TeamFlag);
             FootballAgents.Insert(index, agentComponent);
             homePositions_.Insert(index, currentFormation.ForwardPosition[i]);
             index++;
@@ -467,7 +493,5 @@ public class FootballTeam : NetworkBehaviour
 
     public void ResetToFormation()
     {
-        
-        
     }
 }

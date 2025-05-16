@@ -1,5 +1,4 @@
-﻿
-using BT_Implementation;
+﻿using BT_Implementation;
 using Player.Controller.States;
 using System;
 using System.Collections;
@@ -49,7 +48,9 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
     private BTRoot btRoot_;
 
     private int currentBallAcqusitionStamina_;
+    private int playerIndex_ = -1; // -1 means not assigned to a player
 
+    public bool IsHumanControlled => isHumanControlled;
 
     private bool enableAI = true;
 
@@ -65,6 +66,9 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         NetworkVariableWritePermission.Owner);
 
     private NetworkObject networkObject;
+    [Header("Team Materials")]
+    [SerializeField] private Material redTeamMaterial;
+    [SerializeField] private Material blueTeamMaterial;
 
     private void Awake()
     {
@@ -160,6 +164,7 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
     {
         playerType_ = playerType;
         teamFlag_ = team.TeamFlag;
+
         var blackboardFactory = new FootballAiBlackboardFactory(this,team,index);
 
         switch (playerType_)
@@ -332,6 +337,15 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         if (IsServer) OffPlayerIndicatorRpc();
         isHumanControlledSync.Value = false;
     }
+    public void SetPlayerIndex(int index)
+    {
+        // Unbind existing actions first
+        UnbindActions();
+        Debug.Log(index);
+        playerIndex_ = index;
+        SetActions();
+        BindActions();
+    }
     private void SetActions()
     {
 
@@ -445,7 +459,45 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
 
             lowActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnLowActionBEnter(); };
             lowActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnLowActionBExit(); };
+  //     // Create player-specific action maps
+  //     string playerPrefix = playerIndex_ >= 0 ? $"Player{playerIndex_ + 1}/" : "";
+  //     Debug.Log(playerPrefix);
+  //     moveAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Move");
+  //     lookAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Look");
+  //     lowActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionA");
+  //     lowActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionB");
+  //     highActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionA");
+  //     highActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionB");
+  //     sprintAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Sprint");
 
+  //     // Log warning if actions are not found
+  //     if (moveAction_ == null || lookAction_ == null || lowActionA_ == null || 
+  //         lowActionB_ == null || highActionA_ == null || highActionB_ == null || 
+  //         sprintAction_ == null)
+  //     {
+  //         Debug.LogWarning($"Some input actions not found for player {playerIndex_ + 1}. Make sure the input actions asset is properly configured.");
+  //     }
+  // }
+  // private void BindActions()
+  // {
+  //     // Only bind actions if they exist
+  //     if (lowActionA_ != null)
+  //     {
+  //         lowActionA_.performed += OnLowActionAPerformed;
+  //         lowActionA_.canceled += OnLowActionACanceled;
+  //     }
+
+  //     if (lowActionB_ != null)
+  //     {
+  //         lowActionB_.performed += OnLowActionBPerformed;
+  //         lowActionB_.canceled += OnLowActionBCanceled;
+  //     }
+
+        //if (highActionA_ != null)
+        //{
+        //    highActionA_.performed += OnHighActionAPerformed;
+        //    highActionA_.canceled += OnHighActionACanceled;
+        //}
 
             highActionA_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnHighActionAEnter(); };
             highActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnHighActionAExit(); };
@@ -456,6 +508,140 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
             sprintAction_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnSprintEnter(); };
             sprintAction_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnSprintExit(); };
         }
+        //if (highActionB_ != null)
+        //{
+        //    highActionB_.performed += OnHighActionBPerformed;
+        //    highActionB_.canceled += OnHighActionBCanceled;
+        //}
+//
+        //if (sprintAction_ != null)
+        //{
+        //    sprintAction_.performed += OnSprintPerformed;
+        //    sprintAction_.canceled += OnSprintCanceled;
+        //}
+    }
+
+    private void UnbindActions()
+    {
+        if (lowActionA_ != null)
+        {
+            lowActionA_.performed -= OnLowActionAPerformed;
+            lowActionA_.canceled -= OnLowActionACanceled;
+        }
+
+        if (lowActionB_ != null)
+        {
+            lowActionB_.performed -= OnLowActionBPerformed;
+            lowActionB_.canceled -= OnLowActionBCanceled;
+        }
+
+        if (highActionA_ != null)
+        {
+            highActionA_.performed -= OnHighActionAPerformed;
+            highActionA_.canceled -= OnHighActionACanceled;
+        }
+
+        if (highActionB_ != null)
+        {
+            highActionB_.performed -= OnHighActionBPerformed;
+            highActionB_.canceled -= OnHighActionBCanceled;
+        }
+
+        if (sprintAction_ != null)
+        {
+            sprintAction_.performed -= OnSprintPerformed;
+            sprintAction_.canceled -= OnSprintCanceled;
+        }
+    }
+
+    private void OnLowActionAPerformed(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnLowActionAEnter();
+        }
+        FootballerAnimator footballerAnimator = GetComponent<FootballerAnimator>();
+        if (footballerAnimator != null && currentState_ is DribblingFutbollerState)
+        {
+            footballerAnimator.PlayShootAnimation();
+        }
+    }
+
+    private void OnLowActionACanceled(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnLowActionAExit();
+        }
+    }
+
+    private void OnLowActionBPerformed(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnLowActionBEnter();
+        }
+    }
+
+    private void OnLowActionBCanceled(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnLowActionBExit();
+        }
+    }
+
+    private void OnHighActionAPerformed(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnHighActionAEnter();
+        }
+    }
+
+    private void OnHighActionACanceled(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnHighActionAExit();
+        }
+    }
+
+    private void OnHighActionBPerformed(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnHighActionBEnter();
+        }
+    }
+
+    private void OnHighActionBCanceled(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnHighActionBExit();
+        }
+    }
+
+    private void OnSprintPerformed(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnSprintEnter();
+        }
+    }
+
+    private void OnSprintCanceled(InputAction.CallbackContext context)
+    {
+        if (isHumanControlled)
+        {
+            currentState_.OnSprintExit();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        UnbindActions();
     }
 
     public void ChangeToGhostLayer(float time)
@@ -497,8 +683,6 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         }
         
         return shootablePositions.Count;
-
-
     }
 
     public void DisableAIForATime(float time)
@@ -508,7 +692,6 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
 
      private IEnumerator DisableAIForATimeRoutine(float time)
     {
-
         enableAI = false;
         var prevMaxVel = rigidbody_.maxLinearVelocity;
         rigidbody_.maxLinearVelocity = 1;
@@ -518,6 +701,27 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         gameObject.layer = prevLayer;
         rigidbody_.maxLinearVelocity = prevMaxVel;
         enableAI = true;
+    }
+
+    public void AssignTeamMaterial(TeamFlag tf)
+    {
+        GameObject child1 = transform.GetChild(0).gameObject;
+        GameObject child2 = child1.transform.GetChild(0).gameObject;
+        GameObject child3 = child2.transform.GetChild(0).gameObject;
+
+        SkinnedMeshRenderer agentRenderer = child3.GetComponent<SkinnedMeshRenderer>();
+        if (agentRenderer != null)
+        {
+            Material teamMaterial = tf == TeamFlag.Red ? redTeamMaterial : blueTeamMaterial;
+
+            Material[] currentMaterials = agentRenderer.materials;
+            currentMaterials[4] = teamMaterial; // Only change the first material  
+            agentRenderer.materials = currentMaterials;
+        }
+        else
+        {
+            Debug.LogError($"SkinnedMeshRenderer component not found in children of {gameObject.name}");
+        }
     }
 
 }
