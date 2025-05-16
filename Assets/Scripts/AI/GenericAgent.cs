@@ -221,7 +221,7 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     {
         // Unbind existing actions first
         UnbindActions();
-        
+        Debug.Log(index);
         playerIndex_ = index;
         SetActions();
         BindActions();
@@ -230,6 +230,7 @@ public class GenericAgent : MonoBehaviour, IFootballAgent
     {
         // Create player-specific action maps
         string playerPrefix = playerIndex_ >= 0 ? $"Player{playerIndex_ + 1}/" : "";
+        Debug.Log(playerPrefix);
         moveAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Move");
         lookAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Look");
         lowActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionA");
