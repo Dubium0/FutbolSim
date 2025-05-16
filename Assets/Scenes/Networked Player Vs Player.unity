@@ -1717,6 +1717,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4288289837382306099, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
   m_PrefabInstance: {fileID: 1036160599}
   m_PrefabAsset: {fileID: 0}
+--- !u!134 &1179714089
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance) (Instance)'
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &1385393805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1796,19 +1809,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!134 &1439915248
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 0
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &1470190173
 GameObject:
   m_ObjectHideFlags: 0
@@ -1981,7 +1981,7 @@ PrefabInstance:
     - target: {fileID: 3550028597938208864, guid: 19ffb04b080028043b25d143a3732752, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1439915248}
+      objectReference: {fileID: 1179714089}
     - target: {fileID: 8749789280191893094, guid: 19ffb04b080028043b25d143a3732752, type: 3}
       propertyPath: m_Name
       value: Networked Ball
