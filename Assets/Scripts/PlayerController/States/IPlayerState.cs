@@ -9,7 +9,7 @@ namespace Player.Controller.States
     public void OnExit();
     public void OnFixedUpdate();
 
-        public void HandleTransition();
+    public void HandleTransition();
     public void Move();
 
     public void OnSprintEnter();
