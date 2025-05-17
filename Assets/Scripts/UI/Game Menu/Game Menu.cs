@@ -50,7 +50,7 @@ public class GameMenu : NetworkBehaviour
             if (connectedClientId == null) return;
             ClientInformGameIsStartedRpc();
             GameStartConfig config = new();
-            config.isOnline = true;
+            config.gameMode = GameMode.OnlinePVP;
             config.clientId = (ulong)connectedClientId;
            
             gameMenuCanvas.gameObject.SetActive(false);

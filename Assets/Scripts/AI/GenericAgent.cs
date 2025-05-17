@@ -70,16 +70,17 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
     [SerializeField] private Material redTeamMaterial;
     [SerializeField] private Material blueTeamMaterial;
 
+    [SerializeField] private SkinnedMeshRenderer meshRenderer;
+
     private void Awake()
     {
-        
+
         rigidbody_ = GetComponent<Rigidbody>();
-        networkObject = GetComponent<NetworkObject>();  
+        networkObject = GetComponent<NetworkObject>();
         currentBallAcqusitionStamina_ = agentInfo_.MaxBallAcqusitionStamina;
-        
 
     }
-    public void init(ulong? ownerId = null)
+    public void init(ulong? ownerId = null, int inputIndex = 0)
     {
         if(ownerId != null) { 
             networkObject.ChangeOwnership((ulong)ownerId);
@@ -87,7 +88,7 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
             if(IsServer && IsOwner)
             {
                 Debug.Log("This object is server owned");
-                SetActions();
+                SetActions(inputIndex);
                 BindActions();
             }
             else
@@ -130,7 +131,7 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
     private void FixedUpdate()
     {
         if(IsClient) { return; }
-        if(GameManager.Instance.GameState == EGameState.Running)
+        if(GameManager.Instance.GameState == EGameState.Playing)
         {
 
             TickAISystem();
@@ -189,15 +190,15 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         isInitialized_ = true;
         SetAsAIControlled();
 
-        if (TeamFlag == TeamFlag.Red)
+        if (TeamFlag == TeamFlag.Home)
         {
 
-            GetComponent<MeshRenderer>().material.color = Color.red;
+            meshRenderer.material.color = Color.red;
             if(IsServer) SetColorRedRpc();
         }
         else
         {
-            GetComponent<MeshRenderer>().material.color =  Color.blue;
+            meshRenderer.material.color =  Color.blue;
             if (IsServer)  SetColorBlueRpc();
         }
    
@@ -337,26 +338,19 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         if (IsServer) OffPlayerIndicatorRpc();
         isHumanControlledSync.Value = false;
     }
-    public void SetPlayerIndex(int index)
-    {
-        // Unbind existing actions first
-        UnbindActions();
-        Debug.Log(index);
-        playerIndex_ = index;
-        SetActions();
-        BindActions();
-    }
-    private void SetActions()
+ 
+    private void SetActions(int index = 0)
     {
 
-        moveAction_ = InputSystem.actions.FindAction("Move");
-        lookAction_ = InputSystem.actions.FindAction("Look");
-        lowActionA_ = InputSystem.actions.FindAction("LowActionA");
-        lowActionB_ = InputSystem.actions.FindAction("LowActionB");
-        highActionA_ = InputSystem.actions.FindAction("HighActionA");
-        highActionB_ = InputSystem.actions.FindAction("HighActionB");
-        sprintAction_ = InputSystem.actions.FindAction("Sprint");
-        lookAction_ = InputSystem.actions.FindAction("Look");
+        string playerPrefix = playerIndex_ >= 0 ? $"Player{playerIndex_ + 1}/" : "";
+        Debug.Log(playerPrefix);
+        moveAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Move");
+        lookAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Look");
+        lowActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionA");
+        lowActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionB");
+        highActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionA");
+        highActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionB");
+        sprintAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Sprint");
         
     }
 
@@ -364,49 +358,49 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
 
     private void RequestActionLowAEnterFromServerRpc( )
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnLowActionAEnter(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionAEnter(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionLowAExitFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnLowActionAExit(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionAExit(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionLowBEnterFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnLowActionBEnter(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionBEnter(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionLowBExitFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnLowActionBExit(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionBExit(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionHighAEnterFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnHighActionAEnter(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionAEnter(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionHighAExitFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnHighActionAExit(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionAExit(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionHighBEnterFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnHighActionBEnter(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionBEnter(); }
         Debug.Log("Rpcrequested from server :O");
     }
 
@@ -414,21 +408,21 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
 
     private void RequestActionHighBExitFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnHighActionBExit(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionBExit(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionSprintEnterFromServerRpc()
     {
-        if ( GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnSprintEnter(); }
+        if ( GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnSprintEnter(); }
         Debug.Log("Rpcrequested from server :O");
     }
     [Rpc(SendTo.Server)]
 
     private void RequestActionSprintExitFromServerRpc()
     {
-        if (GameManager.Instance.GameState == EGameState.Running && IsServer) { currentState_.OnSprintExit(); }
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnSprintExit(); }
         Debug.Log("Rpcrequested from server :O");
     }
     private void BindActions()
@@ -454,195 +448,24 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         else
         {
 
-            lowActionA_.performed += context => { if(isHumanControlled && GameManager.Instance.GameState == EGameState.Running)  { currentState_.OnLowActionAEnter(); }};
-            lowActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnLowActionAExit(); };
+            lowActionA_.performed += context => { if(isHumanControlled && GameManager.Instance.GameState == EGameState.Playing)  { currentState_.OnLowActionAEnter(); }};
+            lowActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnLowActionAExit(); };
 
-            lowActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnLowActionBEnter(); };
-            lowActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnLowActionBExit(); };
-  //     // Create player-specific action maps
-  //     string playerPrefix = playerIndex_ >= 0 ? $"Player{playerIndex_ + 1}/" : "";
-  //     Debug.Log(playerPrefix);
-  //     moveAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Move");
-  //     lookAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Look");
-  //     lowActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionA");
-  //     lowActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionB");
-  //     highActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionA");
-  //     highActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionB");
-  //     sprintAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Sprint");
+            lowActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnLowActionBEnter(); };
+            lowActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnLowActionBExit(); };
 
-  //     // Log warning if actions are not found
-  //     if (moveAction_ == null || lookAction_ == null || lowActionA_ == null || 
-  //         lowActionB_ == null || highActionA_ == null || highActionB_ == null || 
-  //         sprintAction_ == null)
-  //     {
-  //         Debug.LogWarning($"Some input actions not found for player {playerIndex_ + 1}. Make sure the input actions asset is properly configured.");
-  //     }
-  // }
-  // private void BindActions()
-  // {
-  //     // Only bind actions if they exist
-  //     if (lowActionA_ != null)
-  //     {
-  //         lowActionA_.performed += OnLowActionAPerformed;
-  //         lowActionA_.canceled += OnLowActionACanceled;
-  //     }
+            highActionA_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionAEnter(); };
+            highActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionAExit(); };
 
-  //     if (lowActionB_ != null)
-  //     {
-  //         lowActionB_.performed += OnLowActionBPerformed;
-  //         lowActionB_.canceled += OnLowActionBCanceled;
-  //     }
+            highActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionBEnter(); };
+            highActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionBExit(); };
 
-        //if (highActionA_ != null)
-        //{
-        //    highActionA_.performed += OnHighActionAPerformed;
-        //    highActionA_.canceled += OnHighActionACanceled;
-        //}
-
-            highActionA_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnHighActionAEnter(); };
-            highActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnHighActionAExit(); };
-
-            highActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnHighActionBEnter(); };
-            highActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnHighActionBExit(); };
-
-            sprintAction_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnSprintEnter(); };
-            sprintAction_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Running) currentState_.OnSprintExit(); };
+            sprintAction_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnSprintEnter(); };
+            sprintAction_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnSprintExit(); };
         }
-        //if (highActionB_ != null)
-        //{
-        //    highActionB_.performed += OnHighActionBPerformed;
-        //    highActionB_.canceled += OnHighActionBCanceled;
-        //}
-//
-        //if (sprintAction_ != null)
-        //{
-        //    sprintAction_.performed += OnSprintPerformed;
-        //    sprintAction_.canceled += OnSprintCanceled;
-        //}
+      
     }
 
-    private void UnbindActions()
-    {
-        if (lowActionA_ != null)
-        {
-            lowActionA_.performed -= OnLowActionAPerformed;
-            lowActionA_.canceled -= OnLowActionACanceled;
-        }
-
-        if (lowActionB_ != null)
-        {
-            lowActionB_.performed -= OnLowActionBPerformed;
-            lowActionB_.canceled -= OnLowActionBCanceled;
-        }
-
-        if (highActionA_ != null)
-        {
-            highActionA_.performed -= OnHighActionAPerformed;
-            highActionA_.canceled -= OnHighActionACanceled;
-        }
-
-        if (highActionB_ != null)
-        {
-            highActionB_.performed -= OnHighActionBPerformed;
-            highActionB_.canceled -= OnHighActionBCanceled;
-        }
-
-        if (sprintAction_ != null)
-        {
-            sprintAction_.performed -= OnSprintPerformed;
-            sprintAction_.canceled -= OnSprintCanceled;
-        }
-    }
-
-    private void OnLowActionAPerformed(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnLowActionAEnter();
-        }
-        FootballerAnimator footballerAnimator = GetComponent<FootballerAnimator>();
-        if (footballerAnimator != null && currentState_ is DribblingFutbollerState)
-        {
-            footballerAnimator.PlayShootAnimation();
-        }
-    }
-
-    private void OnLowActionACanceled(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnLowActionAExit();
-        }
-    }
-
-    private void OnLowActionBPerformed(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnLowActionBEnter();
-        }
-    }
-
-    private void OnLowActionBCanceled(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnLowActionBExit();
-        }
-    }
-
-    private void OnHighActionAPerformed(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnHighActionAEnter();
-        }
-    }
-
-    private void OnHighActionACanceled(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnHighActionAExit();
-        }
-    }
-
-    private void OnHighActionBPerformed(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnHighActionBEnter();
-        }
-    }
-
-    private void OnHighActionBCanceled(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnHighActionBExit();
-        }
-    }
-
-    private void OnSprintPerformed(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnSprintEnter();
-        }
-    }
-
-    private void OnSprintCanceled(InputAction.CallbackContext context)
-    {
-        if (isHumanControlled)
-        {
-            currentState_.OnSprintExit();
-        }
-    }
-
-    private void OnDestroy()
-    {
-        UnbindActions();
-    }
 
     public void ChangeToGhostLayer(float time)
     {
@@ -712,7 +535,7 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         SkinnedMeshRenderer agentRenderer = child3.GetComponent<SkinnedMeshRenderer>();
         if (agentRenderer != null)
         {
-            Material teamMaterial = tf == TeamFlag.Red ? redTeamMaterial : blueTeamMaterial;
+            Material teamMaterial = tf == TeamFlag.Home ? redTeamMaterial : blueTeamMaterial;
 
             Material[] currentMaterials = agentRenderer.materials;
             currentMaterials[4] = teamMaterial; // Only change the first material  

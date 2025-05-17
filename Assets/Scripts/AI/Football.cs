@@ -8,8 +8,8 @@ using UnityEngine;
 
 public enum PicthZone
 {
-    RedZone,
-    BlueZone
+    HomeZone,
+    AwayZone
 }
 
 [RequireComponent(typeof(Rigidbody),typeof(Collider))]
@@ -79,7 +79,7 @@ public class Football : NetworkBehaviour
         
         if(this.transform.position.y < -1)
         {
-            MatchManager.Instance.RestartFromCenter();
+            MatchManager.Instance.RestartFromCenter(TeamFlag.Home);
         }
 
     }
@@ -227,16 +227,16 @@ public class Football : NetworkBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (IsClient) return;
-        if (other.CompareTag("RedZone"))
+        if (other.CompareTag("HomeZone"))
         {
-            pitchZone_ = PicthZone.RedZone;
+            pitchZone_ = PicthZone.HomeZone;
             var pair = other.gameObject.name.Trim().Split(' ');
             int number = -1;
             if (int.TryParse(pair[1], out number)) sectorNumber_ = number;
         }
-        else if (other.CompareTag("BlueZone"))
+        else if (other.CompareTag("AwayZone"))
         {
-            pitchZone_ = PicthZone.BlueZone;
+            pitchZone_ = PicthZone.AwayZone;
             var pair = other.gameObject.name.Trim().Split(' ');
             int number = -1;
             if (int.TryParse(pair[1], out number)) sectorNumber_ = number;
@@ -247,12 +247,12 @@ public class Football : NetworkBehaviour
         }
         else if (other.CompareTag("GoalAway"))
         {
-            MatchManager.Instance.HandleGoal(TeamFlag.Red);
+            MatchManager.Instance.HandleGoal(TeamFlag.Home);
             Debug.Log("Goal Away");
         }
         else if (other.CompareTag("GoalHome"))
         {
-            MatchManager.Instance.HandleGoal(TeamFlag.Blue);
+            MatchManager.Instance.HandleGoal(TeamFlag.Away);
             Debug.Log("Goal Home");
         }
     }

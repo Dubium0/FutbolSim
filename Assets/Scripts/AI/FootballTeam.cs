@@ -8,17 +8,19 @@ using UnityEngine.Android;
 
 public enum TeamFlag
 {
-    Red = 0,
-    Blue = 1,
+    Home = 0,
+    Away = 1,
     None = 2
 }
 
 public enum FormationPhase
 {
-    Defense = 0,
-    Start = 1,
-    Default = 2,
-    Attack = 3
+    AttackStart,
+    DefenseStart,
+
+    Default,
+    Defense,
+    Attack,
 }
 public class FootballTeam : NetworkBehaviour
 {
@@ -30,7 +32,8 @@ public class FootballTeam : NetworkBehaviour
     private List<Transform> homePositions_ = new(11);
 
     public FootballFormation DefenseFormation;
-    public FootballFormation StartFormation;
+    public FootballFormation AttackStartFormation;
+    public FootballFormation DefenseStartFormation;
     public FootballFormation DefaultFormation;
     public FootballFormation AttackFormation;
 
@@ -55,41 +58,47 @@ public class FootballTeam : NetworkBehaviour
 
     private FormationPhase currentFormationPhase;
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
-    
+
+    private NetworkObject networkObject;
     private bool isOnStart = true;
 
     private bool isInitialized = false;
 
-    private NetworkObject ;
+ 
     private bool isInitWithOwner = false;
-    public void SetPlayerIndices(List<int> indices)
-    {
-        // Debug.Log($"[Team Setup] SetPlayerIndices called with {indices.Count} indices for {TeamFlag} team");
-        if (indices == null || indices.Count == 0)
-        {
-            Debug.LogError("[Team Setup] SetPlayerIndices received null or empty indices list!");
-            return;
-        }
-
-        playerIndices_ = indices;
-        // Assign player indices to all agents in the team
-        for (int i = 0; i < FootballAgents.Count; i++)
-        {
-            if (FootballAgents[i] is GenericAgent agent)
-            {
-                // Simply use the first index for all agents
-                int playerIndex = indices[0];
-                // Debug.Log($"[Team Setup] Setting player index {playerIndex} for {TeamFlag} team agent {i}");
-                agent.SetPlayerIndex(playerIndex);
-            }
-        }
-    }
+    //public void SetPlayerIndices(List<int> indices)
+    //{
+    //    if (!isInitialized)
+    //    {
+    //        Debug.Log("[Team Setup] This football team is not yet initialized"); return;
+    //        
+    //    }
+    //    // Debug.Log($"[Team Setup] SetPlayerIndices called with {indices.Count} indices for {TeamFlag} team");
+    //    if (indices == null || indices.Count == 0)
+    //    {
+    //        Debug.LogError("[Team Setup] SetPlayerIndices received null or empty indices list!");
+    //        return;
+    //    }
+//
+    //    playerIndices_ = indices;
+    //    // Assign player indices to all agents in the team
+    //    for (int i = 0; i < FootballAgents.Count; i++)
+    //    {
+    //        if (FootballAgents[i] is GenericAgent agent)
+    //        {
+    //            // Simply use the first index for all agents
+    //            int playerIndex = indices[0];
+    //            // Debug.Log($"[Team Setup] Setting player index {playerIndex} for {TeamFlag} team agent {i}");
+    //            agent.SetPlayerIndex(playerIndex);
+    //        }
+    //    }
+    //}
 
     private void Awake()
     {
         networkObject = GetComponent<NetworkObject>();
     }
-    public void init(bool t_isHumanControlled, bool isHome, ulong? ownerId = null)
+    public void init(bool t_isHumanControlled, bool isHome, ulong? ownerId = null,int t_playerIndices = 0)
     {
       
       
@@ -109,12 +118,13 @@ public class FootballTeam : NetworkBehaviour
                 NotifyClientItIsTheOwnerRpc();
             }
         }
+        Debug.Log("IsClient ? " + IsClient);
         if (IsClient) return;
         isHumanControllable = t_isHumanControlled;
-        currentFormation = StartFormation;
+        currentFormation = isHome ?  AttackStartFormation : DefenseStartFormation;
      
       
-        CreateAgents();
+        CreateAgents(t_playerIndices);
         
 
         isInitialized = true;
@@ -132,7 +142,7 @@ public class FootballTeam : NetworkBehaviour
     private void FixedUpdate()
     {
         if (IsClient) return;
-        if( isInitialized && GameManager.Instance.GameState == EGameState.Running)
+        if( isInitialized && GameManager.Instance.GameState == EGameState.Playing)
         {
 
             SetClosestPlayerToBall(); 
@@ -150,7 +160,7 @@ public class FootballTeam : NetworkBehaviour
             }
             return;
         }
-        if (isInitialized && GameManager.Instance.GameState == EGameState.Running && IsOwner)  CycleToClosestPlayer();
+        if (isInitialized && GameManager.Instance.GameState == EGameState.Playing && IsOwner)  CycleToClosestPlayer();
 
     }
     private void SetClosestPlayerToBall()
@@ -278,7 +288,7 @@ public class FootballTeam : NetworkBehaviour
         UpdateHomePositions();
 
     }
-    private void CreateAgents()
+    private void CreateAgents(int t_playerIndices = 0)
     {
 
         var defCount = currentFormation.DefensePosition.Length;
@@ -288,7 +298,7 @@ public class FootballTeam : NetworkBehaviour
         int index = 0;
 
 
-        int layerToSet = TeamFlag == TeamFlag.Red ? 10 : 9;
+        int layerToSet = TeamFlag == TeamFlag.Home ? 10 : 9;
         
         GameObject goalkeeper = Instantiate(GoalKeeperAgentPrefab, currentFormation.GoalKeeperPosition.position, currentFormation.GoalKeeperPosition.rotation);
         if(IsServer)
@@ -300,12 +310,12 @@ public class FootballTeam : NetworkBehaviour
         var goalkeeperComponent = goalkeeper.GetComponent<IFootballAgent>();
         if (isInitWithOwner)
         {
-            goalkeeperComponent.init(networkObject.OwnerClientId);
+            goalkeeperComponent.init(networkObject.OwnerClientId,t_playerIndices);
 
         }
         else
         {
-            goalkeeperComponent.init();
+            goalkeeperComponent.init(null, t_playerIndices);
         }
       
         goalkeeperComponent.OnBallPossesionCallback = agent => 
@@ -336,12 +346,12 @@ public class FootballTeam : NetworkBehaviour
 
             if (isInitWithOwner)
             {
-                agentComponent.init(networkObject.OwnerClientId);
+                agentComponent.init(networkObject.OwnerClientId,t_playerIndices);
 
             }
             else
             {
-                agentComponent.init();
+                agentComponent.init(null,t_playerIndices);
             }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
@@ -373,12 +383,12 @@ public class FootballTeam : NetworkBehaviour
 
             if (isInitWithOwner)
             {
-                agentComponent.init(networkObject.OwnerClientId);
+                agentComponent.init(networkObject.OwnerClientId,t_playerIndices);
 
             }
             else
             {
-                agentComponent.init();
+                agentComponent.init(null,t_playerIndices);
             }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
@@ -410,12 +420,12 @@ public class FootballTeam : NetworkBehaviour
 
             if (isInitWithOwner)
             {
-                agentComponent.init(networkObject.OwnerClientId);
+                agentComponent.init(networkObject.OwnerClientId,t_playerIndices);
 
             }
             else
             {
-                agentComponent.init();
+                agentComponent.init(null,t_playerIndices);
             }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
@@ -482,16 +492,16 @@ public class FootballTeam : NetworkBehaviour
     {
         switch(TeamFlag)
         {
-            case TeamFlag.Blue:
-                return PicthZone.BlueZone;
-            case TeamFlag.Red: 
-                return PicthZone.RedZone;
+            case TeamFlag.Away:
+                return PicthZone.AwayZone;
+            case TeamFlag.Home: 
+                return PicthZone.HomeZone;
             default:
-                return PicthZone.BlueZone;
+                return PicthZone. AwayZone;
         }
     }
 
-    public void ResetToFormation()
+    public void ResetToFormation(FormationPhase formation)
     {
     }
 }

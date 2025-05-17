@@ -383,6 +383,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -868126232956138195, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2474160193
+      objectReference: {fileID: 0}
+    - target: {fileID: -868126232956138195, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -868126232956138195, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 296426386
+      objectReference: {fileID: 0}
     - target: {fileID: 1951629378674571425, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -426,7 +438,7 @@ PrefabInstance:
     - target: {fileID: 3550028597938208864, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 245503435}
+      objectReference: {fileID: 854683661}
     - target: {fileID: 3550028597938208864, guid: b0e7dc9d7bd181d4ab0622ff8a60a0a5, type: 3}
       propertyPath: m_IsTrigger
       value: 0
@@ -449,54 +461,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1887912783107955581, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
   m_PrefabInstance: {fileID: 2074075822}
   m_PrefabAsset: {fileID: 0}
---- !u!134 &245503435
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: ' (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)'
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 0
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &284810809
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,9 +861,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7293250652120773873, guid: bc176e6c25b42314883876b19e8f70ac, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2970474944
+      objectReference: {fileID: 0}
+    - target: {fileID: -7293250652120773873, guid: bc176e6c25b42314883876b19e8f70ac, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7293250652120773873, guid: bc176e6c25b42314883876b19e8f70ac, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 4040672417
+      objectReference: {fileID: 0}
     - target: {fileID: 5877686069277293802, guid: bc176e6c25b42314883876b19e8f70ac, type: 3}
       propertyPath: m_Name
-      value: BlueFootballTeam
+      value: AwayFootballTeam
       objectReference: {fileID: 0}
     - target: {fileID: 9068278435177675840, guid: bc176e6c25b42314883876b19e8f70ac, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1087,6 +1063,55 @@ Transform:
   - {fileID: 1767814319}
   m_Father: {fileID: 1079121422}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!134 &854683661
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance)'
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &876092322
 GameObject:
   m_ObjectHideFlags: 0
@@ -1765,17 +1790,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1201546981}
   m_LocalEulerAnglesHint: {x: 0, y: 89.967, z: 0}
---- !u!114 &1139993081 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5707155147371609989, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
-  m_PrefabInstance: {fileID: 1900469426}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 803884f064ea3a24f9c68aafb2c26bb0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1148652796
 GameObject:
   m_ObjectHideFlags: 0
@@ -2062,6 +2076,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1435720929}
+  - component: {fileID: 1435720930}
   - component: {fileID: 1435720928}
   m_Layer: 0
   m_Name: GameManager
@@ -2082,7 +2097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e9c34800cac58342a1436d4f4cf65c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
+  ShowTopMostFoldoutHeaderGroup: 1
   RedGoalPosition: {fileID: 2074075824}
   RedGoalBounds:
     m_Center: {x: 0, y: 0.19361687, z: -25}
@@ -2093,8 +2108,8 @@ MonoBehaviour:
   BlueGoalBounds:
     m_Center: {x: 0, y: 0.19361687, z: 25}
     m_Extent: {x: 1, y: 1, z: 1}
-  RedFootballTeam: {fileID: 1139993081}
-  BlueFootballTeam: {fileID: 1455501031}
+  homeFootballTeam: {fileID: 0}
+  awayFootballTeam: {fileID: 0}
   blueTeamLayerMask:
     serializedVersion: 2
     m_Bits: 512
@@ -2116,17 +2131,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1455501031 stripped
+--- !u!114 &1435720930
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4122728495818869721, guid: bc176e6c25b42314883876b19e8f70ac, type: 3}
-  m_PrefabInstance: {fileID: 541342458}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1435720927}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 803884f064ea3a24f9c68aafb2c26bb0, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2998256315
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!4 &1480765478 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6738406954448042633, guid: 92e7cb5d6f8737b479dc722330a45116, type: 3}
@@ -2769,7 +2798,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1494385061613347985, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
       propertyPath: m_Name
-      value: RedFootballTeam
+      value: HomeFootballTeam
       objectReference: {fileID: 0}
     - target: {fileID: 4284701225507153203, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2810,6 +2839,18 @@ PrefabInstance:
     - target: {fileID: 4284701225507153203, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8883427909544345448, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2839588958
+      objectReference: {fileID: 0}
+    - target: {fileID: 8883427909544345448, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8883427909544345448, guid: e0a3a9e3567543e4ba6f712325acc153, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 2326743593
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

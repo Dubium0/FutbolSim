@@ -383,7 +383,7 @@ public class SelectSideManager : MonoBehaviour
         }
         
         bool bothSidesReady = leftSideReadyState && rightSideReadyState;
-        TeamFlag controlledTeamFlag = leftSideReadyState ? TeamFlag.Red : TeamFlag.Blue;
+        TeamFlag controlledTeamFlag = leftSideReadyState ? TeamFlag.Home : TeamFlag.Away;
     
         if (!readyPlayers.Contains(player))
         {
@@ -400,18 +400,21 @@ public class SelectSideManager : MonoBehaviour
         {
             Debug.Log("[Game] All players ready, starting game...");
             Dictionary<TeamFlag, List<int>> teamPlayerIndices = new Dictionary<TeamFlag, List<int>>();
-            teamPlayerIndices[TeamFlag.Red] = new List<int>();
-            teamPlayerIndices[TeamFlag.Blue] = new List<int>();
+            teamPlayerIndices[TeamFlag.Home] = new List<int>();
+            teamPlayerIndices[TeamFlag.Away] = new List<int>();
 
             foreach (var readyPlayer in readyPlayers)
             {
                 string pos = GetPositionName(readyPlayer.CurrentPosition);
-                TeamFlag teamFlag = pos == "Left" ? TeamFlag.Red : TeamFlag.Blue;
+                TeamFlag teamFlag = pos == "Left" ? TeamFlag.Home : TeamFlag.Away;
                 teamPlayerIndices[teamFlag].Add(readyPlayer.PlayerIndex);
                 Debug.Log($"[Team] Player {readyPlayer.PlayerIndex + 1} assigned to {teamFlag}");
             }
-
-            GameManager.Instance.StartGame(bothSidesReady, controlledTeamFlag, teamPlayerIndices);
+            GameStartConfig config = new ();
+            config.gameMode = GameMode.LocalPVP;
+           
+            config.teamPlayerIndices = teamPlayerIndices;
+            GameManager.Instance.StartGame(config);
             gameObject.SetActive(false);
         }
     }

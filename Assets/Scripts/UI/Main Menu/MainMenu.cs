@@ -73,7 +73,6 @@ public class MainMenu : MonoBehaviour
     public void OnPlayerVsAIButtonPressed()
     {
         SceneManager.LoadScene(2);
-
     }
 
     public void OnPlayerVsPlayerButtonPressed()
@@ -100,7 +99,7 @@ public class MainMenu : MonoBehaviour
 
     public void OnHostButtonPressed()
     {
-
+        
         SteamNetworkManager.Instance.StartHost(2);
         Debug.Log("In host");
         NetworkManager.Singleton.SceneManager.LoadScene("Networked Player Vs Player",LoadSceneMode.Single);

@@ -3,15 +3,16 @@ using Player.Controller.States;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
+public class GoalkeeperAgent : NetworkBehaviour, IFootballAgent
 {
     private PlayerType playerType_;
 
-    
+
 
     [SerializeField]
     private FootballAgentInfo agentInfo_;
@@ -47,6 +48,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
     private bool isHumanControlled = false;
     private int currentBallAcqusitionStamina_;
 
+    private NetworkObject networkObject;
 
     private bool enableAI = true;
 
@@ -55,8 +57,8 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
     private void Awake()
     {
         rigidbody_ = GetComponent<Rigidbody>();
-
-        currentBallAcqusitionStamina_ =agentInfo_.MaxBallAcqusitionStamina;
+        networkObject = GetComponent<NetworkObject>();
+        currentBallAcqusitionStamina_ = agentInfo_.MaxBallAcqusitionStamina;
         SetActions();
         BindActions();
 
@@ -71,7 +73,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
 
     private void AdjustBallPosition()
     {
-        if ( Football.Instance.CurrentOwnerPlayer == this )
+        if (Football.Instance.CurrentOwnerPlayer == this)
         {
             var targetPosition = FocusPointTransform.position;
             targetPosition.y = Football.Instance.RigidBody.position.y;
@@ -81,20 +83,20 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
 
     private void HandleHumanInteraction()
     {
-        
-        if(isHumanControlled)
+
+        if (isHumanControlled)
         {
             currentState_.Move();
             currentState_.OnFixedUpdate();
         }
-      
+
     }
 
-    public void InitAISystems(FootballTeam team, PlayerType playerType,int index)
+    public void InitAISystems(FootballTeam team, PlayerType playerType, int index)
     {
         playerType_ = playerType;
         teamFlag_ = team.TeamFlag;
-        var blackboardFactory = new FootballAiBlackboardFactory(this,team,index);
+        var blackboardFactory = new FootballAiBlackboardFactory(this, team, index);
 
         switch (playerType_)
         {
@@ -112,17 +114,17 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
                 break;
 
         }
-      
+
         btRoot_.ConstructBT();
 
         isInitialized_ = true;
-        SetAsAIControlled();  
+        SetAsAIControlled();
 
     }
 
     public void TickAISystem()
     {
-        if(!isInitialized_ || isHumanControlled || !enableAI)
+        if (!isInitialized_ || isHumanControlled || !enableAI)
         {
             return;
         }
@@ -131,7 +133,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
 
     }
 
- 
+
     public int TryToAcquireBall()
     {
 
@@ -144,12 +146,12 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         {
             currentBallAcqusitionStamina_ = 0;
         }
-        var dice6side =  UnityEngine.Random.Range(1, 7);
+        var dice6side = UnityEngine.Random.Range(1, 7);
         return (currentBallAcqusitionStamina_ / agentInfo_.MaxBallAcqusitionStamina) * agentInfo_.BallAcqusitionPoint * dice6side;
     }
     public Action<IFootballAgent> OnBallPossesionCallback { get; set; }
 
-    
+
 
 
     //human controllable things
@@ -158,8 +160,8 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
     private LayerMask groundMask_;
     private InputAction moveAction_;
     private InputAction sprintAction_;
-    private InputAction lowActionA_ ;
-    private InputAction lowActionB_ ;
+    private InputAction lowActionA_;
+    private InputAction lowActionB_;
     private InputAction highActionA_;
     private InputAction highActionB_;
     private InputAction lookAction_;
@@ -200,7 +202,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
 
     public void SetAsHumanControlled()
     {
-        
+
         isHumanControlled = true;
         playerIndicator.SetActive(true);
         SetState(new FreeFutbollerState(this));
@@ -210,34 +212,129 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         playerIndicator.SetActive(false);
         isHumanControlled = false;
     }
-    private void SetActions()
+    private void SetActions(int t_playerIndex = 0)
     {
-        moveAction_ = InputSystem.actions.FindAction("Move");
-        lookAction_ = InputSystem.actions.FindAction("Look");
-        lowActionA_ = InputSystem.actions.FindAction("LowActionA");
-        lowActionB_ = InputSystem.actions.FindAction("LowActionB");
-        highActionA_ = InputSystem.actions.FindAction("HighActionA");
-        highActionB_ = InputSystem.actions.FindAction("HighActionB");
-        sprintAction_ = InputSystem.actions.FindAction("Sprint");
-        lookAction_ = InputSystem.actions.FindAction("Look");
+        string playerPrefix = t_playerIndex >= 0 ? $"Player{t_playerIndex + 1}/" : "";
+        Debug.Log(playerPrefix);
+        moveAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Move");
+        lookAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Look");
+        lowActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionA");
+        lowActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}LowActionB");
+        highActionA_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionA");
+        highActionB_ = InputSystem.actions?.FindAction($"{playerPrefix}HighActionB");
+        sprintAction_ = InputSystem.actions?.FindAction($"{playerPrefix}Sprint");
     }
     private void BindActions()
     {
-        lowActionA_.performed += context => {if(isHumanControlled)  currentState_.OnLowActionAEnter(); };
-        lowActionA_.canceled += context => { if (isHumanControlled) currentState_.OnLowActionAExit(); };
+       if(IsClient && IsOwner)
+        {
+            lowActionA_.performed += context => { if(isHumanControlled) RequestActionLowAEnterFromServerRpc(); };
+            lowActionA_.canceled += context =>  { if(isHumanControlled) RequestActionLowAExitFromServerRpc();  };
+                                               
+            lowActionB_.performed += context => { if(isHumanControlled) RequestActionLowBEnterFromServerRpc(); };
+            lowActionB_.canceled += context =>  { if(isHumanControlled) RequestActionLowBExitFromServerRpc();  };
+                                                
+                                             
+            highActionA_.performed += context =>{ if(isHumanControlled) RequestActionHighAEnterFromServerRpc();};
+            highActionA_.canceled += context => { if(isHumanControlled) RequestActionHighAExitFromServerRpc(); };
+                                              
+            highActionB_.performed += context =>{ if(isHumanControlled) RequestActionHighBEnterFromServerRpc();};
+            highActionB_.canceled += context => { if(isHumanControlled) RequestActionHighBExitFromServerRpc();};
+                                               
+            sprintAction_.performed += context=>{ if(isHumanControlled) RequestActionSprintEnterFromServerRpc();};
+            sprintAction_.canceled += context =>{ if (isHumanControlled) RequestActionSprintExitFromServerRpc();};
+        }
+        else
+        {
 
-        lowActionB_.performed += context => { if (isHumanControlled) currentState_.OnLowActionBEnter(); };
-        lowActionB_.canceled += context => { if (isHumanControlled) currentState_.OnLowActionBExit(); };
+            lowActionA_.performed += context => { if(isHumanControlled && GameManager.Instance.GameState == EGameState.Playing)  { currentState_.OnLowActionAEnter(); }};
+            lowActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnLowActionAExit(); };
+
+            lowActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnLowActionBEnter(); };
+            lowActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnLowActionBExit(); };
+
+            highActionA_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionAEnter(); };
+            highActionA_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionAExit(); };
+
+            highActionB_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionBEnter(); };
+            highActionB_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnHighActionBExit(); };
+
+            sprintAction_.performed += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnSprintEnter(); };
+            sprintAction_.canceled += context => { if (isHumanControlled && GameManager.Instance.GameState == EGameState.Playing) currentState_.OnSprintExit(); };
+        }
+    }
 
 
-        highActionA_.performed += context => { if (isHumanControlled) currentState_.OnHighActionAEnter(); };
-        highActionA_.canceled += context => { if (isHumanControlled) currentState_.OnHighActionAExit(); };
+    [Rpc(SendTo.Server)]
 
-        highActionB_.performed += context => { if (isHumanControlled) currentState_.OnHighActionBEnter(); };
-        highActionB_.canceled += context => { if (isHumanControlled) currentState_.OnHighActionBExit(); };
+    private void RequestActionLowAEnterFromServerRpc( )
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionAEnter(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
 
-        sprintAction_.performed += context => { if (isHumanControlled) currentState_.OnSprintEnter(); };
-        sprintAction_.canceled += context => { if (isHumanControlled) currentState_.OnSprintExit(); };
+    private void RequestActionLowAExitFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionAExit(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionLowBEnterFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionBEnter(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionLowBExitFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnLowActionBExit(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionHighAEnterFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionAEnter(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionHighAExitFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionAExit(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionHighBEnterFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionBEnter(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionHighBExitFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnHighActionBExit(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionSprintEnterFromServerRpc()
+    {
+        if ( GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnSprintEnter(); }
+        Debug.Log("Rpcrequested from server :O");
+    }
+    [Rpc(SendTo.Server)]
+
+    private void RequestActionSprintExitFromServerRpc()
+    {
+        if (GameManager.Instance.GameState == EGameState.Playing && IsServer) { currentState_.OnSprintExit(); }
+        Debug.Log("Rpcrequested from server :O");
     }
 
     public void ChangeToGhostLayer(float time)
@@ -256,17 +353,17 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         yield return new WaitForSeconds(time);
         gameObject.layer = prevLayer;
         rigidbody_.maxLinearVelocity = prevMaxVel;
-        
+
     }
 
     public int GetShootScore()
     {
-        
+
         var enemyGoal = GameManager.Instance.GetEnemyGoalInstance(TeamFlag);
         var enemyLayer = GameManager.Instance.GetLayerMaskOfEnemy(TeamFlag);
         var possibleLocations = enemyGoal.GetHitPointPositions();
         List<Transform> shootablePositions = new();
-        if (Vector3.Distance(enemyGoal.transform.position, Transform.position) <AgentInfo.MaximumShootDistance)
+        if (Vector3.Distance(enemyGoal.transform.position, Transform.position) < AgentInfo.MaximumShootDistance)
         {
             foreach (var possibleLocation in possibleLocations)
             {
@@ -278,7 +375,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
             }
 
         }
-        
+
         return shootablePositions.Count;
 
 
@@ -289,7 +386,7 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         StartCoroutine(DisableAIForATimeRoutine(time));
     }
 
-     private IEnumerator DisableAIForATimeRoutine(float time)
+    private IEnumerator DisableAIForATimeRoutine(float time)
     {
 
         enableAI = false;
@@ -303,4 +400,43 @@ public class GoalkeeperAgent : MonoBehaviour, IFootballAgent
         enableAI = true;
     }
 
+    public void OnBallPossesion()
+    {
+        if (IsServer)
+        {
+            OnBallPossesionCallback(this);
+        }
+    }
+
+    public void init(ulong? ownerId = null,int t_playerIndex = 0)
+    {
+        if (ownerId != null)
+        {
+            networkObject.ChangeOwnership((ulong)ownerId);
+
+            if (IsServer && IsOwner)
+            {
+                Debug.Log("This object is server owned");
+                SetActions();
+                BindActions();
+            }
+            else
+            {
+                NotifyClientItIsTheOwnerRpc();
+            }
+        }
+    }
+    
+    [Rpc(SendTo.ClientsAndHost)]
+    private void NotifyClientItIsTheOwnerRpc()
+    {
+        if (IsClient && IsOwner)
+        {
+            Debug.Log("This object is ownded by client");
+            SetActions();
+            BindActions();
+        }
+    }
+
+  
 }

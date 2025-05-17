@@ -6,12 +6,12 @@ TagManager:
   tags:
   - Futboller
   - SoccerBall
-  - RedZone
-  - BlueZone
   - Out
   - GoalHome
   - GoalAway
   - Throw-in
+  - HomeZone
+  - AwayZone
   layers:
   - Default
   - TransparentFX

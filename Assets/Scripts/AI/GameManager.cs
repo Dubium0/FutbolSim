@@ -1,19 +1,30 @@
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
+public enum GameMode
+{
+    OnlinePVP,
+    LocalPVP,
+    PVA
+}
 public struct GameStartConfig
 {
     public int homePlayerCount;
     public int awayPlayerCount;
-    public bool isOnline;
+
+    public GameMode gameMode;
     public ulong clientId;
+    
+    public Dictionary<TeamFlag, List<int>> teamPlayerIndices;
 }
 
-public enum GameState
+public enum EGameState
 {
-    Start,
+    NotStarted,
     Playing,
+    Frozen,
     RedWin,
     BlueWin,
     Draw
@@ -21,16 +32,16 @@ public enum GameState
 
 public class GameManager : NetworkBehaviour
 {
-    public GameState state = GameState.Start;
+   
     
-    public Transform RedGoalPosition;
-    public Bounds RedGoalBounds;
+    public Transform HomeGoalPosition;
+    public Bounds HomeGoalBounds;
 
-    public Goal BlueGoal;
-    public Goal RedGoal;
+    public Goal AwayGoal;
+    public Goal HomeGoal;
     
-    public Transform BlueGoalPosition;
-    public Bounds BlueGoalBounds;
+    public Transform AwayGoalPosition;
+    public Bounds AwayGoalBounds;
 
     public FootballTeam homeFootballTeam;
     public FootballTeam awayFootballTeam;
@@ -42,9 +53,9 @@ public class GameManager : NetworkBehaviour
 
     private void OnValidate()
     {
-        BlueGoalBounds.center = BlueGoalPosition.position;
+        AwayGoalBounds.center = AwayGoalPosition.position;
 
-        RedGoalBounds.center = RedGoalPosition.position;
+        HomeGoalBounds.center = HomeGoalPosition.position;
     }
     private void Awake()
     {
@@ -73,42 +84,67 @@ public class GameManager : NetworkBehaviour
     
     public void StartGame(GameStartConfig config)
     {
-        if (config.isOnline)
-        {
-            awayFootballTeam.init(true, false, config.clientId);
-            homeFootballTeam.init(true, true, NetworkManager.ServerClientId);
-            state_ = EGameState.Running;
-            return;
-        }
 
-        if (config.homePlayerCount > 0)
+        switch (config.gameMode)
         {
-
-            homeFootballTeam.init(true, true);
+            case GameMode.PVA:
+                break;
+            case GameMode.OnlinePVP:
+                StartOnlineGame(config);
+                break;
+            case GameMode.LocalPVP:
+                StartLocalPVP(config);
+                break;
         }
-        else
-        {
-            homeFootballTeam.init(false, true);
-        }
-        if (config.awayPlayerCount > 0)
-        {
-            awayFootballTeam.init(true, false);
-        }
-        else
-        {
-            awayFootballTeam.init(false, false);
-        }
-        state_ = EGameState.Running;
+        state_ = EGameState.Playing;
     }
     // probably temporary
+
+
+
+    private void StartOnlineGame(GameStartConfig config)
+    {
+         
+        awayFootballTeam.init(true, false, config.clientId);
+        homeFootballTeam.init(true, true, NetworkManager.ServerClientId);
+        state_ = EGameState.Playing;
+
+        
+    }
+    private void StartLocalPVP(GameStartConfig config)
+    {
+        var homePlayerIndices = config.teamPlayerIndices[TeamFlag.Home];
+        var awayPlayerIndices = config.teamPlayerIndices[TeamFlag.Away];
+       
+        if (homePlayerIndices.Count > 0)
+        {
+            Debug.Log("[Current Problem]  I am in home player init");
+            homeFootballTeam.init(true, true,null,homePlayerIndices[0]);
+     
+        }
+        else homeFootballTeam.init(false, true);
+
+        if (awayPlayerIndices.Count > 0)
+        {
+             Debug.Log("[Current Problem]  I am in away player init");
+            awayFootballTeam.init(true, false,null,awayPlayerIndices[0]);
+
+        }
+        else awayFootballTeam.init(false, false);
+
+        
+        
+    }
+    
+
     public void PauseGame()
     {
-        state_ = EGameState.Freeze;
+        state_ = EGameState.Frozen;
         Time.timeScale = 0;
     }
     public void ResumeGame()
     {
-        state_ = EGameState.Running;
+        state_ = EGameState.Playing;
         Time.timeScale = 1;
     }
     
@@ -117,7 +153,7 @@ public class GameManager : NetworkBehaviour
    // {
    //     Debug.Log($"[Game Start] Starting game with isBothTeamsControlled={isBothTeamsControlled}, teamFlag={teamFlag}");
    //     
-   //     bool isRedControlled = teamFlag == TeamFlag.Red;
+   //     bool isRedControlled = teamFlag == TeamFlag.Home;
    //     RedFootballTeam.enabled = true;
    //     BlueFootballTeam.enabled = true;
    //     state = GameState.Playing;
@@ -165,12 +201,12 @@ public class GameManager : NetworkBehaviour
     {
         switch (teamFlag)
         {
-            case TeamFlag.Blue:
-                return BlueGoalPosition.position;
-            case TeamFlag.Red:
-                return RedGoalPosition.position;
+            case TeamFlag.Away:
+                return AwayGoalPosition.position;
+            case TeamFlag.Home:
+                return HomeGoalPosition.position;
             default:
-                return BlueGoalPosition.position;
+                return AwayGoalPosition.position;
 
         }
     }
@@ -179,14 +215,14 @@ public class GameManager : NetworkBehaviour
     {
         switch (teamFlag)
         {
-            case TeamFlag.Blue:
-                BlueGoalBounds.center = BlueGoalPosition.position;  
-                return BlueGoalBounds ;
-            case TeamFlag.Red:
-                RedGoalBounds.center = RedGoalPosition.position;
-                return RedGoalBounds;
+            case TeamFlag.Away:
+                AwayGoalBounds.center = AwayGoalPosition.position;  
+                return AwayGoalBounds ;
+            case TeamFlag.Home:
+                HomeGoalBounds.center = HomeGoalPosition.position;
+                return HomeGoalBounds;
             default:
-                return BlueGoalBounds;
+                return AwayGoalBounds;
 
         }
     }
@@ -195,15 +231,15 @@ public class GameManager : NetworkBehaviour
     {
         switch (teamFlag)
         {
-            case TeamFlag.Blue:
-                RedGoalBounds.center = RedGoalPosition.position;
-                return RedGoalBounds;
+            case TeamFlag.Away:
+                HomeGoalBounds.center = HomeGoalPosition.position;
+                return HomeGoalBounds;
               
-            case TeamFlag.Red:
-                BlueGoalBounds.center = BlueGoalPosition.position;
-                return BlueGoalBounds;
+            case TeamFlag.Home:
+                AwayGoalBounds.center = AwayGoalPosition.position;
+                return AwayGoalBounds;
             default:
-                return BlueGoalBounds;
+                return AwayGoalBounds;
 
         }
     }
@@ -211,13 +247,13 @@ public class GameManager : NetworkBehaviour
     {
         switch (teamFlag)
         {
-            case TeamFlag.Blue:
-                return RedGoalPosition.position;
+            case TeamFlag.Away:
+                return HomeGoalPosition.position;
                 
-            case TeamFlag.Red:
-                return BlueGoalPosition.position;
+            case TeamFlag.Home:
+                return AwayGoalPosition.position;
             default:
-                return BlueGoalPosition.position;
+                return AwayGoalPosition.position;
 
         }
     }
@@ -226,34 +262,34 @@ public class GameManager : NetworkBehaviour
     {
         switch (teamFlag)
         {
-            case TeamFlag.Blue:
-                return RedGoal;
+            case TeamFlag.Away:
+                return HomeGoal;
 
-            case TeamFlag.Red:
-                return BlueGoal;
+            case TeamFlag.Home:
+                return AwayGoal;
             default:
-                return BlueGoal;
+                return AwayGoal;
 
         }
 
     }
 
     [SerializeField]
-    private LayerMask blueTeamLayerMask;
+    private LayerMask awayTeamLayerMask;
 
     [SerializeField]
-    private LayerMask redTeamLayerMask;
+    private LayerMask homeTeamLayerMask;
 
     public LayerMask GetLayerMaskOfEnemy(TeamFlag teamFlag)
     {
         switch(teamFlag)
         {
-            case TeamFlag.Red:
-                return blueTeamLayerMask;
-            case TeamFlag.Blue:
-                return redTeamLayerMask;
+            case TeamFlag.Home:
+                return awayTeamLayerMask;
+            case TeamFlag.Away:
+                return homeTeamLayerMask;
             default:
-            return blueTeamLayerMask;
+            return awayTeamLayerMask;
 
 
         }
@@ -264,13 +300,13 @@ public class GameManager : NetworkBehaviour
     {
         switch (teamFlag)
         {
-            case TeamFlag.Red:
-                return redTeamLayerMask;
+            case TeamFlag.Home:
+                return homeTeamLayerMask;
               
-            case TeamFlag.Blue:
-                return blueTeamLayerMask;
+            case TeamFlag.Away:
+                return awayTeamLayerMask;
             default:
-                return blueTeamLayerMask;
+                return awayTeamLayerMask;
 
 
         }

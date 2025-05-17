@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MatchManager : MonoBehaviour
@@ -7,16 +8,16 @@ public class MatchManager : MonoBehaviour
     public static MatchManager Instance;
 
     [SerializeField] private Transform centerSpot;
-    [SerializeField] private Transform[] goalKickPositionsRed;
-    [SerializeField] private Transform[] goalKickPositionsBlue;
-    [SerializeField] private Transform[] cornerPositionsRed;
-    [SerializeField] private Transform[] cornerPositionsBlue;
+    [SerializeField] private Transform[] goalKickPositionsHome;
+    [SerializeField] private Transform[] goalKickPositionsAway;
+    [SerializeField] private Transform[] cornerPositionsHome;
+    [SerializeField] private Transform[] cornerPositionsAway;
 
-    [SerializeField] private TextMeshProUGUI redScoreText; // Home Team
-    [SerializeField] private TextMeshProUGUI blueScoreText; // Away Team (player controlled)
+    [SerializeField] private TextMeshProUGUI homeScoreText; // Home Team
+    [SerializeField] private TextMeshProUGUI awayScoreText; // Away Team (player controlled)
 
-    public int RedTeamScore { get; private set; }
-    public int BlueTeamScore { get; private set; }
+    public int HomeTeamScore { get; private set; }
+    public int AwayTeamScore { get; private set; }
 
     private Football football;
     private bool isMatchPaused;
@@ -47,32 +48,32 @@ public class MatchManager : MonoBehaviour
 
     private void ResetMatch()
     {
-        RedTeamScore = 0;
-        BlueTeamScore = 0;
+        HomeTeamScore = 0;
+        AwayTeamScore = 0;
         UpdateScoreUI();
-        RestartFromCenter();
+        RestartFromCenter(TeamFlag.Home);
     }
 
     public void HandleGoal(TeamFlag scoringTeam)
     {
-        if (scoringTeam == TeamFlag.Red)
+        if (scoringTeam == TeamFlag.Home)
         {
-            RedTeamScore++;
-            Debug.Log("Goal for Red Team!");
+            HomeTeamScore++;
+            Debug.Log("Goal for Home Team!");
         }
-        else if (scoringTeam == TeamFlag.Blue)
+        else if (scoringTeam == TeamFlag.Away)
         {
-            BlueTeamScore++;
-            Debug.Log("Goal for Blue Team!");
+            AwayTeamScore++;
+            Debug.Log("Goal for Away Team!");
         }
 
         UpdateScoreUI();
 
         // Slow down time briefly after a goal
-        StartCoroutine(SlowTimeAndRestart());
+        StartCoroutine(SlowTimeAndRestart(scoringTeam));
     }
 
-    private IEnumerator SlowTimeAndRestart()
+    private IEnumerator SlowTimeAndRestart(TeamFlag scorerTeam)
     {
         isMatchPaused = true;
 
@@ -84,34 +85,34 @@ public class MatchManager : MonoBehaviour
         Time.timeScale = 1f;
 
         // Restart the match from the center
-        RestartFromCenter();
+        RestartFromCenter(scorerTeam);
     }
 
     public void HandleOut(TeamFlag lastTouchTeam)
     {
-        TeamFlag goalKickTeam = lastTouchTeam == TeamFlag.Red ? TeamFlag.Blue : TeamFlag.Red;
+        TeamFlag goalKickTeam = lastTouchTeam == TeamFlag.Home ? TeamFlag.Away : TeamFlag.Home;
         HandleGoalKick(goalKickTeam);
     }
 
     private void UpdateScoreUI()
     {
-        redScoreText.text = RedTeamScore.ToString();
-        blueScoreText.text = BlueTeamScore.ToString();
+        homeScoreText.text = HomeTeamScore.ToString();
+        awayScoreText.text = AwayTeamScore.ToString();
     }
 
-    public void RestartFromCenter()
+    public void RestartFromCenter(TeamFlag startingTeam)
     {
         ResetFootball(centerSpot.position);
-        ResetPlayersToFormation();
+        ResetPlayersToFormation(startingTeam);
         Invoke(nameof(ResumeMatch), 1f);
     }
 
     public void HandleGoalKick(TeamFlag team)
     {
         isMatchPaused = true;
-        Vector3 goalKickPosition = team == TeamFlag.Red ? goalKickPositionsRed[0].position : goalKickPositionsBlue[0].position;
+        Vector3 goalKickPosition = team == TeamFlag.Home ? goalKickPositionsHome[0].position : goalKickPositionsAway[0].position;
         ResetFootball(goalKickPosition);
-        ResetPlayersToFormation();
+        ResetPlayersToFormation(team);
         Invoke(nameof(ResumeMatch), 1f);
     }
 
@@ -125,10 +126,23 @@ public class MatchManager : MonoBehaviour
         football.ClearOwner();
     }
 
-    private void ResetPlayersToFormation()
+    private void ResetPlayersToFormation(TeamFlag startingTeam)
     {
-        GameManager.Instance.homeFootballTeam.ResetToFormation();
-        GameManager.Instance.awayFootballTeam.ResetToFormation();
+        switch (startingTeam)
+        {
+            case TeamFlag.Home:
+                GameManager.Instance.homeFootballTeam.ResetToFormation(FormationPhase.AttackStart);
+                GameManager.Instance.awayFootballTeam.ResetToFormation(FormationPhase.DefenseStart);
+                break;
+            case TeamFlag.Away:
+                GameManager.Instance.homeFootballTeam.ResetToFormation(FormationPhase.DefenseStart);
+                GameManager.Instance.awayFootballTeam.ResetToFormation(FormationPhase.AttackStart);
+                break;
+            case TeamFlag.None:
+                break;
+        }
+      
+        
     }
 
     private void ResumeMatch()

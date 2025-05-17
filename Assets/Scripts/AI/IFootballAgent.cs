@@ -56,7 +56,7 @@ public interface IFootballAgent
 
     public void DisableAIForATime(float time);
 
-    public void init(ulong? ownerId=null);
+    public void init(ulong? ownerId=null, int index = 0);
 
 }
 
