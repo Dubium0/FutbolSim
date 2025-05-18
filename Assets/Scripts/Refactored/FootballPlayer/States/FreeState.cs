@@ -49,57 +49,57 @@ namespace FootballSim.Player
 
         public void HandleTransition()
         {
-            throw new System.NotImplementedException();
+            //for now empty
         }
 
         public void OnSprintEnter()
         {
-            throw new System.NotImplementedException();
+             //for now empty
         }
 
         public void OnSprintExit()
         {
-            throw new System.NotImplementedException();
+             //for now empty
         }
 
         public void OnLowActionAEnter()
         {
-            throw new System.NotImplementedException();
+             //for now empty
         }
 
         public void OnLowActionAExit()
         {
-            throw new System.NotImplementedException();
+             //for now empty
         }
 
         public void OnLowActionBEnter()
         {
-            throw new System.NotImplementedException();
+             //for now empty
         }
 
         public void OnLowActionBExit()
         {
-            throw new System.NotImplementedException();
+             //for now empty
         }
 
         public void OnHighActionAEnter()
         {
-            throw new System.NotImplementedException();
+            //for now empty
         }
 
         public void OnHighActionAExit()
         {
-            throw new System.NotImplementedException();
+            //for now empty
         }
 
         public void OnHighActionBEnter()
         {
-            throw new System.NotImplementedException();
+           //for now empty
         }
 
         public void OnHighActionBExit()
         {
-            throw new System.NotImplementedException();
+            //for now empty
         }
     }
 

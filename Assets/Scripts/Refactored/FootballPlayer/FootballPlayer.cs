@@ -1,7 +1,5 @@
 
 using Unity.Netcode;
-using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 
@@ -59,16 +57,16 @@ namespace FootballSim.Player
             if (m_InputSource != null)
             {
 
-                m_InputSource.OnLowActionAPerformed = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnLowActionAEnter(); };
-                m_InputSource.OnLowActionACanceled = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnLowActionAExit(); };
-                m_InputSource.OnLowActionBPerformed = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnLowActionBEnter(); };
-                m_InputSource.OnLowActionBCanceled = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnLowActionBExit(); };
-                m_InputSource.OnHighActionAPerformed = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnHighActionAEnter(); };
-                m_InputSource.OnHighActionACanceled = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnHighActionAExit(); };
-                m_InputSource.OnHighActionBPerformed = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnHighActionBEnter(); };
-                m_InputSource.OnHighActionBCanceled = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnHighActionBExit(); };
-                m_InputSource.OnSprintActionPerformed = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnSprintEnter(); };
-                m_InputSource.OnSprintActionCanceled = () => { if (IsServer && m_IsHumanControlled) m_CurrentState.OnSprintExit(); };
+                m_InputSource.OnLowActionAPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAEnter(); };
+                m_InputSource.OnLowActionACanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAExit(); };
+                m_InputSource.OnLowActionBPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionBEnter(); };
+                m_InputSource.OnLowActionBCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionBExit(); };
+                m_InputSource.OnHighActionAPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionAEnter(); };
+                m_InputSource.OnHighActionACanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionAExit(); };
+                m_InputSource.OnHighActionBPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionBEnter(); };
+                m_InputSource.OnHighActionBCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionBExit(); };
+                m_InputSource.OnSprintActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnSprintEnter(); };
+                m_InputSource.OnSprintActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnSprintExit(); };
             }
             else
             {
@@ -86,7 +84,7 @@ namespace FootballSim.Player
         private void Update()
         {
             if (!m_IsInitialized) return;
-            if (IsServer)
+            if (IsHost)
             {
                 if (m_IsHumanControlled)
                 {
@@ -100,7 +98,7 @@ namespace FootballSim.Player
                     m_ElapsedTime = 0.0f;
                 }
             }
-            if (IsClient)
+            if (IsClient && !IsHost)
             {
                 transform.position = m_SyncedPosition.Value;
                 transform.rotation = m_SyncedRotation.Value;
@@ -111,7 +109,7 @@ namespace FootballSim.Player
         private void FixedUpdate()
         {
             if (!m_IsInitialized) return;
-            if (IsServer & m_IsHumanControlled)
+            if (IsHost & m_IsHumanControlled)
             {
                 m_CurrentState.OnFixedUpdate();
             }

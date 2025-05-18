@@ -5,7 +5,7 @@ using System.Text;
 using DG.Tweening;
 using TMPro;
 
-public class SelectSideManager : MonoBehaviour
+public class SelectSideMenu : MonoBehaviour
 {
     // UI Elements
     [SerializeField] private GameObject player1Side;
@@ -394,7 +394,7 @@ public class SelectSideManager : MonoBehaviour
             readyPlayers.Remove(player);
             Debug.Log($"[Ready] Removed Player {player.PlayerIndex + 1} from ready list");
         }
-    
+
         if (readyPlayers.Count == connectedPlayers.Count)
         {
             Debug.Log("[Game] All players ready, starting game...");
@@ -409,12 +409,20 @@ public class SelectSideManager : MonoBehaviour
                 teamPlayerIndices[teamFlag].Add(readyPlayer.PlayerIndex);
                 Debug.Log($"[Team] Player {readyPlayer.PlayerIndex + 1} assigned to {teamFlag}");
             }
-            GameStartConfig config = new ();
-            config.gameMode = GameMode.LocalPVP;
-           
-            config.teamPlayerIndices = teamPlayerIndices;
-            GameManager.Instance.StartGame(config);
-            gameObject.SetActive(false);
+            //GameStartConfig config = new ();
+            //config.gameMode = GameMode.LocalPVP;
+            //
+            //config.teamPlayerIndices = teamPlayerIndices;
+            //GameManager.Instance.StartGame(config);
+            //gameObject.SetActive(false);
+            FootballSim.GameStartConfig config = new();
+
+            config.HomePlayerIndex = teamPlayerIndices[TeamFlag.Home].Count > 0 ? teamPlayerIndices[TeamFlag.Home][0] : -1;
+            config.AwayPlayerIndex = teamPlayerIndices[TeamFlag.Away].Count > 0 ? teamPlayerIndices[TeamFlag.Away][0] : -1;
+            
+            FootballSim.GameManager.Instance.InitiatePVAGame(config);
+            
+
         }
     }
 

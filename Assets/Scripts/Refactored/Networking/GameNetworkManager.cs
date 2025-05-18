@@ -4,6 +4,7 @@ using Steamworks;
 using Steamworks.Data;
 using Netcode.Transports.Facepunch;
 using Unity.Netcode;
+using System;
 
 
 namespace FootballSim.Networking
@@ -21,7 +22,6 @@ namespace FootballSim.Networking
 
         private ulong m_HostId;
 
-
         private void Awake()
         {
             if (Instance == null)
@@ -32,6 +32,7 @@ namespace FootballSim.Networking
             {
                 Destroy(gameObject);
             }
+            
         }
 
         private void OnEnable()
@@ -62,9 +63,15 @@ namespace FootballSim.Networking
                 return;
             }
             NetworkManager.Singleton.OnServerStarted -= Singleton_OnServerStarted;
+            NetworkManager.Singleton.OnServerStopped -= Singleton_OnServerStopped;
             NetworkManager.Singleton.OnClientConnectedCallback -= Singleton_OnClientConnectedCallback;
             NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
 
+        }
+
+        private void Singleton_OnServerStopped(bool obj)
+        {
+            
         }
 
         private void OnApplicationQuit()
@@ -111,11 +118,12 @@ namespace FootballSim.Networking
 
         private void SteamMatchmaking_OnLobbyMemberJoined(Lobby _lobby, Friend _steamId)
         {
-            Debug.Log("member join");
+            Debug.Log($"Member joined with ID{_steamId}");
         }
 
         private void SteamMatchmaking_OnLobbyEntered(Lobby _lobby)
         {
+            Debug.Log("I am in on lobby enter!");
             if (NetworkManager.Singleton.IsHost)
             {
                 return;
@@ -134,16 +142,31 @@ namespace FootballSim.Networking
             _lobby.SetPublic();
             _lobby.SetJoinable(true);
             _lobby.SetGameServer(_lobby.Owner.Id);
-            Debug.Log($"lobby created FakeSteamName");
+            Debug.Log($"lobby created FootballSim");
             //NetworkTransmission.instance.AddMeToDictionaryServerRPC(SteamClient.SteamId, "FakeSteamName", NetworkManager.Singleton.LocalClientId); //
         }
 
-        public async void StartHost(int _maxMembers)
+        public async void StartHost(int t_MaxMembers, Action<string,SteamId?> t_SuccessCallBack = null, Action t_FailCallBack = null)
         {
             NetworkManager.Singleton.OnServerStarted += Singleton_OnServerStarted;
+            NetworkManager.Singleton.OnServerStopped += Singleton_OnServerStopped;
             NetworkManager.Singleton.StartHost();
             //GameManager.instance.myClientId = NetworkManager.Singleton.LocalClientId;
-            CurrentLobby = await SteamMatchmaking.CreateLobbyAsync(_maxMembers);
+            CurrentLobby = await SteamMatchmaking.CreateLobbyAsync(t_MaxMembers);
+            
+            
+
+            if (CurrentLobby == null)
+            {
+                if(t_FailCallBack!=null)
+                    t_FailCallBack();
+            }
+            else
+            {
+                if(t_SuccessCallBack!=null)
+                    t_SuccessCallBack(CurrentLobby?.Owner.Name, CurrentLobby?.Owner.Id);
+               
+            }
         }
 
         public void StartClient(SteamId _sId)
@@ -161,6 +184,7 @@ namespace FootballSim.Networking
         public void Disconnected()
         {
             CurrentLobby?.Leave();
+            CurrentLobby = null;
             if (NetworkManager.Singleton == null)
             {
                 return;
@@ -180,21 +204,23 @@ namespace FootballSim.Networking
         }
 
         private void Singleton_OnClientDisconnectCallback(ulong _cliendId)
-        {
+        {   
+            NetworkConnectionRPCS.Instance.NotifySteamPlayerDisconnectedRpc();
             NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
             if (_cliendId == 0)
-            {
+            {   
                 Disconnected();
             }
         }
 
-        private void Singleton_OnClientConnectedCallback(ulong _cliendId)
+        private void Singleton_OnClientConnectedCallback(ulong t_CliendId)
         {
-            //NetworkTransmission.instance.AddMeToDictionaryServerRPC(SteamClient.SteamId, SteamClient.Name, _cliendId);
+            NetworkConnectionRPCS.Instance.NotifySteamPlayerConnectedRpc(SteamClient.SteamId, SteamClient.Name, t_CliendId);
             //GameManager.instance.myClientId = _cliendId;
             ///NetworkTransmission.instance.IsTheClientReadyServerRPC(false, _cliendId);
-            Debug.Log($"Client has connected : AnotherFakeSteamName");
+            Debug.Log($"Client has connected : {t_CliendId}");
         }
+ 
 
         private void Singleton_OnServerStarted()
         {
