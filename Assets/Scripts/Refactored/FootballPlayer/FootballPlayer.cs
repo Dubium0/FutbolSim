@@ -21,6 +21,12 @@ namespace FootballSim.Player
         private FootballPlayerData m_Data;
 
 
+        [SerializeField]
+        private Animator m_Animator;
+
+        public Animator Animator {get { return m_Animator; }}
+
+
         private IPlayerState m_CurrentState;
 
         private bool m_IsHumanControlled;
@@ -74,6 +80,7 @@ namespace FootballSim.Player
             }
 
             m_CurrentState = new FreeState(this);
+            m_PreviousPosition = transform.position;
             m_CurrentState.OnEnter();
             m_IsInitialized = true;
 
@@ -81,6 +88,9 @@ namespace FootballSim.Player
 
         private float m_TickIntervalMs = 66.6f;
         private float m_ElapsedTime = 0.0f;
+
+        private float m_ClientOnlyVelocity = 0.0f;
+        private Vector3 m_PreviousPosition = Vector3.zero;
         private void Update()
         {
             if (!m_IsInitialized) return;
@@ -101,6 +111,7 @@ namespace FootballSim.Player
             if (IsClient && !IsHost)
             {
                 transform.position = m_SyncedPosition.Value;
+                m_ClientOnlyVelocity = (transform.position - m_PreviousPosition).sqrMagnitude / Time.deltaTime;
                 transform.rotation = m_SyncedRotation.Value;
             }
 
@@ -109,10 +120,16 @@ namespace FootballSim.Player
         private void FixedUpdate()
         {
             if (!m_IsInitialized) return;
-            if (IsHost & m_IsHumanControlled)
+            if (IsHost && m_IsHumanControlled)
             {
                 m_CurrentState.OnFixedUpdate();
+                m_Animator.SetFloat("Velocity", Rigidbody.linearVelocity.sqrMagnitude);
             }
+            if (IsClient && !IsHost)
+            {
+                m_Animator.SetFloat("Velocity", m_ClientOnlyVelocity);
+            }
+
         }
 
     

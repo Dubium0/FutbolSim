@@ -64,7 +64,7 @@ namespace FootballSim.Player
 
         public void OnLowActionAEnter()
         {
-             //for now empty
+            m_FootballPlayer.Animator.SetTrigger("BallHit");
         }
 
         public void OnLowActionAExit()

@@ -68,7 +68,7 @@ namespace FootballSim.Player
         private void Update()
         {
             if (!m_Enable) return;
-            if (IsClient & IsOwner)
+            if (IsClient && IsOwner && !IsHost)
             {
                 m_ElapsedTime += Time.deltaTime * 1000;
                 if (m_ElapsedTime >= m_TickIntervalMs)
@@ -94,7 +94,7 @@ namespace FootballSim.Player
     
         private void BindActions()
         {
-            if (IsClient & IsOwner)
+            if (IsClient && IsOwner && !IsHost)
             {
                 m_LowActionA.performed += context => { if (IsWorkingConditionMet()) RequestActionLowAPerformedFromServerRpc(); };
                 m_LowActionA.canceled += context => { if (IsWorkingConditionMet()) RequestActionLowACanceledFromServerRpc(); };
@@ -107,7 +107,7 @@ namespace FootballSim.Player
                 m_SprintAction.performed += context => { if (IsWorkingConditionMet()) RequestActionSprintPerformedFromServerRpc(); };
                 m_SprintAction.canceled += context => { if (IsWorkingConditionMet()) RequestActionSprintCanceledFromServerRpc(); };
             }
-            if (IsServer & IsOwner)
+            if (IsHost && IsOwner)
             {
                 m_LowActionA.performed += context => { if (IsWorkingConditionMet()) m_OnLowActionAPerformed(); };
                 m_LowActionA.canceled += context => { if (IsWorkingConditionMet()) m_OnLowActionACanceled(); };
@@ -134,7 +134,7 @@ namespace FootballSim.Player
 
             var inputValue = Vector2.zero;
 
-            if (IsServer)
+            if (IsHost)
             {
                 if (IsOwner)
                 {
