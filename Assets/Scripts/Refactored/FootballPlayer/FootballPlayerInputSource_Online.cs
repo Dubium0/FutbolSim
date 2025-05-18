@@ -65,6 +65,13 @@ namespace FootballSim.Player
         private float m_TickIntervalMs= 66.6f; // 15 times per second means
 
         private float m_ElapsedTime = 0.0f;
+
+        public override void OnNetworkSpawn()
+        {
+            base.OnNetworkSpawn();
+
+            
+        }
         private void Update()
         {
             if (!m_Enable) return;

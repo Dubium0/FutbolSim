@@ -419,8 +419,8 @@ public class SelectSideMenu : MonoBehaviour
 
             config.HomePlayerIndex = teamPlayerIndices[TeamFlag.Home].Count > 0 ? teamPlayerIndices[TeamFlag.Home][0] : -1;
             config.AwayPlayerIndex = teamPlayerIndices[TeamFlag.Away].Count > 0 ? teamPlayerIndices[TeamFlag.Away][0] : -1;
-            
-            FootballSim.GameManager.Instance.InitiatePVAGame(config);
+            config.GameMode = FootballSim.GameMode.PVP_LOCAL;
+            FootballSim.GameManager.Instance.InitiateGame(config);
             
 
         }

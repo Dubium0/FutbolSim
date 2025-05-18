@@ -686,6 +686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  m_PlayerPrefab: {fileID: 3607889227430387662, guid: b0fc971fc08967349b1de47d77aa3809, type: 3}
 --- !u!4 &2123872560
 Transform:
   m_ObjectHideFlags: 0
@@ -722,6 +723,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 962974314317105185, guid: 9d1ac40481c42724993106738db829ba, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 962974314317105185, guid: 9d1ac40481c42724993106738db829ba, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -735,6 +740,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6434306596516541112, guid: 9d1ac40481c42724993106738db829ba, type: 3}
       propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6434306596516541112, guid: 9d1ac40481c42724993106738db829ba, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6434306596516541112, guid: 9d1ac40481c42724993106738db829ba, type: 3}
@@ -827,6 +836,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8890814132765211892, guid: 9d1ac40481c42724993106738db829ba, type: 3}
       propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8890814132765211892, guid: 9d1ac40481c42724993106738db829ba, type: 3}
+      propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8890814132765211892, guid: 9d1ac40481c42724993106738db829ba, type: 3}

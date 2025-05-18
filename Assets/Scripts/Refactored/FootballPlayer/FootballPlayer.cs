@@ -1,11 +1,20 @@
 
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
 
 namespace FootballSim.Player
 {
-    [RequireComponent(typeof(Rigidbody),typeof(FootballPlayerInputSource_Offline),typeof(FootballPlayerInputSource_Online) )]
+    public struct TransformSnapshot {
+
+        public double Timestamp;
+        public Vector3 Position;
+        public Quaternion Rotation;
+    }
+
+    [RequireComponent(typeof(Rigidbody), typeof(FootballPlayerInputSource_Offline), typeof(FootballPlayerInputSource_Online))]
     public class FootballPlayer : NetworkBehaviour
     {
 
@@ -24,7 +33,7 @@ namespace FootballSim.Player
         [SerializeField]
         private Animator m_Animator;
 
-        public Animator Animator {get { return m_Animator; }}
+        public Animator Animator { get { return m_Animator; } }
 
 
         private IPlayerState m_CurrentState;
@@ -39,19 +48,39 @@ namespace FootballSim.Player
         private NetworkVariable<Quaternion> m_SyncedRotation = new NetworkVariable<Quaternion>(
         Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+        private List<TransformSnapshot> m_SnapshotBuffer = new();
+
+        private Vector3 m_ClientPreviousInterpolatedPosition = Vector3.zero;
+        private float m_ClientInterpolatedSpeedSqr = 0.0f;
+
+        private double m_InterpolationDelaySeconds = 0.1;
 
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+            m_SyncedPosition.OnValueChanged += GetNextSnapshot;
+
         }
 
+        public override void OnNetworkDespawn()
+        {
+            base.OnNetworkDespawn();
+            m_SyncedPosition.OnValueChanged -= GetNextSnapshot;
+
+        }
+    
         public void Init(bool t_IsHummanControlled = false, bool t_IsOnlinePlayer = false, int t_PlayerIndex = 0)
         {
             if (t_IsOnlinePlayer)
             {
                 m_InputSource = GetComponent<FootballPlayerInputSource_Online>();
                 m_InputSource.Init(t_PlayerIndex);
+                if (IsHost)
+                {
+                    Debug.Log("Server will send client an RPC");
+                    InitRpc(t_IsHummanControlled);            
+                }
             }
             else
             {
@@ -62,7 +91,7 @@ namespace FootballSim.Player
             m_IsHumanControlled = t_IsHummanControlled;
             if (m_InputSource != null)
             {
-
+                
                 m_InputSource.OnLowActionAPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAEnter(); };
                 m_InputSource.OnLowActionACanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAExit(); };
                 m_InputSource.OnLowActionBPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionBEnter(); };
@@ -73,6 +102,7 @@ namespace FootballSim.Player
                 m_InputSource.OnHighActionBCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionBExit(); };
                 m_InputSource.OnSprintActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnSprintEnter(); };
                 m_InputSource.OnSprintActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnSprintExit(); };
+
             }
             else
             {
@@ -80,17 +110,23 @@ namespace FootballSim.Player
             }
 
             m_CurrentState = new FreeState(this);
-            m_PreviousPosition = transform.position;
             m_CurrentState.OnEnter();
             m_IsInitialized = true;
 
         }
 
+        [Rpc(SendTo.ClientsAndHost)]
+        public void InitRpc(bool t_IsHummanControlled = false)
+        {
+            if(!IsHost)
+            Init(t_IsHummanControlled, true);
+        }
+
         private float m_TickIntervalMs = 66.6f;
         private float m_ElapsedTime = 0.0f;
 
-        private float m_ClientOnlyVelocity = 0.0f;
-        private Vector3 m_PreviousPosition = Vector3.zero;
+        
+
         private void Update()
         {
             if (!m_IsInitialized) return;
@@ -110,16 +146,14 @@ namespace FootballSim.Player
             }
             if (IsClient && !IsHost)
             {
-                transform.position = m_SyncedPosition.Value;
-                m_ClientOnlyVelocity = (transform.position - m_PreviousPosition).sqrMagnitude / Time.deltaTime;
-                transform.rotation = m_SyncedRotation.Value;
+                InterpolateClientTransform();
             }
 
         }
 
         private void FixedUpdate()
         {
-            if (!m_IsInitialized) return;
+              if (!m_IsInitialized) return;
             if (IsHost && m_IsHumanControlled)
             {
                 m_CurrentState.OnFixedUpdate();
@@ -127,10 +161,112 @@ namespace FootballSim.Player
             }
             if (IsClient && !IsHost)
             {
-                m_Animator.SetFloat("Velocity", m_ClientOnlyVelocity);
+                m_Animator.SetFloat("Velocity", m_ClientInterpolatedSpeedSqr);
             }
 
         }
+
+        private void GetNextSnapshot(Vector3 t_PreviousValue, Vector3 t_NewValue)
+        {
+
+            m_SnapshotBuffer.Add(new TransformSnapshot
+            {
+                Timestamp = NetworkManager.Singleton.LocalTime.Time,
+                Position = t_NewValue,
+                Rotation = m_SyncedRotation.Value
+            });
+           
+            if (m_SnapshotBuffer.Count > 20) // Adjust buffer size as needed
+            {
+                m_SnapshotBuffer.RemoveAt(0);
+            }
+           
+
+        }
+
+
+        private void InterpolateClientTransform()
+        {
+            if (m_SnapshotBuffer.Count < 2)
+            {
+                // Not enough data to interpolate, snap to the latest known state if available
+                if (m_SnapshotBuffer.Count == 1)
+                {
+                    transform.position = m_SnapshotBuffer[0].Position;
+                    transform.rotation = m_SnapshotBuffer[0].Rotation;
+                }
+                // Reset previous position to avoid large velocity spikes when data arrives
+                m_ClientPreviousInterpolatedPosition = transform.position;
+                m_ClientInterpolatedSpeedSqr = 0f;
+                return;
+            }
+
+            // Calculate the target time for rendering
+            double renderTime = NetworkManager.Singleton.LocalTime.Time - m_InterpolationDelaySeconds;
+
+            // Find the two states in the buffer that bracket the renderTime
+            TransformSnapshot fromSnapshot = default;
+            TransformSnapshot toSnapshot = default;
+            bool foundSnapshots = false;
+
+            for (int i = 0; i < m_SnapshotBuffer.Count - 1; i++)
+            {
+                if (m_SnapshotBuffer[i].Timestamp <= renderTime && m_SnapshotBuffer[i + 1].Timestamp >= renderTime)
+                {
+                    fromSnapshot = m_SnapshotBuffer[i];
+                    toSnapshot = m_SnapshotBuffer[i + 1];
+                    foundSnapshots = true;
+                    break;
+                }
+            }
+
+            if (!foundSnapshots)
+            {
+                // Render time is outside our buffered range.
+                var latestBufferedState = m_SnapshotBuffer[m_SnapshotBuffer.Count - 1];
+                if (renderTime > latestBufferedState.Timestamp)
+                {
+                    transform.position = latestBufferedState.Position;
+                    transform.rotation = latestBufferedState.Rotation;
+                }
+                else
+                {
+                    var oldestBufferedState = m_SnapshotBuffer[0];
+                    transform.position = oldestBufferedState.Position;
+                    transform.rotation = oldestBufferedState.Rotation;
+                }
+                m_ClientPreviousInterpolatedPosition = transform.position;
+                m_ClientInterpolatedSpeedSqr = 0f;
+                return;
+            }
+
+            // Calculate interpolation factor
+            double timeDiffBetweenStates = toSnapshot.Timestamp - fromSnapshot.Timestamp;
+            float interpolationFactor = 0f;
+            if (timeDiffBetweenStates > 0.0001)
+            {
+                interpolationFactor = (float)((renderTime - fromSnapshot.Timestamp) / timeDiffBetweenStates);
+            }
+            interpolationFactor = Mathf.Clamp01(interpolationFactor);
+
+            // Interpolate position and rotation
+            transform.position = Vector3.Lerp(fromSnapshot.Position, toSnapshot.Position, interpolationFactor);
+            transform.rotation = Quaternion.Slerp(fromSnapshot.Rotation, toSnapshot.Rotation, interpolationFactor);
+
+            // Calculate speed for animator based on interpolated movement
+            if (Time.deltaTime > 0.0001f)
+            {
+                float distanceThisFrame = Vector3.Distance(transform.position, m_ClientPreviousInterpolatedPosition);
+                float speedThisFrame = distanceThisFrame / Time.deltaTime;
+                m_ClientInterpolatedSpeedSqr = speedThisFrame * speedThisFrame;
+            }
+            else
+            {
+                m_ClientInterpolatedSpeedSqr = 0f;
+            }
+            m_ClientPreviousInterpolatedPosition = transform.position;
+        }
+
 
     
 

@@ -224,7 +224,12 @@ namespace FootballSim.UI
 
         public void OnHostStartButtonPressed()
         {
-            //NetworkManager.Singleton.SceneManager.LoadScene(1, LoadSceneMode.Single);
+            FootballSim.GameManager.Instance.InitiateGame(new()
+            {
+                HomePlayerIndex = 0,
+                AwayPlayerIndex = -1,
+                GameMode = GameMode.PVP_ONLINE
+            });
         }
 
         public void OnClientJoinButtonPressed()

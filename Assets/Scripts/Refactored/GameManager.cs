@@ -1,5 +1,5 @@
 
-using System;
+
 using System.Collections.Generic;
 using FootballSim.Player;
 using Unity.Netcode;
@@ -12,6 +12,8 @@ namespace FootballSim
     {
         public int HomePlayerIndex;
         public int AwayPlayerIndex;
+
+        public GameMode GameMode;
             
     }
 
@@ -30,6 +32,8 @@ namespace FootballSim
         private GameMode m_GameMode = GameMode.NOT_INIT;
 
         private GameStartConfig m_CurrentGameSettings;
+        [SerializeField]
+        private GameObject m_PlayerPrefab;
         private void Awake()
         {
             if (Instance == null)
@@ -43,27 +47,48 @@ namespace FootballSim
             DontDestroyOnLoad(this);
         }
 
-        public void InitiatePVAGame(GameStartConfig t_Config)
+        public void InitiateGame(GameStartConfig t_Config)
         {
-            NetworkManager.Singleton.SceneManager.LoadScene("PVA_Arena", LoadSceneMode.Single);
-            m_GameMode = GameMode.PVA;
-            m_CurrentGameSettings = t_Config;
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SetupGame;
-        
+            if (IsHost)
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene("PVA_Arena", LoadSceneMode.Single);
+                m_CurrentGameSettings = t_Config;
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SetupGame;
+            }
+
         }
+
 
         private void SetupGame(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
-            var player = FindAnyObjectByType<FootballPlayer>();
-            Debug.Log("Player");
-            if (m_CurrentGameSettings.HomePlayerIndex != -1)
+            //placeholder logic
+
+            bool isOnline = m_CurrentGameSettings.GameMode == GameMode.PVP_ONLINE ? true : false;
+            var excpectedClient = FootballSim.Networking.NetworkConnectionRPCS.Instance.CurrentSteamClient.Value.ClientId;
+            if (clientsCompleted.FindIndex(value => value == excpectedClient) != -1)
             {
-                player.Init(true, false, m_CurrentGameSettings.HomePlayerIndex);
+                Debug.Log("SteamClient successfully loaded!");
+                GameObject serverOwnedPlayer = Instantiate(m_PlayerPrefab, new Vector3(-2.5f, 2.5f, 0), Quaternion.identity);
+                NetworkObject serverNetworkObject = serverOwnedPlayer.GetComponent<NetworkObject>();
+                serverNetworkObject.Spawn();
+
+                GameObject clientOwnedPlayer = Instantiate(m_PlayerPrefab, new Vector3(2.5f, 2.5f, 0), Quaternion.identity);
+                NetworkObject clientNetworkObject = clientOwnedPlayer.GetComponent<NetworkObject>();
+                clientNetworkObject.Spawn();
+                clientNetworkObject.ChangeOwnership(excpectedClient);
+                var serverPlayer = serverOwnedPlayer.GetComponent<FootballPlayer>();
+                var clientPlayer = clientOwnedPlayer.GetComponent<FootballPlayer>();
+
+                serverPlayer.Init(true, true);
+                clientPlayer.Init(true, true);
+
             }
-            if (m_CurrentGameSettings.AwayPlayerIndex != -1) {
-                player.Init(true, false, m_CurrentGameSettings.AwayPlayerIndex);
-            }
+            
+          
         }
+        
+
+
     }
 
 }
