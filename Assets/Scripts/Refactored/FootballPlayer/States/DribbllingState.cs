@@ -22,7 +22,7 @@ namespace FootballSim.Player
 
         public void OnExit()
         {
-            throw new System.NotImplementedException();
+           //for now empty
         }
 
         public void OnFixedUpdate()
@@ -32,7 +32,7 @@ namespace FootballSim.Player
 
         public void OnUpdate()
         {
-            throw new System.NotImplementedException();
+            //for now empty
         }
 
         private void Move()
@@ -47,6 +47,60 @@ namespace FootballSim.Player
             }
         }
 
+        public void HandleTransition()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnSprintEnter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnSprintExit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnLowActionAEnter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnLowActionAExit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnLowActionBEnter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnLowActionBExit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnHighActionAEnter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnHighActionAExit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnHighActionBEnter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnHighActionBExit()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
 }

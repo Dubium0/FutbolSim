@@ -1,78 +1,38 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Video;
 
 namespace FootballSim.Player
 {
-    public struct PlayerInputPayload : INetworkSerializable
-    {
-        public Vector3 MovementVector;
 
-        public bool IsLowActionAPerformed;
-
-        public bool IsLowActionACanceled;
-
-        public bool IsLowActionBPerformed;
-
-        public bool IsLowActionBCanceled;
-
-        public bool IsHighActionAPerformed;
-
-        public bool IsHighActionACanceled;
-
-        public bool IsHighActionBPerformed;
-
-        public bool IsHighActionBCanceled;
-
-        public bool IsSprintActionPerformed;
-
-        public bool IsSprintActionCanceled;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref MovementVector);
-
-            serializer.SerializeValue(ref IsLowActionAPerformed);
-            serializer.SerializeValue(ref IsLowActionACanceled);
-
-            serializer.SerializeValue(ref IsLowActionBPerformed);
-            serializer.SerializeValue(ref IsLowActionBCanceled);
-
-            serializer.SerializeValue(ref IsHighActionAPerformed);
-            serializer.SerializeValue(ref IsHighActionACanceled);
-
-            serializer.SerializeValue(ref IsHighActionBPerformed);
-            serializer.SerializeValue(ref IsHighActionBCanceled);
-
-            serializer.SerializeValue(ref IsSprintActionPerformed);
-            serializer.SerializeValue(ref IsSprintActionCanceled);
-        }
-    }
     public class FootballPlayerInputSource_Online : NetworkBehaviour, IFootballPlayerInputSource
     {
-        public Vector3 MovementVector {get { return m_ServerLastProcessedInput.MovementVector; }}
+        public Vector3 MovementVector { get { if (IsWorkingConditionMet()) return GetMovementVector(); else return Vector3.zero; } }
 
-        public bool IsLowActionAPerformed {get { return m_ServerLastProcessedInput.IsLowActionAPerformed; }}
-
-        public bool IsLowActionACanceled {get { return m_ServerLastProcessedInput.IsLowActionACanceled; }}
-
-        public bool IsLowActionBPerformed{get { return m_ServerLastProcessedInput.IsLowActionBPerformed; }}
-
-        public bool IsLowActionBCanceled {get { return m_ServerLastProcessedInput.IsLowActionBCanceled; }}
-
-        public bool IsHighActionAPerformed {get { return m_ServerLastProcessedInput.IsHighActionAPerformed; }}
-
-        public bool IsHighActionACanceled {get { return m_ServerLastProcessedInput.IsHighActionACanceled; }}
-
-        public bool IsHighActionBPerformed {get { return m_ServerLastProcessedInput.IsHighActionBPerformed; }}
-
-        public bool IsHighActionBCanceled {get { return m_ServerLastProcessedInput.IsHighActionBCanceled; }}
-
-        public bool IsSprintActionPerformed {get { return m_ServerLastProcessedInput.IsSprintActionPerformed; }}
-
-        public bool IsSprintActionCanceled {get { return m_ServerLastProcessedInput.IsSprintActionCanceled; }}
+        public Action OnLowActionAPerformed { set { m_OnLowActionAPerformed = value; } }
+        public Action OnLowActionACanceled { set { m_OnLowActionACanceled = value; } }
+        public Action OnLowActionBPerformed { set { m_OnLowActionBPerformed = value; } }
+        public Action OnLowActionBCanceled { set { m_OnLowActionBCanceled = value; } }
+        public Action OnHighActionAPerformed { set { m_OnHighActionAPerformed = value; } }
+        public Action OnHighActionACanceled { set { m_OnHighActionACanceled = value; } }
+        public Action OnHighActionBPerformed { set { m_OnHighActionBPerformed = value; } }
+        public Action OnHighActionBCanceled { set { m_OnHighActionBCanceled = value; } }
+        public Action OnSprintActionPerformed { set { m_OnSprintActionPerformed = value; } }
+        public Action OnSprintActionCanceled { set { m_OnSprintActionCanceled = value; } }
 
         public bool Enable { get { return m_Enable; } set { m_Enable = value; } }
+        private Action m_OnLowActionAPerformed;
+        private Action m_OnLowActionACanceled;
+        private Action m_OnLowActionBPerformed;
+        private Action m_OnLowActionBCanceled;
+        private Action m_OnHighActionAPerformed;
+        private Action m_OnHighActionACanceled;
+        private Action m_OnHighActionBPerformed;
+        private Action m_OnHighActionBCanceled;
+        private Action m_OnSprintActionPerformed;
+        private Action m_OnSprintActionCanceled;
 
         private InputAction m_MoveAction;
         private InputAction m_SprintAction;
@@ -82,11 +42,10 @@ namespace FootballSim.Player
         private InputAction m_HighActionB;
         private InputAction m_LookAction;
 
-        private bool m_Enable = true;
+        private bool m_Enable = false;
         public bool EnableDebug = true;
 
-        private PlayerInputPayload m_ServerLastProcessedInput;
-
+        private Vector2 m_ClientMovementInput = Vector2.zero;
         private void SetActions(int t_playerIndex = 0)
         {
             string playerPrefix = t_playerIndex >= 0 ? $"Player{t_playerIndex + 1}/" : "";
@@ -102,6 +61,25 @@ namespace FootballSim.Player
             m_SprintAction = InputSystem.actions?.FindAction($"{playerPrefix}Sprint");
         }
 
+
+        private float m_TickIntervalMs= 66.6f; // 15 times per second means
+
+        private float m_ElapsedTime = 0.0f;
+        private void Update()
+        {
+            if (!m_Enable) return;
+            if (IsClient & IsOwner)
+            {
+                m_ElapsedTime += Time.deltaTime * 1000;
+                if (m_ElapsedTime >= m_TickIntervalMs)
+                {
+                    UpdateMovementInputRpc(m_MoveAction.ReadValue<Vector2>());
+                    m_ElapsedTime = 0;
+                }
+
+            }
+        }
+
         private bool IsWorkingConditionMet()
         {
             return m_Enable;
@@ -110,45 +88,37 @@ namespace FootballSim.Player
         public void Init(int t_playerIndex = 0)
         {
             SetActions(t_playerIndex);
+            BindActions();
+            m_Enable = true;
         }
-        private void Update()
+    
+        private void BindActions()
         {
-            if (IsClient && IsOwner)
+            if (IsClient & IsOwner)
             {
-                m_ServerLastProcessedInput = new()
-                {
-                    MovementVector = GetMovementVector(),
-
-                    IsLowActionAPerformed = m_LowActionA.WasPerformedThisFrame(),
-
-                    IsLowActionACanceled = m_LowActionA.WasReleasedThisFrame(),
-
-                    IsLowActionBPerformed = m_LowActionB.WasPerformedThisFrame(),
-
-                    IsLowActionBCanceled = m_LowActionB.WasReleasedThisFrame(),
-
-                    IsHighActionAPerformed = m_HighActionA.WasPerformedThisFrame(),
-
-                    IsHighActionACanceled = m_HighActionA.WasReleasedThisFrame(),
-
-                    IsHighActionBPerformed = m_HighActionB.WasPerformedThisFrame(),
-
-                    IsHighActionBCanceled = m_HighActionB.WasReleasedThisFrame(),
-
-                    IsSprintActionPerformed = m_SprintAction.WasPerformedThisFrame(),
-
-                    IsSprintActionCanceled = m_SprintAction.WasReleasedThisFrame()
-
-                };
-                
+                m_LowActionA.performed += context => { if (IsWorkingConditionMet()) RequestActionLowAPerformedFromServerRpc(); };
+                m_LowActionA.canceled += context => { if (IsWorkingConditionMet()) RequestActionLowACanceledFromServerRpc(); };
+                m_LowActionB.performed += context => { if (IsWorkingConditionMet()) RequestActionLowBPerformedFromServerRpc(); };
+                m_LowActionB.canceled += context => { if (IsWorkingConditionMet()) RequestActionLowBCanceledFromServerRpc(); };
+                m_HighActionA.performed += context => { if (IsWorkingConditionMet()) RequestActionHighAPerformedFromServerRpc(); };
+                m_HighActionA.canceled += context => { if (IsWorkingConditionMet()) RequestActionHighACanceledFromServerRpc(); };
+                m_HighActionB.performed += context => { if (IsWorkingConditionMet()) RequestActionHighBPerformedFromServerRpc(); };
+                m_HighActionB.canceled += context => { if (IsWorkingConditionMet()) RequestActionHighBCanceledFromServerRpc(); };
+                m_SprintAction.performed += context => { if (IsWorkingConditionMet()) RequestActionSprintPerformedFromServerRpc(); };
+                m_SprintAction.canceled += context => { if (IsWorkingConditionMet()) RequestActionSprintCanceledFromServerRpc(); };
             }
-        }
-
-        private void FixedUpdate()
-        {
-            if (IsClient && IsOwner)
+            if (IsServer & IsOwner)
             {
-                SubmitInputServerRpc(m_ServerLastProcessedInput);
+                m_LowActionA.performed += context => { if (IsWorkingConditionMet()) m_OnLowActionAPerformed(); };
+                m_LowActionA.canceled += context => { if (IsWorkingConditionMet()) m_OnLowActionACanceled(); };
+                m_LowActionB.performed += context => { if (IsWorkingConditionMet()) m_OnLowActionBPerformed(); };
+                m_LowActionB.canceled += context => { if (IsWorkingConditionMet()) m_OnLowActionBCanceled(); };
+                m_HighActionA.performed += context => { if (IsWorkingConditionMet()) m_OnHighActionAPerformed(); };
+                m_HighActionA.canceled += context => { if (IsWorkingConditionMet()) m_OnHighActionACanceled(); };
+                m_HighActionB.performed += context => { if (IsWorkingConditionMet()) m_OnHighActionBPerformed(); };
+                m_HighActionB.canceled += context => { if (IsWorkingConditionMet()) m_OnHighActionBCanceled(); };
+                m_SprintAction.performed += context => { if (IsWorkingConditionMet()) m_OnSprintActionPerformed(); };
+                m_SprintAction.canceled += context => { if (IsWorkingConditionMet()) m_OnSprintActionCanceled(); };
             }
         }
 
@@ -162,24 +132,65 @@ namespace FootballSim.Player
             cameraRight.Normalize();
             cameraForward.Normalize();
 
-            var inputValue = m_MoveAction.ReadValue<Vector2>();
+            var inputValue = Vector2.zero;
+
+            if (IsServer)
+            {
+                if (IsOwner)
+                {
+                    inputValue = m_MoveAction.ReadValue<Vector2>();
+                }
+                else
+                {
+                    inputValue = m_ClientMovementInput;
+                }
+
+            }
+
             var moveDirection = cameraRight * inputValue.x + cameraForward * inputValue.y;
 
             return moveDirection.normalized;
         }
-        [ServerRpc]
-        public void SubmitInputServerRpc(PlayerInputPayload inputData, ServerRpcParams rpcParams = default)
-        {
-            // Basic validation: ensure the sender is the owner
-            if (rpcParams.Receive.SenderClientId != OwnerClientId) return;
 
-            // Store this input. It will be processed in FixedUpdate on the server.
-            m_ServerLastProcessedInput = inputData;
-            // Optionally, if m_ServerLastProcessedInput is a NetworkVariable, its value is set here.
+        [Rpc(SendTo.Server)]
+        private void RequestActionLowAPerformedFromServerRpc() { if ( IsWorkingConditionMet()) m_OnLowActionAPerformed(); if (EnableDebug) Debug.Log("Sending LowA performed to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionLowACanceledFromServerRpc() { if ( IsWorkingConditionMet()) m_OnLowActionACanceled(); if (EnableDebug) Debug.Log("Sending LowA canceled to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionLowBPerformedFromServerRpc() { if (IsWorkingConditionMet()) m_OnLowActionBPerformed(); if (EnableDebug) Debug.Log("Sending LowB performed to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionLowBCanceledFromServerRpc() { if ( IsWorkingConditionMet()) m_OnLowActionBCanceled(); if (EnableDebug) Debug.Log("Sending LowB canceled to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionHighAPerformedFromServerRpc() { if (IsWorkingConditionMet()) m_OnHighActionAPerformed(); if (EnableDebug) Debug.Log("Sending HighA performed to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionHighACanceledFromServerRpc() { if (IsWorkingConditionMet()) m_OnHighActionACanceled(); if (EnableDebug) Debug.Log("Sending HighA canceled to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionHighBPerformedFromServerRpc() { if (IsWorkingConditionMet()) m_OnHighActionBPerformed(); if (EnableDebug) Debug.Log("Sending HighB performed to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionHighBCanceledFromServerRpc() { if ( IsWorkingConditionMet()) m_OnHighActionBCanceled(); if (EnableDebug) Debug.Log("Sending HighB canceled to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionSprintPerformedFromServerRpc() { if ( IsWorkingConditionMet()) m_OnSprintActionPerformed(); if (EnableDebug) Debug.Log("Sending sprint performed to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void RequestActionSprintCanceledFromServerRpc() { if ( IsWorkingConditionMet()) m_OnSprintActionCanceled(); if (EnableDebug) Debug.Log("Sending sprint cancaled to Server"); }
+
+        [Rpc(SendTo.Server)]
+        private void UpdateMovementInputRpc(Vector2 t_MovementInput)
+        {
+            
+            m_ClientMovementInput = t_MovementInput;
+            
         }
 
-
-
+       
     }
 
 }

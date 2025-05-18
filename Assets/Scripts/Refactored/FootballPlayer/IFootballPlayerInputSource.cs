@@ -11,20 +11,22 @@ namespace FootballSim.Player
         public bool Enable { get; set; }
         public Vector3 MovementVector { get; }
 
-        public bool IsLowActionAPerformed { get; }
-        public bool IsLowActionACanceled { get; }
+        public Action OnLowActionAPerformed { set; }
+        public Action OnLowActionACanceled { set; }
 
-        public bool IsLowActionBPerformed { get; }
-        public bool IsLowActionBCanceled { get; }
+        public Action OnLowActionBPerformed { set; }
+        public Action OnLowActionBCanceled { set; }
 
-        public bool IsHighActionAPerformed { get; }
-        public bool IsHighActionACanceled { get; }
+        public Action OnHighActionAPerformed { set; }
+        public Action OnHighActionACanceled { set; }
 
-        public bool IsHighActionBPerformed { get; }
-        public bool IsHighActionBCanceled { get; }
+        public Action OnHighActionBPerformed { set; }
+        public Action OnHighActionBCanceled { set; }
 
-        public bool IsSprintActionPerformed { get; }
-        public bool IsSprintActionCanceled { get; }
+        public Action OnSprintActionPerformed { set; }
+        public Action OnSprintActionCanceled { set; }
+
+        public void Init(int t_playerIndex = 0);
     }
 
 }
