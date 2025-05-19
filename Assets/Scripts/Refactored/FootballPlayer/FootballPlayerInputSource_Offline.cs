@@ -55,7 +55,19 @@ namespace FootballSim.Player
 
         private void SetActions(int t_playerIndex = 0)
         {
-            string playerPrefix = t_playerIndex >= 0 ? $"Player{t_playerIndex + 1}/" : "";
+            string playerPrefix;
+            if (t_playerIndex  == 1)
+            {
+                playerPrefix ="Keyboard Only/" ;
+            }
+            else if (t_playerIndex == 2)
+            {
+                playerPrefix = "Controller Only/";
+            }
+            else
+            {
+                playerPrefix = "Player/";
+            }
 
             if (EnableDebug) Debug.Log("[Input System] Setting up for " + playerPrefix);
 

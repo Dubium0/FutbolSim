@@ -111,8 +111,6 @@ public class FootballFormation : MonoBehaviour
             forwardPosition[i] = forwardLine.GetChild(i);
         }
 
-
-
     }
 }
 

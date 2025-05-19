@@ -3,15 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags:
-  - Futboller
-  - SoccerBall
-  - Out
-  - GoalHome
-  - GoalAway
-  - Throw-in
-  - HomeZone
-  - AwayZone
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -24,8 +16,8 @@ TagManager:
   - Ball
   - BlueFootballer
   - RedFootballer
-  - 
-  - 
+  - FootballPlayer
+  - Football
   - 
   - 
   - 

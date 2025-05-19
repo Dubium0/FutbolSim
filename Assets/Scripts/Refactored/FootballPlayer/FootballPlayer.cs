@@ -1,6 +1,7 @@
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -35,6 +36,11 @@ namespace FootballSim.Player
 
         public Animator Animator { get { return m_Animator; } }
 
+        public FootballTeam.TeamFlag TeamFlag { get; private set; } = FootballTeam.TeamFlag.NotInitialized;
+
+        public event Action<FootballPlayer> OnBallWinCallback;
+
+        public event Action<FootballPlayer> OnBallLoseCallback;
 
         private IPlayerState m_CurrentState;
 
@@ -54,7 +60,17 @@ namespace FootballSim.Player
         private float m_ClientInterpolatedSpeedSqr = 0.0f;
 
         private double m_InterpolationDelaySeconds = 0.1;
+        [SerializeField]
+        private Transform m_BallPositionTransform;
 
+        public Vector3 BallPosition { get { return m_BallPositionTransform.position; }}
+
+
+        public bool IsTheOwnerOfTheBall { get; private set; } = false;
+
+        public bool CanPossesTheBall { get; private set; } = true;
+
+        public bool IsForcefullyTakingBall { get; private set; } = false;
 
         public override void OnNetworkSpawn()
         {
@@ -69,7 +85,7 @@ namespace FootballSim.Player
             m_SyncedPosition.OnValueChanged -= GetNextSnapshot;
 
         }
-    
+
         public void Init(bool t_IsHummanControlled = false, bool t_IsOnlinePlayer = false, int t_PlayerIndex = 0)
         {
             if (t_IsOnlinePlayer)
@@ -79,7 +95,7 @@ namespace FootballSim.Player
                 if (IsHost)
                 {
                     Debug.Log("Server will send client an RPC");
-                    InitRpc(t_IsHummanControlled);            
+                    InitRpc(t_IsHummanControlled);
                 }
             }
             else
@@ -91,7 +107,7 @@ namespace FootballSim.Player
             m_IsHumanControlled = t_IsHummanControlled;
             if (m_InputSource != null)
             {
-                
+
                 m_InputSource.OnLowActionAPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAEnter(); };
                 m_InputSource.OnLowActionACanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAExit(); };
                 m_InputSource.OnLowActionBPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionBEnter(); };
@@ -113,6 +129,58 @@ namespace FootballSim.Player
             m_CurrentState.OnEnter();
             m_IsInitialized = true;
 
+            OnBallLoseCallback += player =>
+            {
+                IsTheOwnerOfTheBall = false;
+
+                StartCoroutine(StartBallPossesCooldown());
+
+            };
+            OnBallWinCallback += player =>
+            {
+                IsTheOwnerOfTheBall = true;
+                
+                StartCoroutine(StartForcefullyTakingBallCooldown());
+            };
+
+            Football.Football.Instance.OnBallOwnerChanged += (t_PrevOwner, t_NewOwner) =>
+            {
+                if (IsHost)
+                {
+                    if (t_PrevOwner == this)
+                    {
+                        if (OnBallLoseCallback != null)
+                        {
+                            OnBallLoseCallback.Invoke(this);
+                          
+                        }
+                    }
+                    else if (t_NewOwner == this)
+                    {
+                        if (OnBallWinCallback != null)
+                        {
+                            
+                          OnBallWinCallback.Invoke(this);
+                        }
+                    }
+                    
+                }
+            };
+
+        }
+
+        private IEnumerator StartBallPossesCooldown()
+        {
+            CanPossesTheBall = false;
+            yield return new WaitForSeconds(1); // 1 second cooldown
+            CanPossesTheBall = true;
+        }
+
+        private IEnumerator StartForcefullyTakingBallCooldown()
+        {
+            IsForcefullyTakingBall = true;
+            yield return new WaitForSeconds(0.5f); // 1 second cooldown
+            IsForcefullyTakingBall = false;
         }
 
         [Rpc(SendTo.ClientsAndHost)]
@@ -132,6 +200,7 @@ namespace FootballSim.Player
             if (!m_IsInitialized) return;
             if (IsHost)
             {
+                Debug.Log("I am Ticking!");
                 if (m_IsHumanControlled)
                 {
                     m_CurrentState.OnUpdate();
@@ -154,9 +223,12 @@ namespace FootballSim.Player
         private void FixedUpdate()
         {
               if (!m_IsInitialized) return;
-            if (IsHost && m_IsHumanControlled)
+            if (IsHost)
             {
-                m_CurrentState.OnFixedUpdate();
+                if (m_IsHumanControlled)
+                {
+                    m_CurrentState.OnFixedUpdate();
+                }
                 m_Animator.SetFloat("Velocity", Rigidbody.linearVelocity.sqrMagnitude);
             }
             if (IsClient && !IsHost)
@@ -165,6 +237,9 @@ namespace FootballSim.Player
             }
 
         }
+
+
+        
 
         private void GetNextSnapshot(Vector3 t_PreviousValue, Vector3 t_NewValue)
         {
@@ -175,13 +250,33 @@ namespace FootballSim.Player
                 Position = t_NewValue,
                 Rotation = m_SyncedRotation.Value
             });
-           
+
             if (m_SnapshotBuffer.Count > 20) // Adjust buffer size as needed
             {
                 m_SnapshotBuffer.RemoveAt(0);
             }
-           
 
+
+        }
+
+        public void SetHumanControlled(bool t_IsHumanControlled)
+        {
+            m_IsHumanControlled = t_IsHumanControlled;
+        }
+        public void SetKickBallTrigger()
+        {
+            if (IsHost)
+            {
+                Animator.SetTrigger("BallKick");
+                SetKickBallTriggerRpc();
+            }
+
+        }
+        [Rpc(SendTo.ClientsAndHost)]
+        public void SetKickBallTriggerRpc()
+        {
+            if (!IsHost)
+                Animator.SetTrigger("BallKick");
         }
 
 

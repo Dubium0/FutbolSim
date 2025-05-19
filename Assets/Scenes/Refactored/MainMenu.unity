@@ -686,7 +686,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  m_PlayerPrefab: {fileID: 3607889227430387662, guid: b0fc971fc08967349b1de47d77aa3809, type: 3}
+  m_HomeTeamPrefab: {fileID: 6086371049058648932, guid: 36dd5c96f54e24c4d8c1e3ec3a1f6002, type: 3}
+  m_AwayTeamPrefab: {fileID: 6292518414554670868, guid: 26358458c1e462845b6b01cad788dbae, type: 3}
 --- !u!4 &2123872560
 Transform:
   m_ObjectHideFlags: 0

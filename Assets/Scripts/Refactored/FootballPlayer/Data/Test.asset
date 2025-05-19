@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   MaxWalkSpeed: 6
-  WalkingAcceleration: 20
+  WalkingAcceleration: 30
   RotationTime: 2

@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 namespace FootballSim.Player
 {
 
+    
 
     public interface IFootballPlayerInputSource
     {
