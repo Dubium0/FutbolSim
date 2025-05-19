@@ -42,7 +42,7 @@ namespace FootballSim.Networking
             }
             DontDestroyOnLoad(gameObject);
         }
-
+        
         [Rpc(SendTo.Server)]
         public void NotifySteamPlayerConnectedRpc(ulong t_SteamId, string t_SteamName, ulong t_ClientId)
         {

@@ -5,6 +5,7 @@ using Steamworks.Data;
 using Netcode.Transports.Facepunch;
 using Unity.Netcode;
 using System;
+using UnityEngine.SceneManagement;
 
 
 namespace FootballSim.Networking
@@ -201,6 +202,7 @@ namespace FootballSim.Networking
             //GameManager.instance.ClearChat();
             //GameManager.instance.Disconnected();
             Debug.Log("disconnected");
+            
         }
 
         private void Singleton_OnClientDisconnectCallback(ulong _cliendId)
@@ -208,8 +210,9 @@ namespace FootballSim.Networking
             NetworkConnectionRPCS.Instance.NotifySteamPlayerDisconnectedRpc();
             NetworkManager.Singleton.OnClientDisconnectCallback -= Singleton_OnClientDisconnectCallback;
             if (_cliendId == 0)
-            {   
+            {
                 Disconnected();
+                SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
             }
         }
 

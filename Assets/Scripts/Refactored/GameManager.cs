@@ -36,6 +36,9 @@ namespace FootballSim
         private GameObject m_HomeTeamPrefab;
         [SerializeField]
         private GameObject m_AwayTeamPrefab;
+
+        [SerializeField]
+        private GameObject m_FootballPrefab;
         private void Awake()
         {
             if (Instance == null)
@@ -56,6 +59,7 @@ namespace FootballSim
                 NetworkManager.Singleton.SceneManager.LoadScene("PVA_Arena", LoadSceneMode.Single);
                 m_CurrentGameSettings = t_Config;
                 NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SetupGame;
+
             }
 
         }
@@ -63,9 +67,6 @@ namespace FootballSim
 
         private void SetupGame(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
-            //placeholder logic
-
-            bool isOnline = m_CurrentGameSettings.GameMode == GameMode.PVP_ONLINE ? true : false;
 
             switch (m_CurrentGameSettings.GameMode)
             {
@@ -97,6 +98,8 @@ namespace FootballSim
             //var player2Script = pvpPlayer2.GetComponent<FootballPlayer>();
             //player1Script.Init(true, false, m_CurrentGameSettings.HomePlayerIndex != -1 ? m_CurrentGameSettings.HomePlayerIndex :  m_CurrentGameSettings.AwayPlayerIndex );
             //player2Script.Init(false, false);
+
+
             GameObject homeTeamObj = Instantiate(m_HomeTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             GameObject awayTeamObj = Instantiate(m_AwayTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             homeTeamObj.GetComponent<NetworkObject>().Spawn();
@@ -114,7 +117,7 @@ namespace FootballSim
                 homeTeamScript.Init(false, FootballTeam.TeamFlag.Home);
             }
 
-             if (m_CurrentGameSettings.AwayPlayerIndex != -1)
+            if (m_CurrentGameSettings.AwayPlayerIndex != -1)
             {
 
                 awayTeamScript.Init(true, FootballTeam.TeamFlag.Away, m_CurrentGameSettings.AwayPlayerIndex);
@@ -127,7 +130,7 @@ namespace FootballSim
 
 
 
-            
+
         }
 
         private void SetupLocalPvPGame()
@@ -144,6 +147,7 @@ namespace FootballSim
             //var player2Script = pvpPlayer2.GetComponent<FootballPlayer>();
             //player1Script.Init(true, false, m_CurrentGameSettings.HomePlayerIndex);
             //player2Script.Init(true, false, m_CurrentGameSettings.AwayPlayerIndex);
+
             GameObject homeTeamObj = Instantiate(m_HomeTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             GameObject awayTeamObj = Instantiate(m_AwayTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             homeTeamObj.GetComponent<NetworkObject>().Spawn();
@@ -161,7 +165,7 @@ namespace FootballSim
                 homeTeamScript.Init(false, FootballTeam.TeamFlag.Home);
             }
 
-             if (m_CurrentGameSettings.AwayPlayerIndex != -1)
+            if (m_CurrentGameSettings.AwayPlayerIndex != -1)
             {
 
                 awayTeamScript.Init(true, FootballTeam.TeamFlag.Away, m_CurrentGameSettings.AwayPlayerIndex);
@@ -171,7 +175,7 @@ namespace FootballSim
             {
                 awayTeamScript.Init(false, FootballTeam.TeamFlag.Away);
             }
-            
+
 
         }
 
@@ -192,18 +196,18 @@ namespace FootballSim
             //
             //serverPlayer.Init(true, true);
             //clientPlayer.Init(true, true);
+           
             GameObject homeTeamObj = Instantiate(m_HomeTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             GameObject awayTeamObj = Instantiate(m_AwayTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             homeTeamObj.GetComponent<NetworkObject>().Spawn();
             awayTeamObj.GetComponent<NetworkObject>().SpawnWithOwnership(t_ClientId);
             var homeTeamScript = homeTeamObj.GetComponent<FootballTeam.FootballTeam>();
             var awayTeamScript = awayTeamObj.GetComponent<FootballTeam.FootballTeam>();
-           
-            homeTeamScript.Init(true, FootballTeam.TeamFlag.Home,0,true);
-            awayTeamScript.Init(true, FootballTeam.TeamFlag.Away,0,true);
-                  
-        }
 
+            homeTeamScript.Init(true, FootballTeam.TeamFlag.Home, 0, true);
+            awayTeamScript.Init(true, FootballTeam.TeamFlag.Away, 0, true);
+
+        }
     }
 
 }
