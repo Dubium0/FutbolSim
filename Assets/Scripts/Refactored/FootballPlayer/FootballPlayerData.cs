@@ -9,7 +9,9 @@ namespace FootballSim.Player
         public float MaxWalkSpeed;
         public float WalkingAcceleration;
         public float RotationTime;
-        
+        public float MaximumShootPower;
+
+        public float MinimumShootPower;
     }   
 
 }

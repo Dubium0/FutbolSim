@@ -34,7 +34,12 @@ namespace FootballSim.Player
         [SerializeField]
         private Animator m_Animator;
 
-        public Animator Animator { get { return m_Animator; } }
+        [SerializeField]
+        private FootballPlayerAnimation m_FootballPlayerAnimation;
+
+        public FootballPlayerAnimation FootballPlayerAnimation{get { return m_FootballPlayerAnimation; }}
+        public Animator Animator
+        { get { return m_Animator; } }
 
         public FootballTeam.TeamFlag TeamFlag { get; private set; } = FootballTeam.TeamFlag.NotInitialized;
 
@@ -46,7 +51,7 @@ namespace FootballSim.Player
 
         private bool m_IsHumanControlled;
 
-        private bool m_IsInitialized = false;
+        private bool m_IsInitialized = false;   
 
         // always sycn values
         private NetworkVariable<Vector3> m_SyncedPosition = new NetworkVariable<Vector3>(
@@ -108,14 +113,14 @@ namespace FootballSim.Player
             if (m_InputSource != null)
             {
 
-                m_InputSource.OnLowActionAPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAEnter(); };
-                m_InputSource.OnLowActionACanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionAExit(); };
-                m_InputSource.OnLowActionBPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionBEnter(); };
-                m_InputSource.OnLowActionBCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLowActionBExit(); };
-                m_InputSource.OnHighActionAPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionAEnter(); };
-                m_InputSource.OnHighActionACanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionAExit(); };
-                m_InputSource.OnHighActionBPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionBEnter(); };
-                m_InputSource.OnHighActionBCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnHighActionBExit(); };
+                m_InputSource.OnPassActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnPassActionEnter(); };
+                m_InputSource.OnPassActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnPassActionExit(); };
+                m_InputSource.OnThroughPassActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnThroughPassActionEnter(); };
+                m_InputSource.OnThroughPassActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnThroughPassActionExit(); };
+                m_InputSource.OnLobPassActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLobPassActionEnter(); };
+                m_InputSource.OnLobPassActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnLobPassActionExit(); };
+                m_InputSource.OnShootActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnShootActionEnter(); };
+                m_InputSource.OnShootActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnShootActionExit(); };
                 m_InputSource.OnSprintActionPerformed = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnSprintEnter(); };
                 m_InputSource.OnSprintActionCanceled = () => { if (IsHost && m_IsHumanControlled) m_CurrentState.OnSprintExit(); };
 
@@ -200,7 +205,6 @@ namespace FootballSim.Player
             if (!m_IsInitialized) return;
             if (IsHost)
             {
-                Debug.Log("I am Ticking!");
                 if (m_IsHumanControlled)
                 {
                     m_CurrentState.OnUpdate();

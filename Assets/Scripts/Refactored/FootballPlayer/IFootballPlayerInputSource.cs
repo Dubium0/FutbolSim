@@ -12,17 +12,17 @@ namespace FootballSim.Player
         public bool Enable { get; set; }
         public Vector3 MovementVector { get; }
 
-        public Action OnLowActionAPerformed { set; }
-        public Action OnLowActionACanceled { set; }
+        public Action OnPassActionPerformed { set; }
+        public Action OnPassActionCanceled { set; }
 
-        public Action OnLowActionBPerformed { set; }
-        public Action OnLowActionBCanceled { set; }
+        public Action OnThroughPassActionPerformed { set; }
+        public Action OnThroughPassActionCanceled { set; }
 
-        public Action OnHighActionAPerformed { set; }
-        public Action OnHighActionACanceled { set; }
+        public Action OnLobPassActionPerformed { set; }
+        public Action OnLobPassActionCanceled { set; }
 
-        public Action OnHighActionBPerformed { set; }
-        public Action OnHighActionBCanceled { set; }
+        public Action OnShootActionPerformed { set; }
+        public Action OnShootActionCanceled { set; }
 
         public Action OnSprintActionPerformed { set; }
         public Action OnSprintActionCanceled { set; }

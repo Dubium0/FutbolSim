@@ -62,42 +62,42 @@ namespace FootballSim.Player
             throw new System.NotImplementedException();
         }
 
-        public void OnLowActionAEnter()
+        public void OnPassActionEnter()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnLowActionAExit()
+        public void OnPassActionExit()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnLowActionBEnter()
+        public void OnThroughPassActionEnter()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnLowActionBExit()
+        public void OnThroughPassActionExit()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnHighActionAEnter()
+        public void OnLobPassActionEnter()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnHighActionAExit()
+        public void OnLobPassActionExit()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnHighActionBEnter()
+        public void OnShootActionEnter()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OnHighActionBExit()
+        public void OnShootActionExit()
         {
             throw new System.NotImplementedException();
         }

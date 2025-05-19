@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace FootballSim.Player
@@ -62,42 +64,93 @@ namespace FootballSim.Player
              //for now empty
         }
 
-        public void OnLowActionAEnter()
+        private float m_ShootTimer = 0;
+        private float m_ShootMaxPowerReachTime = 0.5f; // seconds
+        private bool m_IsShooting = false;
+        public void OnPassActionEnter()
         {
-            m_FootballPlayer.Animator.SetTrigger("BallHit");
+            if (m_FootballPlayer.IsTheOwnerOfTheBall)
+            {
+                m_IsShooting = true;
+                m_ShootTimer = Time.time;
+                m_FootballPlayer.StartCoroutine(ShootPowerAdjustRoutine());
+
+
+            }
         }
 
-        public void OnLowActionAExit()
+        public void OnPassActionExit()
         {
-             //for now empty
+            if (m_FootballPlayer.IsTheOwnerOfTheBall && m_IsShooting)
+            {
+                float elapsedTime = Time.time - m_ShootTimer;
+
+                float clampValue01 = Mathf.Clamp(elapsedTime, 0, m_ShootMaxPowerReachTime) / m_ShootMaxPowerReachTime;
+                m_FootballPlayer.Animator.SetTrigger("BallHit");
+                m_FootballPlayer.FootballPlayerAnimation.OnBallTouchEvent +=  () =>
+                {
+                    HitBallLogic(Mathf.Lerp(m_FootballPlayer.Data.MinimumShootPower, m_FootballPlayer.Data.MaximumShootPower, clampValue01) );
+                    m_IsShooting = false;
+                };
+            }
+            m_IsShooting = false;
         }
 
-        public void OnLowActionBEnter()
-        {
-             //for now empty
+        
+        private IEnumerator ShootPowerAdjustRoutine() {
+            yield return new WaitForSeconds(m_ShootMaxPowerReachTime);
+            if (m_IsShooting)
+            {   
+                m_FootballPlayer.Animator.SetTrigger("BallHit");
+                m_FootballPlayer.FootballPlayerAnimation.OnBallTouchEvent +=  () =>
+                {
+                    HitBallLogic(m_FootballPlayer.Data.MaximumShootPower);
+                    m_IsShooting = false;
+                };
+               
+            }
         }
-
-        public void OnLowActionBExit()
+        
+        
+        private void HitBallLogic(float t_ShootPower)
         {
-             //for now empty
-        }
 
-        public void OnHighActionAEnter()
+            if (m_FootballPlayer.IsTheOwnerOfTheBall)
+            {
+
+                Football.Football.Instance.HitBall(
+                    m_FootballPlayer.transform.forward,
+                    t_ShootPower,
+                    m_FootballPlayer);
+
+            }
+        }
+        public void OnThroughPassActionEnter()
         {
             //for now empty
         }
 
-        public void OnHighActionAExit()
+        public void OnThroughPassActionExit()
+        {
+             //for now empty
+        }
+
+        public void OnLobPassActionEnter()
         {
             //for now empty
         }
 
-        public void OnHighActionBEnter()
+        public void OnLobPassActionExit()
+        {
+            //for now empty
+        }
+
+        public void OnShootActionEnter()
         {
            //for now empty
         }
 
-        public void OnHighActionBExit()
+        public void OnShootActionExit()
         {
             //for now empty
         }

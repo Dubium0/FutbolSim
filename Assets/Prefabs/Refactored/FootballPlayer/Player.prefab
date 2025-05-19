@@ -1074,6 +1074,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   m_Data: {fileID: 11400000, guid: ade72c9e3786b614e813b6bae2f25b1f, type: 2}
   m_Animator: {fileID: 908286949145560757}
+  m_FootballPlayerAnimation: {fileID: 682121233061764912}
   m_BallPositionTransform: {fileID: 5738909449204467828}
 --- !u!1 &3982458001576425901
 GameObject:
@@ -1596,6 +1597,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7278689586320351511}
   - component: {fileID: 908286949145560757}
+  - component: {fileID: 682121233061764912}
   m_Layer: 11
   m_Name: defender_fb@Running
   m_TagString: Untagged
@@ -1642,6 +1644,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &682121233061764912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8256510024799696675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c11259605015b4748b6749d1859087bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8261535017765325579
 GameObject:
   m_ObjectHideFlags: 0

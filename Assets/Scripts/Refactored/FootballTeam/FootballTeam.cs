@@ -102,6 +102,7 @@ namespace FootballSim.FootballTeam
 
             if (IsHost && IsOwner)
             {
+                Debug.Log("Setting up for the cycle player input");
                 m_CycleToClosestPlayerButton.performed += context => { CycleToClosestPlayer(); };
             }
 
@@ -136,7 +137,7 @@ namespace FootballSim.FootballTeam
 
                     var playerScript = player.GetComponent<FootballPlayer>();
                     playerScript.Init(false, t_IsOnlineSpawn, m_PlayerControlIndex);
-                    playerScript.OnBallWinCallback += player =>
+                     playerScript.OnBallWinCallback += player =>
                     {
                         CurrentBallOwnerPlayer = player;
 
@@ -149,6 +150,15 @@ namespace FootballSim.FootballTeam
                             CurrentControlledPlayer = CurrentBallOwnerPlayer;
                             CurrentBallOwnerPlayer.SetHumanControlled(true);
                         }
+                    };
+
+                    playerScript.OnBallLoseCallback += player =>
+                    {
+                        if (CurrentBallOwnerPlayer == player)
+                        {
+                            CurrentBallOwnerPlayer = null;
+                        }
+
                     };
                     FootballPlayers.Add(playerScript);
 
@@ -187,6 +197,18 @@ namespace FootballSim.FootballTeam
                         CurrentBallOwnerPlayer.SetHumanControlled(true);
                     }
                 };
+
+                playerScript.OnBallLoseCallback += player =>
+                {
+                    if (CurrentBallOwnerPlayer == player)
+                    {
+                        CurrentBallOwnerPlayer = null;
+                    }
+
+                };
+
+
+
                 FootballPlayers.Add(playerScript);
 
             }
@@ -199,14 +221,15 @@ namespace FootballSim.FootballTeam
             {
                 FindClosestPlayerToBall();
             }
-
-            if (CurrentBallOwnerPlayer == null) 
+            
+            if (CurrentBallOwnerPlayer == null)
             {
                 if (CurrentControlledPlayer != ClosestPlayerToBall && m_IsHumanControlled)
                 {
-                    if(CurrentControlledPlayer !=null) CurrentControlledPlayer.SetHumanControlled(false);
+                    if (CurrentControlledPlayer != null) CurrentControlledPlayer.SetHumanControlled(false);
                     CurrentControlledPlayer = ClosestPlayerToBall;
                     CurrentControlledPlayer.SetHumanControlled(true);
+                    Debug.Log("Cycle to closest player clicked");
                 }
             }
 

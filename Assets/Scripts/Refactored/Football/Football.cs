@@ -38,6 +38,8 @@ namespace FootballSim.Football
                 return Physics.Raycast(Rigidbody.position, Vector3.down, 0.1f, m_GroundCheckLayer);
             }
         }
+
+        
     
 
         private void Awake()
@@ -70,6 +72,22 @@ namespace FootballSim.Football
             }
         }
 
+        public void HitBall(Vector3 t_ForceVector, float t_ShootPower ,FootballPlayer t_Player)
+        {
+            if (t_Player != CurrentOwnerPlayer)
+            {
+                Debug.Log("Only owner can hit the ball!");
+                return;
+            }
+            Rigidbody.AddForce(t_ForceVector * t_ShootPower, ForceMode.VelocityChange);
+            CurrentOwnerPlayer = null;
+            if (OnBallOwnerChanged != null)
+            {
+                OnBallOwnerChanged(t_Player, CurrentOwnerPlayer);
+            }
+                
+        }
+        
 
         private void CheckPlayerCollision()
         {
@@ -86,7 +104,7 @@ namespace FootballSim.Football
 
             FootballPlayer playerToAssign = CurrentOwnerPlayer;
 
-            
+
 
             foreach (var collider in colliders)
             {
@@ -102,14 +120,14 @@ namespace FootballSim.Football
                         var currentPlayerScore = UnityEngine.Random.Range(1, 7);
                         var otherPlayerScore = UnityEngine.Random.Range(1, 7);
 
-                        var finalCondition = currentPlayerScore  < otherPlayerScore && otherPlayer.CanPossesTheBall;
-                       
+                        var finalCondition = currentPlayerScore < otherPlayerScore && otherPlayer.CanPossesTheBall;
+
                         playerToAssign = finalCondition ? otherPlayer : playerToAssign;
                     }
                     else
                     {
-                        if(otherPlayer.CanPossesTheBall)
-                        playerToAssign = otherPlayer;
+                        if (otherPlayer.CanPossesTheBall)
+                            playerToAssign = otherPlayer;
                     }
                 }
             }

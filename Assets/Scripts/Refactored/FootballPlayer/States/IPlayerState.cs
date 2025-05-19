@@ -14,14 +14,14 @@ namespace FootballSim.Player
         public void OnSprintEnter();
         public void OnSprintExit();
 
-        public void OnLowActionAEnter();
-        public void OnLowActionAExit();
-        public void OnLowActionBEnter();
-        public void OnLowActionBExit();
-        public void OnHighActionAEnter();
-        public void OnHighActionAExit();
-        public void OnHighActionBEnter();
-        public void OnHighActionBExit();
+        public void OnPassActionEnter();
+        public void OnPassActionExit();
+        public void OnThroughPassActionEnter();
+        public void OnThroughPassActionExit();
+        public void OnLobPassActionEnter();
+        public void OnLobPassActionExit();
+        public void OnShootActionEnter();
+        public void OnShootActionExit();
        
     }   
 

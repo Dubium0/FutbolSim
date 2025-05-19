@@ -13,25 +13,25 @@ namespace FootballSim.Player
 
         public Vector3 MovementVector {get{ if (IsWorkingConditionMet()) return GetMovementVector(); else return Vector3.zero; }}
 
-        public Action OnLowActionAPerformed     { set { m_OnLowActionAPerformed = value;} }
-        public Action OnLowActionACanceled      { set { m_OnLowActionACanceled = value;} }
-        public Action OnLowActionBPerformed     { set { m_OnLowActionBPerformed = value;} }
-        public Action OnLowActionBCanceled      { set { m_OnLowActionBCanceled = value;} }
-        public Action OnHighActionAPerformed    { set { m_OnHighActionAPerformed = value;} }
-        public Action OnHighActionACanceled     { set { m_OnHighActionACanceled = value;} }
-        public Action OnHighActionBPerformed    { set { m_OnHighActionBPerformed = value;} }
-        public Action OnHighActionBCanceled     { set { m_OnHighActionBCanceled = value;} }
+        public Action OnPassActionPerformed     { set { m_OnPassActionPerformed = value;} }
+        public Action OnPassActionCanceled      { set { m_OnPassActionCanceled = value;} }
+        public Action OnThroughPassActionPerformed     { set { m_OnThroughPassActionPerformed = value;} }
+        public Action OnThroughPassActionCanceled      { set { m_OnThroughPassActionCanceled = value;} }
+        public Action OnLobPassActionPerformed    { set { m_OnLobPassActionPerformed = value;} }
+        public Action OnLobPassActionCanceled     { set { m_OnLobPassActionCanceled = value;} }
+        public Action OnShootActionPerformed    { set { m_OnShootActionPerformed = value;} }
+        public Action OnShootActionCanceled     { set { m_OnShootActionCanceled = value;} }
         public Action OnSprintActionPerformed   { set { m_OnSprintActionPerformed = value;} }
         public Action OnSprintActionCanceled    { set { m_OnSprintActionCanceled = value;} }
 
-        private Action m_OnLowActionAPerformed;
-        private Action m_OnLowActionACanceled;
-        private Action m_OnLowActionBPerformed;
-        private Action m_OnLowActionBCanceled;
-        private Action m_OnHighActionAPerformed;
-        private Action m_OnHighActionACanceled;
-        private Action m_OnHighActionBPerformed;
-        private Action m_OnHighActionBCanceled;
+        private Action m_OnPassActionPerformed;
+        private Action m_OnPassActionCanceled;
+        private Action m_OnThroughPassActionPerformed;
+        private Action m_OnThroughPassActionCanceled;
+        private Action m_OnLobPassActionPerformed;
+        private Action m_OnLobPassActionCanceled;
+        private Action m_OnShootActionPerformed;
+        private Action m_OnShootActionCanceled;
         private Action m_OnSprintActionPerformed;
         private Action m_OnSprintActionCanceled;
 
@@ -41,11 +41,10 @@ namespace FootballSim.Player
 
         private InputAction m_MoveAction;
         private InputAction m_SprintAction;
-        private InputAction m_LowActionA;
-        private InputAction m_LowActionB;
-        private InputAction m_HighActionA;
-        private InputAction m_HighActionB;
-        private InputAction m_LookAction;
+        private InputAction m_PassAction;
+        private InputAction m_ThroughPassAction;
+        private InputAction m_LobPassAction;
+        private InputAction m_ShootAction;
 
         private bool m_Enable = false;
         public bool EnableDebug = true;
@@ -72,25 +71,24 @@ namespace FootballSim.Player
             if (EnableDebug) Debug.Log("[Input System] Setting up for " + playerPrefix);
 
             m_MoveAction    = InputSystem.actions?.FindAction($"{playerPrefix}Move");
-            m_LookAction    = InputSystem.actions?.FindAction($"{playerPrefix}Look");
-            m_LowActionA    = InputSystem.actions?.FindAction($"{playerPrefix}LowActionA");
-            m_LowActionB    = InputSystem.actions?.FindAction($"{playerPrefix}LowActionB");
-            m_HighActionA   = InputSystem.actions?.FindAction($"{playerPrefix}HighActionA");
-            m_HighActionB   = InputSystem.actions?.FindAction($"{playerPrefix}HighActionB");
+            m_PassAction    = InputSystem.actions?.FindAction($"{playerPrefix}Pass");
+            m_ThroughPassAction    = InputSystem.actions?.FindAction($"{playerPrefix}ThroughPass");
+            m_LobPassAction   = InputSystem.actions?.FindAction($"{playerPrefix}LobPass");
+            m_ShootAction   = InputSystem.actions?.FindAction($"{playerPrefix}Shoot");
             m_SprintAction  = InputSystem.actions?.FindAction($"{playerPrefix}Sprint");
         }
 
         private void BindActions()
         {
 
-            m_LowActionA.performed      += context => { if(IsWorkingConditionMet()) m_OnLowActionAPerformed();  };
-            m_LowActionA.canceled       += context => { if(IsWorkingConditionMet()) m_OnLowActionACanceled();   };
-            m_LowActionB.performed      += context => { if(IsWorkingConditionMet()) m_OnLowActionBPerformed();  };
-            m_LowActionB.canceled       += context => { if(IsWorkingConditionMet()) m_OnLowActionBCanceled();   };
-            m_HighActionA.performed     += context => { if(IsWorkingConditionMet()) m_OnHighActionAPerformed(); };
-            m_HighActionA.canceled      += context => { if(IsWorkingConditionMet()) m_OnHighActionACanceled();  };
-            m_HighActionB.performed     += context => { if(IsWorkingConditionMet()) m_OnHighActionBPerformed(); };
-            m_HighActionB.canceled      += context => { if(IsWorkingConditionMet()) m_OnHighActionBCanceled();  };
+            m_PassAction.performed      += context => { if(IsWorkingConditionMet()) m_OnPassActionPerformed();  };
+            m_PassAction.canceled       += context => { if(IsWorkingConditionMet()) m_OnPassActionCanceled();   };
+            m_ThroughPassAction.performed      += context => { if(IsWorkingConditionMet()) m_OnThroughPassActionPerformed();  };
+            m_ThroughPassAction.canceled       += context => { if(IsWorkingConditionMet()) m_OnThroughPassActionCanceled();   };
+            m_LobPassAction.performed     += context => { if(IsWorkingConditionMet()) m_OnLobPassActionPerformed(); };
+            m_LobPassAction.canceled      += context => { if(IsWorkingConditionMet()) m_OnLobPassActionCanceled();  };
+            m_ShootAction.performed     += context => { if(IsWorkingConditionMet()) m_OnShootActionPerformed(); };
+            m_ShootAction.canceled      += context => { if(IsWorkingConditionMet()) m_OnShootActionCanceled();  };
             m_SprintAction.performed    += context => { if(IsWorkingConditionMet()) m_OnSprintActionPerformed();};
             m_SprintAction.canceled     += context => { if(IsWorkingConditionMet()) m_OnSprintActionCanceled(); };
             
