@@ -20,11 +20,13 @@ namespace FootballSim.Player
         {
             m_FootballPlayer.Rigidbody.maxLinearVelocity = m_FootballPlayer.Data.MaxWalkSpeed;
             m_CurrentAcceleration = m_FootballPlayer.Data.WalkingAcceleration;
+
+            m_FootballPlayer.OnBallWinCallback += HandleDribblingTransition;
         }
 
         public void OnExit()
         {
-            //for now empty
+            m_FootballPlayer.OnBallWinCallback -= HandleDribblingTransition;
         }
 
         public void OnFixedUpdate()
@@ -49,82 +51,67 @@ namespace FootballSim.Player
             }
         }
 
-        public void HandleTransition()
+        public void HandleDribblingTransition(FootballPlayer _)
         {
-            //for now empty
+            m_FootballPlayer.TransitionTo(new DribblingState(m_FootballPlayer));
+
         }
 
+        private float m_SprintStartTime = 0.0f;
+        private bool m_IsSprinting = false;
+        private bool m_CanSprint = true;
         public void OnSprintEnter()
         {
-             //for now empty
+            if (!m_CanSprint) return;
+            m_CurrentAcceleration = m_FootballPlayer.Data.RunningAcceleration;
+            m_FootballPlayer.Rigidbody.maxLinearVelocity = m_FootballPlayer.Data.MaxRunSpeed;
+
+            m_SprintStartTime = Time.time;
+            m_IsSprinting = true;
+            m_FootballPlayer.StartCoroutine(HandleSprint());
         }
 
         public void OnSprintExit()
         {
-             //for now empty
-        }
-
-        private float m_ShootTimer = 0;
-        private float m_ShootMaxPowerReachTime = 0.5f; // seconds
-        private bool m_IsShooting = false;
-        public void OnPassActionEnter()
-        {
-            if (m_FootballPlayer.IsTheOwnerOfTheBall)
+            if (m_IsSprinting)
             {
-                m_IsShooting = true;
-                m_ShootTimer = Time.time;
-                m_FootballPlayer.StartCoroutine(ShootPowerAdjustRoutine());
-
+                m_FootballPlayer.Rigidbody.maxLinearVelocity = m_FootballPlayer.Data.MaxWalkSpeed;
+                m_CurrentAcceleration = m_FootballPlayer.Data.WalkingAcceleration;
+                m_IsSprinting = false;
+                float elapsedTimePercentage = (Time.time - m_SprintStartTime) / m_FootballPlayer.Data.MaxRunningTime;
+                m_FootballPlayer.StartCoroutine(HandleSprintCooldown(m_FootballPlayer.Data.RunningCooldown * elapsedTimePercentage));
 
             }
+        }
+        private IEnumerator HandleSprintCooldown(float t_TimeToWait)
+        {
+            m_CanSprint = false;
+            yield return new WaitForSeconds(t_TimeToWait);
+            m_CanSprint = true;
+        }
+        private IEnumerator HandleSprint()
+        {
+            yield return new WaitForSeconds(m_FootballPlayer.Data.MaxRunningTime);
+            if (m_IsSprinting)
+            {
+                m_FootballPlayer.Rigidbody.maxLinearVelocity = m_FootballPlayer.Data.MaxWalkSpeed;
+                m_CurrentAcceleration = m_FootballPlayer.Data.WalkingAcceleration;
+                m_IsSprinting = false;
+                HandleSprintCooldown(m_FootballPlayer.Data.RunningCooldown);
+            }
+           
+        }
+
+        public void OnPassActionEnter()
+        {
+            //for now empty
         }
 
         public void OnPassActionExit()
         {
-            if (m_FootballPlayer.IsTheOwnerOfTheBall && m_IsShooting)
-            {
-                float elapsedTime = Time.time - m_ShootTimer;
-
-                float clampValue01 = Mathf.Clamp(elapsedTime, 0, m_ShootMaxPowerReachTime) / m_ShootMaxPowerReachTime;
-                m_FootballPlayer.Animator.SetTrigger("BallHit");
-                m_FootballPlayer.FootballPlayerAnimation.OnBallTouchEvent +=  () =>
-                {
-                    HitBallLogic(Mathf.Lerp(m_FootballPlayer.Data.MinimumShootPower, m_FootballPlayer.Data.MaximumShootPower, clampValue01) );
-                    m_IsShooting = false;
-                };
-            }
-            m_IsShooting = false;
+              //for now empty
         }
 
-        
-        private IEnumerator ShootPowerAdjustRoutine() {
-            yield return new WaitForSeconds(m_ShootMaxPowerReachTime);
-            if (m_IsShooting)
-            {   
-                m_FootballPlayer.Animator.SetTrigger("BallHit");
-                m_FootballPlayer.FootballPlayerAnimation.OnBallTouchEvent +=  () =>
-                {
-                    HitBallLogic(m_FootballPlayer.Data.MaximumShootPower);
-                    m_IsShooting = false;
-                };
-               
-            }
-        }
-        
-        
-        private void HitBallLogic(float t_ShootPower)
-        {
-
-            if (m_FootballPlayer.IsTheOwnerOfTheBall)
-            {
-
-                Football.Football.Instance.HitBall(
-                    m_FootballPlayer.transform.forward,
-                    t_ShootPower,
-                    m_FootballPlayer);
-
-            }
-        }
         public void OnThroughPassActionEnter()
         {
             //for now empty

@@ -2,6 +2,7 @@
 using System;
 using Steamworks;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace FootballSim.Networking
 {
@@ -42,7 +43,7 @@ namespace FootballSim.Networking
             }
             DontDestroyOnLoad(gameObject);
         }
-        
+
         [Rpc(SendTo.Server)]
         public void NotifySteamPlayerConnectedRpc(ulong t_SteamId, string t_SteamName, ulong t_ClientId)
         {
@@ -63,9 +64,9 @@ namespace FootballSim.Networking
         [ClientRpc]
         public void NotifySteamClientWithHostInfoClientRpc(ulong t_SteamId, string t_SteamName)
         {
-            if (IsHost)     return;
-           
-        
+            if (IsHost) return;
+
+
             SteamClientInfo steamClient = new()
             {
                 SteamId = t_SteamId,
@@ -73,10 +74,10 @@ namespace FootballSim.Networking
                 ClientId = 0
 
             };
-                
+
             OnSteamHostInfoTransmission.Invoke(steamClient);
-            
-            
+
+
         }
 
         [Rpc(SendTo.Server)]
@@ -92,8 +93,11 @@ namespace FootballSim.Networking
         {
             OnSteamPlayerReadyAction();
         }
-
-
+        [Rpc(SendTo.ClientsAndHost)]
+        public void SetGameTimeScaleRpc(float t_TimeScale)
+        {
+            Time.timeScale = t_TimeScale;   
+        }
 
 
     }

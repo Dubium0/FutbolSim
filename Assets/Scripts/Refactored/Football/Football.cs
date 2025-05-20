@@ -24,6 +24,9 @@ namespace FootballSim.Football
 
         [SerializeField]
         private bool m_EnableDebug = true;
+
+        [SerializeField]
+        private Transform m_StartTransform;
         public Rigidbody Rigidbody { get { return GetComponent<Rigidbody>(); } }
         
         public FootballPlayer CurrentOwnerPlayer { get; private set; }
@@ -31,6 +34,11 @@ namespace FootballSim.Football
         public FootballTeam.TeamFlag LastTouchedTeam { get; private set; } = FootballTeam.TeamFlag.NotInitialized;
 
         public event Action<FootballPlayer, FootballPlayer> OnBallOwnerChanged;
+
+        public event Action<FootballPlayer> OnBallHit;
+        public event Action<FootballTeam.TeamFlag,FootballPlayer> OnGoal;
+
+        public FootballPlayer LastHitPlayer { get; private set; }
         public bool IsGrounded
         {
             get
@@ -39,7 +47,7 @@ namespace FootballSim.Football
             }
         }
 
-        
+        public bool IsInteractable { get; private set; } = true;
     
 
         private void Awake()
@@ -65,15 +73,17 @@ namespace FootballSim.Football
         }
         private void Update()
         {
-            if (IsHost)
+            if (IsHost && IsInteractable)
             {
                 CheckPlayerCollision();
                 AdjustPosition();
             }
         }
 
-        public void HitBall(Vector3 t_ForceVector, float t_ShootPower ,FootballPlayer t_Player)
+        public void HitBall(Vector3 t_ForceVector, float t_ShootPower, FootballPlayer t_Player)
         {
+            if (!IsInteractable) return;
+
             if (t_Player != CurrentOwnerPlayer)
             {
                 Debug.Log("Only owner can hit the ball!");
@@ -85,9 +95,24 @@ namespace FootballSim.Football
             {
                 OnBallOwnerChanged(t_Player, CurrentOwnerPlayer);
             }
+            if (OnBallHit != null)
+            {
+                OnBallHit(t_Player);
+                LastHitPlayer = t_Player;
+            }
                 
         }
-        
+
+        public void SetInteractable(bool t_Value)
+        {
+            IsInteractable = t_Value;
+            var prevPlayer = CurrentOwnerPlayer;
+            CurrentOwnerPlayer = null;
+            if (OnBallOwnerChanged != null)
+            {
+                OnBallOwnerChanged(prevPlayer, CurrentOwnerPlayer);
+            }
+        }
 
         private void CheckPlayerCollision()
         {
@@ -146,10 +171,34 @@ namespace FootballSim.Football
 
             }
         }
+        public void ResetToStartTransform()
+        {
+            transform.position = m_StartTransform.position;
+            transform.rotation = m_StartTransform.rotation;
+            
+        }
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!IsHost) return;
+            if (other.CompareTag("GoalAway"))
+            {
+                if (OnGoal != null)
+                {
+                    OnGoal.Invoke(FootballTeam.TeamFlag.Home, LastHitPlayer);
+                }
+            }
+            else if (other.CompareTag("GoalHome"))
+            {
 
+                if (OnGoal != null)
+                {
+                    OnGoal.Invoke(FootballTeam.TeamFlag.Away, LastHitPlayer);
+                }
+            }
+        }
         private void AdjustPosition()
         {
-            if (CurrentOwnerPlayer != null)
+            if (CurrentOwnerPlayer != null && IsInteractable)
             {
                 var targetPosition = CurrentOwnerPlayer.BallPosition;
                 transform.position = targetPosition;

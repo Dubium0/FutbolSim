@@ -13,7 +13,20 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   MaxWalkSpeed: 6
+  MaxRunSpeed: 10
   WalkingAcceleration: 30
+  RunningAcceleration: 40
+  MaxRunningTime: 4
+  RunningCooldown: 2
   RotationTime: 2
+  MinimumPassPower: 15
+  MaximumPassPower: 50
+  MinimumLobPassPower: 20
+  MaximumLobPassPower: 50
+  MinimumThroughPassPower: 10
+  MaximumThrougPassPower: 50
   MaximumShootPower: 50
   MinimumShootPower: 20
+  PassAngle: 15
+  ShootAngle: 20
+  LobPassAngle: 30
