@@ -133,7 +133,6 @@ public class GenericAgent : NetworkBehaviour, IFootballAgent
         if(IsClient) { return; }
         if(GameManager.Instance.GameState == EGameState.Playing)
         {
-
             TickAISystem();
             HandleHumanInteraction();
             AdjustBallPosition();

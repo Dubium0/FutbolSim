@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using FootballSim.Player;
+using JetBrains.Annotations;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -43,7 +44,8 @@ namespace FootballSim.FootballTeam
         private FootballFormation m_AttackFormation;
 
         private FootballFormation m_CurrentFormation;
-        public FormationTag FormationTag{ get; private set; }
+
+        public FormationTag FormationTag { get; private set; }
 
         private bool m_IsInitialized = false;
 
@@ -117,20 +119,20 @@ namespace FootballSim.FootballTeam
                 playerPrefix = "Player/";
             }
             m_CycleToClosestPlayerButton = InputSystem.actions?.FindAction($"{playerPrefix}CycleToClosestPlayer");
-      
+
 
             if (IsHost && IsOwner)
             {
                 Debug.Log("Setting up for the cycle player input");
                 m_CycleToClosestPlayerButton.performed += context => { CycleToClosestPlayer(); };
-                
+
 
             }
 
             if (IsClient && IsOwner && !IsHost)
             {
                 m_CycleToClosestPlayerButton.performed += context => { CycleToClosestPlayerRpc(); };
-              
+
             }
         }
 
@@ -158,6 +160,8 @@ namespace FootballSim.FootballTeam
 
                     var playerScript = player.GetComponent<FootballPlayer>();
                     playerScript.Init(this, TeamFlag, Player.PlayerType.GoalKeeper, false, t_IsOnlineSpawn, m_PlayerControlIndex);
+                    playerScript.SetHomePosition(m_CurrentFormation.GoalKeeperPosition);
+
                     playerScript.OnBallWinCallback += player =>
                    {
                        CurrentBallOwnerPlayer = player;
@@ -192,7 +196,7 @@ namespace FootballSim.FootballTeam
             }
         }
 
-        private void PlayerSpawnHelper(Transform[] t_Transforms,
+        private void PlayerSpawnHelper(List<Transform> t_Transforms,
             ulong t_OwnerOfTheTeam,
             Player.PlayerType t_PlayerType,
             bool t_IsOnlineSpawn = false,
@@ -205,6 +209,7 @@ namespace FootballSim.FootballTeam
 
                 var playerScript = player.GetComponent<FootballPlayer>();
                 playerScript.Init(this, TeamFlag, t_PlayerType, false, t_IsOnlineSpawn, t_PlayerIndex);
+                playerScript.SetHomePosition(playerTransform);
                 playerScript.OnBallWinCallback += player =>
                 {
                     CurrentBallOwnerPlayer = player;
@@ -235,8 +240,6 @@ namespace FootballSim.FootballTeam
 
             }
         }
-
-
         private void CycleToClosestPlayer()
         {
             if (ClosestPlayerToBall == null)
@@ -307,32 +310,31 @@ namespace FootballSim.FootballTeam
 
         }
 
-        public void ChangeFormation(FormationTag t_TargetFormation,bool t_ImmidietalyMove = false)
+        public void ChangeFormation(FormationTag t_TargetFormation, bool t_ImmidietalyMove = false)
         {
             FormationTag = t_TargetFormation;
-            if (t_ImmidietalyMove)
+
+            switch (FormationTag)
             {
-                switch (FormationTag)
-                {
-                    case FormationTag.DefenseFormation:
-                        MovePlayersToFormationPositions(m_DefenseFormation);
-                        break;
-                    case FormationTag.AttackFormation:
-                        MovePlayersToFormationPositions(m_AttackFormation);
-                        break;
-                    case FormationTag.AttackStartFormation:
-                        MovePlayersToFormationPositions(m_AttackStartFormation);
-                        break;
-                    case FormationTag.DefenseStartFormation:
-                        MovePlayersToFormationPositions(m_DefenseStartFormation);
-                        break;
-                    case FormationTag.DefaultFormation:
-                        MovePlayersToFormationPositions(m_DefaultFormation);
-                        break;
-                }
+                case FormationTag.DefenseFormation:
+                    MovePlayersToFormationPositions(m_DefenseFormation, t_ImmidietalyMove);
+                    break;
+                case FormationTag.AttackFormation:
+                    MovePlayersToFormationPositions(m_AttackFormation, t_ImmidietalyMove);
+                    break;
+                case FormationTag.AttackStartFormation:
+                    MovePlayersToFormationPositions(m_AttackStartFormation, t_ImmidietalyMove);
+                    break;
+                case FormationTag.DefenseStartFormation:
+                    MovePlayersToFormationPositions(m_DefenseStartFormation, t_ImmidietalyMove);
+                    break;
+                case FormationTag.DefaultFormation:
+                    MovePlayersToFormationPositions(m_DefaultFormation, t_ImmidietalyMove);
+                    break;
             }
+
         }
-        private void MovePlayersToFormationPositions(FootballSim.FootballTeam.FootballFormation t_TargetFormation)
+        private void MovePlayersToFormationPositions(FootballSim.FootballTeam.FootballFormation t_TargetFormation, bool t_ImmidietalyMove = false)
         {
             if (!m_IsInitialized) return;
             m_CurrentFormation = t_TargetFormation;
@@ -342,29 +344,45 @@ namespace FootballSim.FootballTeam
             int forwardIndex = 0;
             foreach (var player in FootballPlayers)
             {
+                Transform targetPosition = player.CurrentHomePosition;
                 switch (player.PlayerType)
                 {
+
                     case Player.PlayerType.GoalKeeper:
-                        player.transform.position = t_TargetFormation.GoalKeeperPosition.position;
-                        player.transform.rotation = t_TargetFormation.GoalKeeperPosition.rotation;
+                        targetPosition = t_TargetFormation.GoalKeeperPosition;
                         break;
                     case Player.PlayerType.Defender:
-                        player.transform.position = t_TargetFormation.DefensePosition[defenseIndex].position;
-                        player.transform.rotation = t_TargetFormation.DefensePosition[defenseIndex].rotation;
+                        targetPosition = t_TargetFormation.DefensePosition[defenseIndex];
                         defenseIndex++;
                         break;
                     case Player.PlayerType.Midfielder:
-                        player.transform.position = t_TargetFormation.MidfieldPosition[midfieldIndex].position;
-                        player.transform.rotation = t_TargetFormation.MidfieldPosition[midfieldIndex].rotation;
+                        targetPosition = t_TargetFormation.MidfieldPosition[midfieldIndex];
                         midfieldIndex++;
                         break;
                     case Player.PlayerType.Forward:
-                        player.transform.position = t_TargetFormation.ForwardPosition[forwardIndex].position;
-                        player.transform.rotation = t_TargetFormation.ForwardPosition[forwardIndex].rotation;
+                        targetPosition = t_TargetFormation.ForwardPosition[forwardIndex];
                         forwardIndex++;
                         break;
 
                 }
+                player.SetHomePosition(targetPosition);
+                if (t_ImmidietalyMove)
+                    player.ImmidiatelyMoveToHomePosition();
+            }
+
+
+        }
+
+
+        public int GetPlayerIndex(FootballPlayer t_Player) => FootballPlayers.FindIndex(player => t_Player == player);
+
+
+        public void DetectCurrentFormation()
+        {
+            if (CurrentBallOwnerPlayer != null)
+            {
+                
+                
             }
         }
     }

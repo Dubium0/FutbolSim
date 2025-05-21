@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using FootballSim.FootballTeam;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 namespace FootballSim.Player
@@ -26,7 +27,8 @@ namespace FootballSim.Player
     [RequireComponent(typeof(Rigidbody), typeof(FootballPlayerInputSource_Offline), typeof(FootballPlayerInputSource_Online))]
     public class FootballPlayer : NetworkBehaviour
     {
-
+        public const int HomeLayerMask = 9;
+        public const int AwayLayerMask = 10;
         private IFootballPlayerInputSource m_InputSource;
         public IFootballPlayerInputSource InputSource { get { return m_InputSource; } }
 
@@ -45,7 +47,7 @@ namespace FootballSim.Player
         [SerializeField]
         private FootballPlayerAnimation m_FootballPlayerAnimation;
 
-        public FootballPlayerAnimation FootballPlayerAnimation{get { return m_FootballPlayerAnimation; }}
+        public FootballPlayerAnimation FootballPlayerAnimation { get { return m_FootballPlayerAnimation; } }
         public Animator Animator
         { get { return m_Animator; } }
 
@@ -58,8 +60,9 @@ namespace FootballSim.Player
         private IPlayerState m_CurrentState;
 
         private bool m_IsHumanControlled;
+        public bool IsHumanControlled { get { return m_IsHumanControlled; } }
 
-        private bool m_IsInitialized = false;   
+        private bool m_IsInitialized = false;
 
         // always sycn values
         private NetworkVariable<Vector3> m_SyncedPosition = new NetworkVariable<Vector3>(
@@ -83,7 +86,7 @@ namespace FootballSim.Player
 
         public Vector3 BallPosition { get { return m_BallPositionTransform.position; } }
 
-        
+
         public bool IsTheOwnerOfTheBall { get; private set; } = false;
 
         public bool CanPossesTheBall { get; private set; } = true;
@@ -92,11 +95,14 @@ namespace FootballSim.Player
 
         public bool IsMovementLocked { get; private set; } = false;
 
-        public FootballTeam.FootballTeam OwnerTeam{ get; private set; }
+        public FootballTeam.FootballTeam OwnerTeam { get; private set; }
 
         public PlayerType PlayerType { get; private set; }
-        
-        
+        public bool IsAITicking { get; private set; } = true;
+
+
+        public Transform CurrentHomePosition { get; private set; }
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -111,9 +117,9 @@ namespace FootballSim.Player
 
         }
 
-        public void Init(FootballTeam.FootballTeam t_OwnerTeam,FootballTeam.TeamFlag t_TeamFlag,PlayerType t_PlayerType,bool t_IsHummanControlled = false, bool t_IsOnlinePlayer = false, int t_PlayerIndex = 0)
+        public void Init(FootballTeam.FootballTeam t_OwnerTeam, FootballTeam.TeamFlag t_TeamFlag, PlayerType t_PlayerType, bool t_IsHummanControlled = false, bool t_IsOnlinePlayer = false, int t_PlayerIndex = 0)
         {
-            
+
             if (t_IsOnlinePlayer)
             {
                 m_InputSource = GetComponent<FootballPlayerInputSource_Online>();
@@ -121,7 +127,7 @@ namespace FootballSim.Player
                 if (IsHost)
                 {
                     Debug.Log("Server will send client an RPC");
-                    InitRpc(t_TeamFlag, t_PlayerType,t_IsHummanControlled);
+                    InitRpc(t_TeamFlag, t_PlayerType, t_IsHummanControlled);
                 }
             }
             else
@@ -133,6 +139,14 @@ namespace FootballSim.Player
             OwnerTeam = t_OwnerTeam;
             PlayerType = t_PlayerType;
             SetTeamColor(TeamFlag);
+            if (TeamFlag == FootballTeam.TeamFlag.Home)
+            {
+                gameObject.layer = 9;
+            }
+            else if (TeamFlag == FootballTeam.TeamFlag.Away)
+            {
+                gameObject.layer = 10;
+            }
 
             m_IsHumanControlled = t_IsHummanControlled;
             if (m_InputSource != null)
@@ -164,7 +178,7 @@ namespace FootballSim.Player
                 IsTheOwnerOfTheBall = false;
 
                 StartCoroutine(StartBallPossesCooldown());
-                
+
 
             };
             OnBallWinCallback += player =>
@@ -176,7 +190,7 @@ namespace FootballSim.Player
 
             };
 
-           
+
 
             Football.Football.Instance.OnBallOwnerChanged += (t_PrevOwner, t_NewOwner) =>
             {
@@ -187,18 +201,18 @@ namespace FootballSim.Player
                         if (OnBallLoseCallback != null)
                         {
                             OnBallLoseCallback.Invoke(this);
-                          
+
                         }
                     }
                     else if (t_NewOwner == this)
                     {
                         if (OnBallWinCallback != null)
                         {
-                            
-                          OnBallWinCallback.Invoke(this);
+
+                            OnBallWinCallback.Invoke(this);
                         }
                     }
-                    
+
                 }
             };
 
@@ -219,10 +233,10 @@ namespace FootballSim.Player
         }
 
         [Rpc(SendTo.ClientsAndHost)]
-        public void InitRpc(FootballTeam.TeamFlag t_TeamFlag,PlayerType t_PlayerType,bool t_IsHummanControlled = false)
+        public void InitRpc(FootballTeam.TeamFlag t_TeamFlag, PlayerType t_PlayerType, bool t_IsHummanControlled = false)
         {
-            if(!IsHost)
-            Init(null,t_TeamFlag,t_PlayerType,t_IsHummanControlled, true);
+            if (!IsHost)
+                Init(null, t_TeamFlag, t_PlayerType, t_IsHummanControlled, true);
         }
 
         private float m_TickIntervalMs = 66.6f;
@@ -269,13 +283,13 @@ namespace FootballSim.Player
 
         private void FixedUpdate()
         {
-            
+
             if (!m_IsInitialized) return;
             if (IsHost)
             {
                 if (m_IsHumanControlled && !IsMovementLocked)
                 {
-                    m_CurrentState.OnFixedUpdate();
+                   m_CurrentState.OnFixedUpdate();
                 }
                 m_Animator.SetFloat("Velocity", Rigidbody.linearVelocity.sqrMagnitude);
             }
@@ -290,7 +304,7 @@ namespace FootballSim.Player
         {
             IsMovementLocked = t_Value;
         }
-        
+
 
         public void EnableIndicator(bool t_Enable)
         {
@@ -345,8 +359,9 @@ namespace FootballSim.Player
             if (IsHost && m_IsHumanControlled != t_IsHumanControlled)
             {
                 EnableIndicator(t_IsHumanControlled);
-                EnableIndicatorRpc(t_IsHumanControlled); 
+                EnableIndicatorRpc(t_IsHumanControlled);
             }
+       
             m_IsHumanControlled = t_IsHumanControlled;
         }
         public void SetKickBallTrigger()
@@ -449,8 +464,15 @@ namespace FootballSim.Player
         }
 
 
-    
-
+        public void SetHomePosition(Transform t_Target)
+        {
+            CurrentHomePosition = t_Target;
+        }
+        public void ImmidiatelyMoveToHomePosition()
+        {
+            transform.position = CurrentHomePosition.position;
+            transform.rotation = CurrentHomePosition.rotation;
+        }
     }   
 
 }

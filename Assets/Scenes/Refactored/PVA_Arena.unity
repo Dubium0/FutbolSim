@@ -362,8 +362,12 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   m_HomeTeamPrefab: {fileID: 6086371049058648932, guid: 36dd5c96f54e24c4d8c1e3ec3a1f6002, type: 3}
   m_AwayTeamPrefab: {fileID: 6292518414554670868, guid: 26358458c1e462845b6b01cad788dbae, type: 3}
+  m_AITestTeamPrefab: {fileID: 4587414655141786642, guid: 7c2b08c2e6274534cbde7e82d3d188ec, type: 3}
+  m_PlayerTestTeamPrefab: {fileID: 2009837791282534699, guid: a6b8c01aac9b27f44a655ab09d05064f, type: 3}
+  m_PitchData: {fileID: 3903849352333815521}
   MatchTime:
     m_InternalValue: 0
+  m_InitWithDebug: 1
 --- !u!1001 &441411325
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -375,7 +379,7 @@ PrefabInstance:
     - target: {fileID: 421047801629811742, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1591928914}
+      objectReference: {fileID: 590842772}
     - target: {fileID: 438987881767932905, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_StartTransform
       value: 
@@ -423,14 +427,6 @@ PrefabInstance:
     - target: {fileID: 7156285797245854852, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 202004706
-      objectReference: {fileID: 0}
-    - target: {fileID: 7156285797245854852, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
-      propertyPath: SceneMigrationSynchronization
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7156285797245854852, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 3042563763
       objectReference: {fileID: 0}
     - target: {fileID: 8592701493921663022, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_Name
@@ -571,6 +567,21 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   FollowOffset: {x: 0, y: 25, z: -25}
+--- !u!134 &590842772
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Football (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance)
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 1
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &890194824
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,20 +997,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!134 &1591928914
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Football (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance)
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 1
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &1775248799
 GameObject:
   m_ObjectHideFlags: 0
@@ -1174,7 +1171,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1545052725564451735, guid: 4ae07f67824e58b4cb154f251ba5e515, type: 3}
       propertyPath: m_Name
-      value: Saha
+      value: Pitch
       objectReference: {fileID: 0}
     - target: {fileID: 2178319348659450157, guid: 4ae07f67824e58b4cb154f251ba5e515, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1221,6 +1218,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ae07f67824e58b4cb154f251ba5e515, type: 3}
+--- !u!114 &3903849352333815521 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4293867696466503952, guid: 4ae07f67824e58b4cb154f251ba5e515, type: 3}
+  m_PrefabInstance: {fileID: 3903849352333815520}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ea434cb53136143998e72f3bc6cc30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

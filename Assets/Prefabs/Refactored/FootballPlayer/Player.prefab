@@ -1019,6 +1019,7 @@ GameObject:
   - component: {fileID: 5454529340508440792}
   - component: {fileID: 4293288993009799179}
   - component: {fileID: 8797522274767069495}
+  - component: {fileID: 9144056885492894405}
   m_Layer: 11
   m_Name: Player
   m_TagString: Untagged
@@ -1165,6 +1166,45 @@ MonoBehaviour:
   m_BallPositionTransform: {fileID: 5738909449204467828}
   m_Indicator: {fileID: 1785493665158211114}
   m_Renderer: {fileID: 5531870068344420966}
+--- !u!114 &9144056885492894405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3607889227430387662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  m_Graph: {fileID: 3808656464450366101, guid: 27145d2a0b4db7248b765419c21302a4, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 4840404696309956867
+  - rid: 4840404696309956878
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  NetcodeRunOnlyOnOwner: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 4840404696309956867
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 3607889227430387662}
+    - rid: 4840404696309956878
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        m_Value: {fileID: 8797522274767069495}
 --- !u!1 &3982458001576425901
 GameObject:
   m_ObjectHideFlags: 0

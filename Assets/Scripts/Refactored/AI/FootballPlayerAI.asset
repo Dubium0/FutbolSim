@@ -1,0 +1,879 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6497186578216718184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dd922ae02c94c87a66e46a10a7319b9, type: 3}
+  m_Name: FootballPlayerAI Blackboard
+  m_EditorClassIdentifier: 
+  AssetID:
+    m_Value0: 2645668016454177831
+    m_Value1: 11818030096543151755
+  m_Variables:
+  - rid: 4840404696309956678
+  - rid: 4840404696309956868
+  m_VersionTimestamp: 638833947431247110
+  m_CommandBuffer:
+    m_Commands: []
+  m_RuntimeBlackboardAsset: {fileID: 5323658777516415253}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4840404696309956678
+      type: {class: 'TypedVariableModel`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 4840404696309956868
+      type: {class: 'TypedVariableModel`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bad8f2220607dac4db5082ff333fafb8, type: 3}
+  m_Name: FootballPlayerAI
+  m_EditorClassIdentifier: 
+  Blackboard: {fileID: -6497186578216718184}
+  m_Description: 
+  m_Nodes:
+  - rid: 4840404696309956679
+  - rid: 4840404696309956952
+  - rid: 4840404696309956969
+  - rid: 4840404696309956970
+  - rid: 4840404696309956971
+  - rid: 4840404696309957007
+  - rid: 4840404696309957008
+  - rid: 4840404696309957009
+  - rid: 4840404696309957047
+  m_VersionTimestamp: 638833949427835637
+  m_DebugInfo: {fileID: 8909563678435379439}
+  m_RuntimeGraph: {fileID: 3808656464450366101}
+  AssetID:
+    m_Value0: 2645668016454177831
+    m_Value1: 11818030096543151755
+  Story:
+    Story: 
+    StoryVariableNames: []
+    Variables: []
+  m_NodeModelsInfo:
+  - Name: On Start
+    Story: 
+    RuntimeTypeID:
+      m_Value0: 3335272451348827663
+      m_Value1: 11549843281177505721
+    Variables: []
+    NamedChildren: []
+  - Name: Conditional Guard
+    Story: 
+    RuntimeTypeID:
+      m_Value0: 10845871997924083670
+      m_Value1: 4041440894818793834
+    Variables: []
+    NamedChildren: []
+  - Name: Conditional Branch
+    Story: 
+    RuntimeTypeID:
+      m_Value0: 12334964803190848789
+      m_Value1: 14608808926743427008
+    Variables: []
+    NamedChildren:
+    - True
+    - False
+  - Name: TryToGetInRecievingPosition
+    Story: '[Player] tries to be in a nice spot to receieve ball.'
+    RuntimeTypeID:
+      m_Value0: 2104093470740040567
+      m_Value1: 2783023542540858845
+    Variables:
+    - Name: Player
+      Type:
+        m_SerializableType: FootballSim.Player.FootballPlayer, Assembly-CSharp, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      Tooltip: 
+    NamedChildren: []
+  - Name: Try In Order
+    Story: 
+    RuntimeTypeID:
+      m_Value0: 11477120919463386923
+      m_Value1: 7730102824742023565
+    Variables: []
+    NamedChildren: []
+  m_Blackboards: []
+  m_MainBlackboardAuthoringAsset: {fileID: -6497186578216718184}
+  m_CommandBuffer:
+    m_Commands: []
+  m_SubgraphsInfo: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4840404696309956679
+      type: {class: StartNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: -64.799995, y: -111.20005}
+        ID:
+          m_Value0: 11260871316715647986
+          m_Value1: 5355448408776264718
+        Parents: []
+        PortModels:
+        - rid: 4840404696309956680
+        NodeType:
+          m_SerializableType: Unity.Behavior.Start, Unity.Behavior, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 3335272451348827663
+          m_Value1: 11549843281177505721
+        m_FieldValues: []
+        Repeat: 1
+        AllowMultipleRepeatsPerTick: 0
+    - rid: 4840404696309956680
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309956679
+        m_Connections:
+        - rid: 4840404696309956953
+    - rid: 4840404696309956952
+      type: {class: ConditionalGuardNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: -64.799995, y: 18.89997}
+        ID:
+          m_Value0: 13000753599825380327
+          m_Value1: 149229351156158080
+        Parents: []
+        PortModels:
+        - rid: 4840404696309956953
+        - rid: 4840404696309956954
+        NodeType:
+          m_SerializableType: Unity.Behavior.ConditionalGuardAction, Unity.Behavior,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 10845871997924083670
+          m_Value1: 4041440894818793834
+        m_FieldValues: []
+        <ConditionModels>k__BackingField:
+        - rid: 4840404696309956955
+        <RequiresAllConditionsTrue>k__BackingField: 0
+        <ShouldTruncateNodeUI>k__BackingField: 0
+    - rid: 4840404696309956953
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309956952
+        m_Connections:
+        - rid: 4840404696309956680
+    - rid: 4840404696309956954
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309956952
+        m_Connections:
+        - rid: 4840404696309957010
+    - rid: 4840404696309956955
+      type: {class: ConditionModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        ConditionType:
+          m_SerializableType: IsAiEnabledCondition, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        ConditionTypeID:
+          m_Value0: 8814339977646243079
+          m_Value1: 12886169826570333261
+        NodeModel:
+          rid: 4840404696309956952
+        m_FieldValues:
+        - rid: 4840404696309956956
+        OperatorFieldModel:
+          rid: -2
+    - rid: 4840404696309956956
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: Player
+        Type:
+          m_SerializableType: FootballSim.Player.FootballPlayer, Assembly-CSharp,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        LocalValue:
+          rid: 4840404696309956957
+        LinkedVariable:
+          rid: 4840404696309956958
+    - rid: 4840404696309956957
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 4840404696309956958
+      type: {class: 'TypedVariableModel`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 4840404696309956969
+      type: {class: BranchingConditionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: -159.89246, y: 311.36548}
+        ID:
+          m_Value0: 2306196353169170659
+          m_Value1: 16040311817440328097
+        Parents: []
+        PortModels:
+        - rid: 4840404696309956972
+        - rid: 4840404696309956973
+        - rid: 4840404696309956974
+        NodeType:
+          m_SerializableType: Unity.Behavior.BranchingConditionComposite, Unity.Behavior,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 12334964803190848789
+          m_Value1: 14608808926743427008
+        m_FieldValues: []
+        <ConditionModels>k__BackingField:
+        - ConditionType:
+            m_SerializableType: DoPlayerHasTheBallCondition, Assembly-CSharp, Version=0.0.0.0,
+              Culture=neutral, PublicKeyToken=null
+          ConditionTypeID:
+            m_Value0: 6041267303078679508
+            m_Value1: 7056508345126794865
+          NodeModel:
+            rid: 4840404696309956969
+          m_FieldValues:
+          - rid: 4840404696309956980
+          OperatorFieldModel:
+            rid: -2
+        <RequiresAllConditionsTrue>k__BackingField: 0
+        <ShouldTruncateNodeUI>k__BackingField: 0
+    - rid: 4840404696309956970
+      type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        Position: {x: -255.89238, y: 414.36554}
+        ID:
+          m_Value0: 8333132170616344668
+          m_Value1: 6144372579625083770
+        Parents: []
+        PortModels:
+        - rid: 4840404696309956975
+        - rid: 4840404696309956976
+        ParentNodeID:
+          m_Value0: 2306196353169170659
+          m_Value1: 16040311817440328097
+        PortName: True
+    - rid: 4840404696309956971
+      type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        Position: {x: -63.892563, y: 414.36554}
+        ID:
+          m_Value0: 7256385940312450813
+          m_Value1: 2216911577389528210
+        Parents: []
+        PortModels:
+        - rid: 4840404696309956977
+        - rid: 4840404696309956978
+        ParentNodeID:
+          m_Value0: 2306196353169170659
+          m_Value1: 16040311817440328097
+        PortName: False
+    - rid: 4840404696309956972
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309956969
+        m_Connections:
+        - rid: 4840404696309957014
+    - rid: 4840404696309956973
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: True
+        m_PortDataFlowType: 1
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309956969
+        m_Connections:
+        - rid: 4840404696309956975
+    - rid: 4840404696309956974
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: False
+        m_PortDataFlowType: 1
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309956969
+        m_Connections:
+        - rid: 4840404696309956977
+    - rid: 4840404696309956975
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309956970
+        m_Connections:
+        - rid: 4840404696309956973
+    - rid: 4840404696309956976
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309956970
+        m_Connections: []
+    - rid: 4840404696309956977
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309956971
+        m_Connections:
+        - rid: 4840404696309956974
+    - rid: 4840404696309956978
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309956971
+        m_Connections:
+        - rid: 4840404696309957048
+    - rid: 4840404696309956980
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: Player
+        Type:
+          m_SerializableType: FootballSim.Player.FootballPlayer, Assembly-CSharp,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        LocalValue:
+          rid: 4840404696309956981
+        LinkedVariable:
+          rid: 4840404696309956982
+    - rid: 4840404696309956981
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 4840404696309956982
+      type: {class: 'TypedVariableModel`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 4840404696309957007
+      type: {class: BranchingConditionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: -64.89831, y: 116.51029}
+        ID:
+          m_Value0: 17284289184473577065
+          m_Value1: 10689269285540873237
+        Parents: []
+        PortModels:
+        - rid: 4840404696309957010
+        - rid: 4840404696309957011
+        - rid: 4840404696309957012
+        NodeType:
+          m_SerializableType: Unity.Behavior.BranchingConditionComposite, Unity.Behavior,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 12334964803190848789
+          m_Value1: 14608808926743427008
+        m_FieldValues: []
+        <ConditionModels>k__BackingField:
+        - ConditionType:
+            m_SerializableType: DoOwnerTeamHasTheBallCondition, Assembly-CSharp,
+              Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+          ConditionTypeID:
+            m_Value0: 6534604653292957853
+            m_Value1: 9704320152166288209
+          NodeModel:
+            rid: 4840404696309957007
+          m_FieldValues:
+          - rid: 4840404696309957017
+          OperatorFieldModel:
+            rid: -2
+        <RequiresAllConditionsTrue>k__BackingField: 0
+        <ShouldTruncateNodeUI>k__BackingField: 0
+    - rid: 4840404696309957008
+      type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        Position: {x: -159.67981, y: 219.51016}
+        ID:
+          m_Value0: 10385044888837779730
+          m_Value1: 12787233594225612431
+        Parents: []
+        PortModels:
+        - rid: 4840404696309957013
+        - rid: 4840404696309957014
+        ParentNodeID:
+          m_Value0: 17284289184473577065
+          m_Value1: 10689269285540873237
+        PortName: True
+    - rid: 4840404696309957009
+      type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        Position: {x: 32.32036, y: 219.51016}
+        ID:
+          m_Value0: 9606944741568878373
+          m_Value1: 271175417546911948
+        Parents: []
+        PortModels:
+        - rid: 4840404696309957015
+        - rid: 4840404696309957016
+        ParentNodeID:
+          m_Value0: 17284289184473577065
+          m_Value1: 10689269285540873237
+        PortName: False
+    - rid: 4840404696309957010
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309957007
+        m_Connections:
+        - rid: 4840404696309956954
+    - rid: 4840404696309957011
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: True
+        m_PortDataFlowType: 1
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309957007
+        m_Connections:
+        - rid: 4840404696309957013
+    - rid: 4840404696309957012
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: False
+        m_PortDataFlowType: 1
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309957007
+        m_Connections:
+        - rid: 4840404696309957015
+    - rid: 4840404696309957013
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309957008
+        m_Connections:
+        - rid: 4840404696309957011
+    - rid: 4840404696309957014
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309957008
+        m_Connections:
+        - rid: 4840404696309956972
+    - rid: 4840404696309957015
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 4840404696309957009
+        m_Connections:
+        - rid: 4840404696309957012
+    - rid: 4840404696309957016
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309957009
+        m_Connections: []
+    - rid: 4840404696309957017
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: Player
+        Type:
+          m_SerializableType: FootballSim.Player.FootballPlayer, Assembly-CSharp,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        LocalValue:
+          rid: 4840404696309957018
+        LinkedVariable:
+          rid: 4840404696309957019
+    - rid: 4840404696309957018
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 4840404696309957019
+      type: {class: 'TypedVariableModel`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 4840404696309957047
+      type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: -63.97209, y: 500.78116}
+        ID:
+          m_Value0: 16708082000873864890
+          m_Value1: 4743724122549898362
+        Parents: []
+        PortModels:
+        - rid: 4840404696309957048
+        - rid: 4840404696309957049
+        NodeType:
+          m_SerializableType: TryToGetInRecievingPositionAction, Assembly-CSharp,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 2104093470740040567
+          m_Value1: 2783023542540858845
+        m_FieldValues:
+        - rid: 4840404696309957050
+    - rid: 4840404696309957048
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309957047
+        m_Connections:
+        - rid: 4840404696309956978
+    - rid: 4840404696309957049
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 4840404696309957047
+        m_Connections: []
+    - rid: 4840404696309957050
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: Player
+        Type:
+          m_SerializableType: FootballSim.Player.FootballPlayer, Assembly-CSharp,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        LocalValue:
+          rid: 4840404696309957051
+        LinkedVariable:
+          rid: 4840404696309957067
+    - rid: 4840404696309957051
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 4840404696309957067
+      type: {class: 'TypedVariableModel`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+--- !u!114 &3808656464450366101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db920e62f70f420bb33c771449926fa4, type: 3}
+  m_Name: FootballPlayerAI
+  m_EditorClassIdentifier: 
+  Graphs:
+  - rid: 4840404696309957104
+  RootGraph:
+    rid: 4840404696309957104
+  m_DebugInfo: {fileID: 8909563678435379439}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4840404696309957104
+      type: {class: BehaviorGraphModule, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        AuthoringAssetID:
+          m_Value0: 2645668016454177831
+          m_Value1: 11818030096543151755
+        m_DebugInfo: {fileID: 0}
+        Root:
+          rid: 4840404696309957105
+        BlackboardReference:
+          rid: 4840404696309957106
+        BlackboardGroupReferences: []
+        m_ActiveNodes: []
+        m_NodesToTick: []
+        m_NodesToEnd:
+          rid: 4840404696309957107
+        m_EndedNodes:
+          rid: 4840404696309957108
+        m_VersionTimestamp: 638833949427835637
+    - rid: 4840404696309957105
+      type: {class: Start, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 11260871316715647986
+          m_Value1: 5355448408776264718
+        Graph:
+          rid: 4840404696309957104
+        m_Parent:
+          rid: -2
+        m_Child:
+          rid: 4840404696309957109
+        Repeat: 1
+        AllowMultipleRepeatsPerTick: 0
+    - rid: 4840404696309957106
+      type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        m_Blackboard:
+          rid: 4840404696309957110
+        m_Source: {fileID: 5323658777516415253}
+    - rid: 4840404696309957107
+      type: {class: 'Stack`1[[Unity.Behavior.Node, Unity.Behavior]]', ns: System.Collections.Generic, asm: mscorlib}
+      data: 
+    - rid: 4840404696309957108
+      type: {class: 'HashSet`1[[Unity.Behavior.Node, Unity.Behavior]]', ns: System.Collections.Generic, asm: System.Core}
+      data: 
+    - rid: 4840404696309957109
+      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 13000753599825380327
+          m_Value1: 149229351156158080
+        Graph:
+          rid: 4840404696309957104
+        m_Parent:
+          rid: 4840404696309957105
+        m_Children:
+        - rid: 4840404696309957111
+        - rid: 4840404696309957112
+    - rid: 4840404696309957110
+      type: {class: Blackboard, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        m_Variables:
+        - rid: 4840404696309957113
+        - rid: 4840404696309957114
+    - rid: 4840404696309957111
+      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 13000753599825380327
+          m_Value1: 149229351156158080
+        Graph:
+          rid: 4840404696309957104
+        m_Parent:
+          rid: 4840404696309957109
+        m_Conditions:
+        - rid: 4840404696309957115
+        m_RequiresAllConditions: 0
+    - rid: 4840404696309957112
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 17284289184473577065
+          m_Value1: 10689269285540873237
+        Graph:
+          rid: 4840404696309957104
+        m_Parent:
+          rid: 4840404696309957109
+        m_Children:
+        - rid: 4840404696309957116
+        m_Conditions:
+        - rid: 4840404696309957117
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404696309957116
+        False:
+          rid: -2
+    - rid: 4840404696309957113
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 0}
+    - rid: 4840404696309957114
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        m_Value: {fileID: 0}
+    - rid: 4840404696309957115
+      type: {class: IsAiEnabledCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404696309957104
+        Player:
+          rid: 4840404696309957114
+    - rid: 4840404696309957116
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 2306196353169170659
+          m_Value1: 16040311817440328097
+        Graph:
+          rid: 4840404696309957104
+        m_Parent:
+          rid: 4840404696309957112
+        m_Children:
+        - rid: 4840404696309957118
+        m_Conditions:
+        - rid: 4840404696309957119
+        m_RequiresAllConditions: 0
+        True:
+          rid: -2
+        False:
+          rid: 4840404696309957118
+    - rid: 4840404696309957117
+      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404696309957104
+        Player:
+          rid: 4840404696309957114
+    - rid: 4840404696309957118
+      type: {class: TryToGetInRecievingPositionAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 16708082000873864890
+          m_Value1: 4743724122549898362
+        Graph:
+          rid: 4840404696309957104
+        m_Parent:
+          rid: 4840404696309957116
+        Player:
+          rid: 4840404696309957114
+    - rid: 4840404696309957119
+      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404696309957104
+        Player:
+          rid: 4840404696309957114
+--- !u!114 &5323658777516415253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c02bb70996b49eba31d0c206e28da24, type: 3}
+  m_Name: FootballPlayerAI Blackboard
+  m_EditorClassIdentifier: 
+  VersionTimestamp: 638833947431247110
+  AssetID:
+    m_Value0: 2645668016454177831
+    m_Value1: 11818030096543151755
+  m_Blackboard:
+    m_Variables:
+    - rid: 4840404696309956688
+    - rid: 4840404696309956877
+  m_SharedBlackboardVariableGuids: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 4840404696309956688
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 0}
+    - rid: 4840404696309956877
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        m_Value: {fileID: 0}
+--- !u!114 &8909563678435379439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b27bb6d9a2c8d540a10dff10acc543e, type: 3}
+  m_Name: FootballPlayerAI Debug Info
+  m_EditorClassIdentifier: 
+  m_CodeBreakPointsList: []

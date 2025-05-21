@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FootballSim.FootballTeam
@@ -10,20 +11,20 @@ namespace FootballSim.FootballTeam
         public Transform GoalKeeperPosition => m_GoalKeeperPosition;
 
         [SerializeField]
-        private Transform[] m_DefensePosition;
-        public Transform[] DefensePosition
+        private List<Transform> m_DefensePosition = new();
+        public List<Transform> DefensePosition
         {
             get { return m_DefensePosition; }
         }
         [SerializeField]
-        private Transform[] m_MidfieldPosition;
-        public Transform[] MidfieldPosition
+        private List<Transform> m_MidfieldPosition = new();
+        public List<Transform> MidfieldPosition
         {
             get { return m_MidfieldPosition; }
         }
         [SerializeField]
-        private Transform[] m_ForwardPosition;
-        public Transform[] ForwardPosition
+        private List<Transform> m_ForwardPosition =new();
+        public List<Transform> ForwardPosition
         {
             get { return m_ForwardPosition; }
         }
@@ -45,7 +46,8 @@ namespace FootballSim.FootballTeam
         {
             get { return m_ForwardLine; }
         }
-
+         [SerializeField]
+        private bool m_EnableDebug = true;
 
         private void OnValidate()
         {
@@ -59,25 +61,35 @@ namespace FootballSim.FootballTeam
 
         private void FillPositions()
         {
-            if(m_DefenseLine == null || m_MidfieldLine == null || m_ForwardLine == null || m_GoalKeeperPosition == null)
+            if(m_EnableDebug && (m_DefenseLine == null || m_MidfieldLine == null || m_ForwardLine == null || m_GoalKeeperPosition == null))
             {
                 Debug.LogError("Please assign all the lines");
                 return;
             }
-            m_DefensePosition = new  Transform[4];
-            m_MidfieldPosition = new  Transform[4];
-            m_ForwardPosition = new  Transform[2];
-            for (int i = 0; i < m_DefensePosition.Length; i++)
-            {
-                m_DefensePosition[i] = m_DefenseLine.GetChild(i);
+            m_DefensePosition.Clear();
+            m_MidfieldPosition.Clear();
+            m_ForwardPosition.Clear();
+            if (m_DefenseLine != null)
+            {       
+                for (int i = 0; i < m_DefenseLine.childCount; i++)
+                {
+                    m_DefensePosition.Add(m_DefenseLine.GetChild(i));
+                }
             }
-            for (int i = 0; i < m_MidfieldPosition.Length; i++)
-            {
-                m_MidfieldPosition[i] = m_MidfieldLine.GetChild(i);
+            if (m_MidfieldLine != null)
+            {       
+                for (int i = 0; i < m_MidfieldLine.childCount; i++)
+                {
+                    m_MidfieldPosition.Add(m_MidfieldLine.GetChild(i));
+                }
             }
-            for (int i = 0; i < m_ForwardPosition.Length; i++)
-            {
-                m_ForwardPosition[i] = m_ForwardLine.GetChild(i);
+
+            if (m_ForwardLine != null)
+            {       
+                for (int i = 0; i < m_ForwardLine.childCount; i++)
+                {
+                    m_ForwardPosition.Add(m_ForwardLine.GetChild(i));
+                }
             }
 
         }

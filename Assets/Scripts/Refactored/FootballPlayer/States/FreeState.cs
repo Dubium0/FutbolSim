@@ -49,6 +49,9 @@ namespace FootballSim.Player
             {
                 m_FootballPlayer.Transform.forward = MathExtra.MoveTowards(m_FootballPlayer.Transform.forward, inputVector, 1 / m_FootballPlayer.Data.RotationTime);
             }
+
+           
+
         }
 
         public void HandleDribblingTransition(FootballPlayer _)

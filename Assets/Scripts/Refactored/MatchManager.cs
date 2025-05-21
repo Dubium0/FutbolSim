@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using FootballSim.FootballTeam;
 using FootballSim.Networking;
 using FootballSim.Player;
-using NUnit.Framework.Internal.Filters;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace FootballSim
@@ -26,6 +25,16 @@ namespace FootballSim
         [SerializeField]
         private GameObject m_AwayTeamPrefab;
 
+        [SerializeField]
+        private GameObject m_AITestTeamPrefab;
+        [SerializeField]
+        private GameObject m_PlayerTestTeamPrefab;
+
+        [SerializeField]
+        private FootballPitch.FootballPitch m_PitchData;
+
+        public FootballPitch.FootballPitch PitchData { get => m_PitchData; }
+
         public bool IsMatchInitialized { get; private set; } = false;
 
         public MatchState CurrentMatchState { get; private set; } = MatchState.Santra;
@@ -36,7 +45,7 @@ namespace FootballSim
         public int HomeTeamScore { get; private set; } = 0;
         public int AwayTeamScore { get; private set; } = 0;
 
-        public event Action<int,int> OnScoreChanged;
+        public event Action<int, int> OnScoreChanged;
 
         public event Action OnMatchStarted;
         public event Action OnMatchResumed;
@@ -47,7 +56,10 @@ namespace FootballSim
         public NetworkVariable<int> MatchTime = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
         private bool m_IsTickingTime = false;
-        
+
+        [SerializeField]
+        private bool m_InitWithDebug = false;
+
         private void Awake()
         {
             if (Instance == null)
@@ -59,6 +71,8 @@ namespace FootballSim
             {
                 Destroy(gameObject);
             }
+            
+            
         }
 
         public void SetupOnlinePVP(GameStartConfig t_Config, ulong t_ClientId)
@@ -66,6 +80,11 @@ namespace FootballSim
             if (IsMatchInitialized)
             {
                 Debug.Log("A match is already initialized!");
+                return;
+            }
+            if (m_InitWithDebug)
+            {
+                SetupOnlineTest(t_Config, t_ClientId);
                 return;
             }
             GameObject homeTeamObj = Instantiate(m_HomeTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
@@ -87,6 +106,11 @@ namespace FootballSim
             if (IsMatchInitialized)
             {
                 Debug.Log("A match is already initialized!");
+                return;
+            }
+            if (m_InitWithDebug)
+            {
+                SetupLocalTest(t_Config);
                 return;
             }
             GameObject homeTeamObj = Instantiate(m_HomeTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
@@ -126,6 +150,11 @@ namespace FootballSim
                 Debug.Log("A match is already initialized!");
                 return;
             }
+            if (m_InitWithDebug)
+            {
+                SetupLocalTest(t_Config);
+                return;
+            }
             GameObject homeTeamObj = Instantiate(m_HomeTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             GameObject awayTeamObj = Instantiate(m_AwayTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
             homeTeamObj.GetComponent<NetworkObject>().Spawn();
@@ -157,6 +186,65 @@ namespace FootballSim
         }
 
 
+        private void SetupLocalTest(GameStartConfig t_Config)
+        {
+            if (IsMatchInitialized)
+            {
+                Debug.Log("A match is already initialized!");
+                return;
+            }
+            GameObject homeTeamObj = Instantiate(m_PlayerTestTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
+            GameObject awayTeamObj = Instantiate(m_AITestTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
+            homeTeamObj.GetComponent<NetworkObject>().Spawn();
+            awayTeamObj.GetComponent<NetworkObject>().Spawn();
+            HomeTeam = homeTeamObj.GetComponent<FootballTeam.FootballTeam>();
+            AwayTeam = awayTeamObj.GetComponent<FootballTeam.FootballTeam>();
+            if (t_Config.HomePlayerIndex != -1)
+            {
+
+                HomeTeam.Init(true, FootballTeam.TeamFlag.Home, t_Config.HomePlayerIndex);
+
+            }
+            else
+            {
+                HomeTeam.Init(false, FootballTeam.TeamFlag.Home);
+            }
+
+            if (t_Config.AwayPlayerIndex != -1)
+            {
+
+                AwayTeam.Init(true, FootballTeam.TeamFlag.Away, t_Config.AwayPlayerIndex);
+
+            }
+            else
+            {
+                AwayTeam.Init(false, FootballTeam.TeamFlag.Away);
+            }
+            InitMatch();
+        }
+
+        private void SetupOnlineTest(GameStartConfig t_Config, ulong t_ClientId)
+        {
+            if (IsMatchInitialized)
+            {
+                Debug.Log("A match is already initialized!");
+                return;
+            }
+            GameObject homeTeamObj = Instantiate(m_PlayerTestTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
+            GameObject awayTeamObj = Instantiate(m_AITestTeamPrefab, new Vector3(0.0f, 1.0f, 0.0f), Quaternion.identity);
+            homeTeamObj.GetComponent<NetworkObject>().Spawn();
+            awayTeamObj.GetComponent<NetworkObject>().SpawnWithOwnership(t_ClientId);
+            HomeTeam = homeTeamObj.GetComponent<FootballTeam.FootballTeam>();
+            AwayTeam = awayTeamObj.GetComponent<FootballTeam.FootballTeam>();
+
+            HomeTeam.Init(true, FootballTeam.TeamFlag.Home, 0, true);
+            AwayTeam.Init(true, FootballTeam.TeamFlag.Away, 0, true);
+
+            IsMatchInitialized = true;
+            InitMatch();
+        }
+
+
         private void InitMatch()
         {
 
@@ -172,7 +260,7 @@ namespace FootballSim
 
         }
 
-        private void HandleGoalAction(FootballTeam.TeamFlag t_ScorerTeam,FootballPlayer t_ScorerPlayer)
+        private void HandleGoalAction(FootballTeam.TeamFlag t_ScorerTeam, FootballPlayer t_ScorerPlayer)
         {
             StartCoroutine(OnGoalRoutine(t_ScorerTeam, t_ScorerPlayer));
         }
@@ -210,7 +298,7 @@ namespace FootballSim
             }
             if (OnScoreChanged != null)
             {
-                OnScoreChanged.Invoke(HomeTeamScore,AwayTeamScore);
+                OnScoreChanged.Invoke(HomeTeamScore, AwayTeamScore);
             }
 
         }
@@ -253,7 +341,7 @@ namespace FootballSim
             if (m_IsTickingTime)
             {
                 m_ElapsedTickTime += Time.deltaTime;
-                
+
                 if (m_ElapsedTickTime >= 1.0f)
                 {
                     MatchTime.Value += 1;
