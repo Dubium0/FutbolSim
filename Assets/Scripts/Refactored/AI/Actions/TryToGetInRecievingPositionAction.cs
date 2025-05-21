@@ -30,54 +30,46 @@ public partial class TryToGetInRecievingPositionAction : Action
 
         var rayOrigin = Player.Value.CurrentHomePosition.position;
 
-        var layerMaskToCheck = Player.Value.TeamFlag == FootballSim.FootballTeam.TeamFlag.Home ?
-        FootballPlayer.AwayLayerMask : FootballPlayer.HomeLayerMask;
-        Debug.Log("LayerMask to check" + layerMaskToCheck);
+        var layerMaskToCheck = 1 <<(Player.Value.TeamFlag == FootballSim.FootballTeam.TeamFlag.Home ?
+        FootballPlayer.AwayLayerMask : FootballPlayer.HomeLayerMask);
+       
 
-        //current ------------
-        var hitResults = Physics.RaycastAll(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
-       
-       
         var currentPosOpen = !Physics.Raycast(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
-        Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.white);
+        ////Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.white);
         //--------------------
         //left ---------------
         rayOrigin = Player.Value.CurrentHomePosition.position + leftPlaneDir;
         distanceToBallFromHomePosition = ballPosition - rayOrigin;
         directionToBall = distanceToBallFromHomePosition.normalized;
 
-        hitResults = Physics.RaycastAll(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
-        var leftCloseOpen = hitResults != null ?
-        hitResults.Count(hitInfo => { return hitInfo.collider.GetComponent<FootballPlayer>().TeamFlag != Player.Value.TeamFlag; }) == 0 : true;
-        //--------------------
-        Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.black);
+      
+        var leftCloseOpen = !Physics.Raycast(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
+         //--------------------
+        //Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.black);
         rayOrigin = Player.Value.CurrentHomePosition.position + leftPlaneDir * 1.5f;
         distanceToBallFromHomePosition = ballPosition - rayOrigin;
         directionToBall = distanceToBallFromHomePosition.normalized;
 
-        hitResults = Physics.RaycastAll(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
-        var leftWideOpen = hitResults != null ?
-        hitResults.Count(hitInfo => { return hitInfo.collider.GetComponent<FootballPlayer>().TeamFlag != Player.Value.TeamFlag; }) == 0 : true;
-            Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.red);
+        
+        var leftWideOpen =  !Physics.Raycast(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
+        
+        ////Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.red);
         rayOrigin = Player.Value.CurrentHomePosition.position + rightPlaneDir;
         distanceToBallFromHomePosition = ballPosition - rayOrigin;
         directionToBall = distanceToBallFromHomePosition.normalized;
 
-        hitResults = Physics.RaycastAll(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
-        var rightCloseOpen = hitResults != null ?
-        hitResults.Count(hitInfo => { return hitInfo.collider.GetComponent<FootballPlayer>().TeamFlag != Player.Value.TeamFlag; }) == 0 : true;
-        Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.blue);
+        
+        var rightCloseOpen =  !Physics.Raycast(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
+        
+        //Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.blue);
         rayOrigin = Player.Value.CurrentHomePosition.position + rightPlaneDir * 1.5f;
         distanceToBallFromHomePosition = ballPosition - rayOrigin;
         directionToBall = distanceToBallFromHomePosition.normalized;
 
-        hitResults = Physics.RaycastAll(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
-        var rightWideOpen = hitResults != null ?
-        hitResults.Count(hitInfo => { return hitInfo.collider.GetComponent<FootballPlayer>().TeamFlag != Player.Value.TeamFlag; }) == 0 : true;
-            Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.yellow);
-
-
-
+        
+        var rightWideOpen =  !Physics.Raycast(rayOrigin, directionToBall, distanceToBallFromHomePosition.magnitude, layerMaskToCheck);
+        
+            //Debug.DrawRay(rayOrigin, distanceToBallFromHomePosition, Color.yellow);
         var finalDestination = Player.Value.CurrentHomePosition.position;
 
         if (currentPosOpen)
