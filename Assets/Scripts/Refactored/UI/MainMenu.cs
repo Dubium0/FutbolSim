@@ -91,6 +91,7 @@ namespace FootballSim.UI
         private void Awake()
         {
             m_CurrentDisplay = m_MenuOptions;
+           
         }
 
         private void Update()

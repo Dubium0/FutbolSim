@@ -74,26 +74,26 @@ public partial class TryToGetInRecievingPositionAction : Action
 
         if (currentPosOpen)
         {
-            Debug.Log("CurrentPos is open");
+            //Debug.Log("CurrentPos is open");
         }
         else if (leftCloseOpen)
         {
-            Debug.Log("leftCloseOpen is open");
+            //Debug.Log("leftCloseOpen is open");
             finalDestination += leftPlaneDir;
         }
         else if (rightCloseOpen)
         {
-            Debug.Log("rightCloseOpen is open");
+            //Debug.Log("rightCloseOpen is open");
             finalDestination += rightPlaneDir;
         }
         else if (leftWideOpen)
         {
-            Debug.Log("leftWideOpen is open");
+            //Debug.Log("leftWideOpen is open");
             finalDestination += leftPlaneDir * 2;
         }
         else if (rightWideOpen)
         {
-            Debug.Log("rightWideOpen is open");
+            //Debug.Log("rightWideOpen is open");
             finalDestination += rightPlaneDir * 2;
         }
 
