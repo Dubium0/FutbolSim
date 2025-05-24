@@ -37,8 +37,8 @@ namespace FootballSim.Football
 
         public event Action<FootballPlayer> OnBallHit;
         public event Action<FootballTeam.TeamFlag,FootballPlayer> OnGoal;
-
         public FootballPlayer LastHitPlayer { get; private set; }
+        public int CurrentSector { get; private set; } = -1;
         public bool IsGrounded
         {
             get
@@ -195,7 +195,19 @@ namespace FootballSim.Football
                     OnGoal.Invoke(FootballTeam.TeamFlag.Away, LastHitPlayer);
                 }
             }
+
+            if (other.CompareTag("Sector"))
+            {
+                if (int.TryParse(other.gameObject.name, out int sectorNumber))
+                {
+                    if (CurrentSector != sectorNumber)
+                    {
+                        CurrentSector = sectorNumber;
+                    }
+                }
+            }
         }
+
         private void AdjustPosition()
         {
             if (CurrentOwnerPlayer != null && IsInteractable)

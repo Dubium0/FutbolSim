@@ -11,6 +11,7 @@ TagManager:
   - GoalAway
   - HomeZone
   - AwayZone
+  - Sector
   layers:
   - Default
   - TransparentFX

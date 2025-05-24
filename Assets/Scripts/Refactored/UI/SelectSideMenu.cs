@@ -304,8 +304,8 @@ public class SelectSideMenu : MonoBehaviour
     {
         if (player1ControlsText != null && player2ControlsText != null)
         {
-            player1ControlsText.text = isInputMapSwapped ? "WASD" : "ARROWS";
-            player2ControlsText.text = isInputMapSwapped ? "ARROWS" : "WASD";
+            player1ControlsText.text = isInputMapSwapped ? "ARROWS" : "WASD";
+            player2ControlsText.text = isInputMapSwapped ? "WASD" : "ARROWS";
         }
     }
 
