@@ -11,7 +11,7 @@ public class GoToTheGoalPost : ActionNode
         var agent = blackBoard.GetValue<IFootballAgent>("Owner Agent");
         var ballPosition = Football.Instance.transform.position;
 
-        var zPosition = agent.TeamFlag == TeamFlag.Red ? -21 : 21;
+        var zPosition = agent.TeamFlag == TeamFlag.Home ? -21 : 21;
         var adjustedX = Mathf.Clamp(ballPosition.x, -5f, 5f);
         var targetPosition = new Vector3(adjustedX, 0, zPosition);
 

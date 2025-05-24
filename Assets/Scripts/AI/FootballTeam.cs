@@ -1,24 +1,28 @@
 ﻿using Player.Controller.States;
 using System.Collections.Generic;
-using UnityEditor;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Android;
 
 
 public enum TeamFlag
 {
-    Red,
-    Blue,
-    None
+    Home = 0,
+    Away = 1,
+    None = 2
 }
 
 public enum FormationPhase
 {
-    Defense,
-    Start,
+    AttackStart,
+    DefenseStart,
+
     Default,
-    Attack
+    Defense,
+    Attack,
 }
-public class FootballTeam : MonoBehaviour
+public class FootballTeam : NetworkBehaviour
 {
     public bool isHumanControllable = false;
     public TeamFlag TeamFlag;
@@ -28,7 +32,8 @@ public class FootballTeam : MonoBehaviour
     private List<Transform> homePositions_ = new(11);
 
     public FootballFormation DefenseFormation;
-    public FootballFormation StartFormation;
+    public FootballFormation AttackStartFormation;
+    public FootballFormation DefenseStartFormation;
     public FootballFormation DefaultFormation;
     public FootballFormation AttackFormation;
 
@@ -53,47 +58,110 @@ public class FootballTeam : MonoBehaviour
 
     private FormationPhase currentFormationPhase;
     public FormationPhase CurrentFormationPhase => currentFormationPhase;
-    
+
+    private NetworkObject networkObject;
     private bool isOnStart = true;
 
-    public void SetPlayerIndices(List<int> indices)
-    {
-        // Debug.Log($"[Team Setup] SetPlayerIndices called with {indices.Count} indices for {TeamFlag} team");
-        if (indices == null || indices.Count == 0)
-        {
-            Debug.LogError("[Team Setup] SetPlayerIndices received null or empty indices list!");
-            return;
-        }
+    private bool isInitialized = false;
 
-        playerIndices_ = indices;
-        // Assign player indices to all agents in the team
-        for (int i = 0; i < FootballAgents.Count; i++)
-        {
-            if (FootballAgents[i] is GenericAgent agent)
-            {
-                // Simply use the first index for all agents
-                int playerIndex = indices[0];
-                // Debug.Log($"[Team Setup] Setting player index {playerIndex} for {TeamFlag} team agent {i}");
-                agent.SetPlayerIndex(playerIndex);
-            }
-        }
-    }
+ 
+    private bool isInitWithOwner = false;
+    //public void SetPlayerIndices(List<int> indices)
+    //{
+    //    if (!isInitialized)
+    //    {
+    //        Debug.Log("[Team Setup] This football team is not yet initialized"); return;
+    //        
+    //    }
+    //    // Debug.Log($"[Team Setup] SetPlayerIndices called with {indices.Count} indices for {TeamFlag} team");
+    //    if (indices == null || indices.Count == 0)
+    //    {
+    //        Debug.LogError("[Team Setup] SetPlayerIndices received null or empty indices list!");
+    //        return;
+    //    }
+//
+    //    playerIndices_ = indices;
+    //    // Assign player indices to all agents in the team
+    //    for (int i = 0; i < FootballAgents.Count; i++)
+    //    {
+    //        if (FootballAgents[i] is GenericAgent agent)
+    //        {
+    //            // Simply use the first index for all agents
+    //            int playerIndex = indices[0];
+    //            // Debug.Log($"[Team Setup] Setting player index {playerIndex} for {TeamFlag} team agent {i}");
+    //            agent.SetPlayerIndex(playerIndex);
+    //        }
+    //    }
+    //}
 
     private void Awake()
     {
-        currentFormation = StartFormation;
-        CreateAgents();
+        networkObject = GetComponent<NetworkObject>();
+    }
+    public void init(bool t_isHumanControlled, bool isHome, ulong? ownerId = null,int t_playerIndices = 0)
+    {
+      
+      
+        if (ownerId != null && IsServer)
+        {
+
+            networkObject.ChangeOwnership((ulong)ownerId);
+            isInitWithOwner = true;
+
+            if (IsServer && IsOwner)
+            {
+                Debug.Log("This football team is ownded by server");
+
+            }
+            else { 
+            
+                NotifyClientItIsTheOwnerRpc();
+            }
+        }
+        Debug.Log("IsClient ? " + IsClient);
+        if (IsClient) return;
+        isHumanControllable = t_isHumanControlled;
+        currentFormation = isHome ?  AttackStartFormation : DefenseStartFormation;
+     
+      
+        CreateAgents(t_playerIndices);
+        
+
+        isInitialized = true;
     }
 
+    [Rpc(SendTo.ClientsAndHost)]
+
+    private void NotifyClientItIsTheOwnerRpc()
+    {
+        if( IsClient  && IsOwner) {
+            Debug.Log("This football team is ownded by client");
+        }
+    }
+ 
     private void FixedUpdate()
     {
-        SetClosestPlayerToBall(); 
+        if (IsClient) return;
+        if( isInitialized && GameManager.Instance.GameState == EGameState.Playing)
+        {
+
+            SetClosestPlayerToBall(); 
        
-        DecideStrategy();
+            DecideStrategy();
+        }
     }
     private void Update()
     {
-        CycleToClosestPlayer();
+        if(IsOwner && IsClient)
+        {
+            if(Input.GetKeyDown(KeyCode.C))
+            {
+                CycleToClosestPlayerRpc();
+            }
+            return;
+        }
+        if (isInitialized && GameManager.Instance.GameState == EGameState.Playing && IsOwner)  CycleToClosestPlayer();
+
     }
     private void SetClosestPlayerToBall()
     {
@@ -102,42 +170,60 @@ public class FootballTeam : MonoBehaviour
         ballPosition.y = 0;
         Vector3 minDistance = Vector3.one * 9999;
         IFootballAgent minDistancePlayer = null;
-        FootballAgents.ForEach(agent => 
-        {
 
+        int chosenPlayerIndex = 0;
+        for( int i = 0; i < FootballAgents.Count; i++ )
+        {
+            var agent  = FootballAgents[i];
             var distance = ballPosition - agent.Transform.position;
             if (distance.magnitude < minDistance.magnitude)
             {
                 minDistance = distance;
                 minDistancePlayer = agent;
+                chosenPlayerIndex = i;
             }
         }
-        
-        );
         var prevClosest = closestPlayerToBall_;
       
         closestPlayerToBall_ = minDistancePlayer;
+      
         if (isHumanControllable && prevClosest != minDistancePlayer && isOnStart)
         {
             isOnStart = false;
             playerControlledAgent = closestPlayerToBall_;
             playerControlledAgent.SetAsHumanControlled();
+           
         }
 
+
+    }
+
+    [Rpc(SendTo.Server)]
+    private void CycleToClosestPlayerRpc()
+    {
+        
+         CycleToClosestPlayerLogic();
+        
+    }
+
+    private void CycleToClosestPlayerLogic()
+    {
+        var prevAgent = playerControlledAgent;
+        if (prevAgent != null)
+        {
+            prevAgent.SetAsAIControlled();
+        }
+        playerControlledAgent = closestPlayerToBall_;
+        playerControlledAgent.SetAsHumanControlled();  
+
+      
 
     }
 
     private void CycleToClosestPlayer()
     {
         if(Input.GetKeyDown(KeyCode.C) && isHumanControllable) {
-            var prevAgent = playerControlledAgent;
-            if (prevAgent != null)
-            {
-                prevAgent.SetAsAIControlled();
-            }
-            playerControlledAgent = closestPlayerToBall_;
-            playerControlledAgent.SetAsHumanControlled();
-
+            CycleToClosestPlayerLogic();
         }
 
     }
@@ -200,9 +286,11 @@ public class FootballTeam : MonoBehaviour
             }
         }
         UpdateHomePositions();
+
     }
-    private void CreateAgents()
+    private void CreateAgents(int t_playerIndices = 0)
     {
+
         var defCount = currentFormation.DefensePosition.Length;
         var midfieldCount = currentFormation.MidfieldPosition.Length;
         var attackCount = currentFormation.ForwardPosition.Length;
@@ -210,11 +298,26 @@ public class FootballTeam : MonoBehaviour
         int index = 0;
 
 
-        int layerToSet = TeamFlag == TeamFlag.Red ? 10 : 9;
+        int layerToSet = TeamFlag == TeamFlag.Home ? 10 : 9;
         
         GameObject goalkeeper = Instantiate(GoalKeeperAgentPrefab, currentFormation.GoalKeeperPosition.position, currentFormation.GoalKeeperPosition.rotation);
+        if(IsServer)
+        {
+
+        goalkeeper.GetComponent<NetworkObject>().Spawn();
+        }
         goalkeeper.layer = layerToSet;
         var goalkeeperComponent = goalkeeper.GetComponent<IFootballAgent>();
+        if (isInitWithOwner)
+        {
+            goalkeeperComponent.init(networkObject.OwnerClientId,t_playerIndices);
+
+        }
+        else
+        {
+            goalkeeperComponent.init(null, t_playerIndices);
+        }
+      
         goalkeeperComponent.OnBallPossesionCallback = agent => 
         {
             currentBallOwnerTeamMate = agent;
@@ -235,9 +338,21 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < defCount; i++)
         {
             GameObject agent = Instantiate(DefenseAgentPrefab, currentFormation.DefensePosition[i].position, currentFormation.DefensePosition[i].rotation);
+            if (IsServer)  agent.GetComponent<NetworkObject>().Spawn();
             agent.layer = layerToSet;
-
+          
             var agentComponent = agent.GetComponent<GenericAgent>();
+           
+
+            if (isInitWithOwner)
+            {
+                agentComponent.init(networkObject.OwnerClientId,t_playerIndices);
+
+            }
+            else
+            {
+                agentComponent.init(null,t_playerIndices);
+            }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -264,6 +379,17 @@ public class FootballTeam : MonoBehaviour
           
             agent.layer = layerToSet;
             var agentComponent = agent.GetComponent<GenericAgent>();
+            if (IsServer) agent.GetComponent<NetworkObject>().Spawn();
+
+            if (isInitWithOwner)
+            {
+                agentComponent.init(networkObject.OwnerClientId,t_playerIndices);
+
+            }
+            else
+            {
+                agentComponent.init(null,t_playerIndices);
+            }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -287,9 +413,20 @@ public class FootballTeam : MonoBehaviour
         for (var i = 0; i < attackCount; i++)
         {
             GameObject agent = Instantiate(ForwardAgentPrefab, currentFormation.ForwardPosition[i].position, currentFormation.ForwardPosition[i].rotation);
+            if (IsServer) agent.GetComponent<NetworkObject>().Spawn();
             agent.layer = layerToSet;
-
+           
             var agentComponent = agent.GetComponent<GenericAgent>();
+
+            if (isInitWithOwner)
+            {
+                agentComponent.init(networkObject.OwnerClientId,t_playerIndices);
+
+            }
+            else
+            {
+                agentComponent.init(null,t_playerIndices);
+            }
             agentComponent.OnBallPossesionCallback = agent => {
                 currentBallOwnerTeamMate = agent;
                 if (isHumanControllable)
@@ -355,17 +492,16 @@ public class FootballTeam : MonoBehaviour
     {
         switch(TeamFlag)
         {
-            case TeamFlag.Blue:
-                return PicthZone.BlueZone;
-            case TeamFlag.Red: 
-                return PicthZone.RedZone;
+            case TeamFlag.Away:
+                return PicthZone.AwayZone;
+            case TeamFlag.Home: 
+                return PicthZone.HomeZone;
             default:
-                return PicthZone.BlueZone;
+                return PicthZone. AwayZone;
         }
     }
 
-
-    public void ResetToFormation()
+    public void ResetToFormation(FormationPhase formation)
     {
     }
 }

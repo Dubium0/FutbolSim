@@ -18,7 +18,7 @@ public class BootTheBall : ActionNode
         }
         
         // get if agent red or blue. based on that set direction + or -
-        var direction = agent.TeamFlag == TeamFlag.Red ? Vector3.right : Vector3.left;
+        var direction = agent.TeamFlag == TeamFlag.Home ? Vector3.right : Vector3.left;
         var power = Random.Range(1, 3);
         
         ball.HitBall(direction, power);

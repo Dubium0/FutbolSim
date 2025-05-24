@@ -2,18 +2,19 @@
 using Player.Controller;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 
 public enum PicthZone
 {
-    RedZone,
-    BlueZone
+    HomeZone,
+    AwayZone
 }
 
 [RequireComponent(typeof(Rigidbody),typeof(Collider))]
 
-public class Football : MonoBehaviour
+public class Football : NetworkBehaviour
 {
     [SerializeField]
     private float playerCheckRadius_ = 2;
@@ -54,6 +55,7 @@ public class Football : MonoBehaviour
     
     private void Awake()
     {
+        
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -61,6 +63,7 @@ public class Football : MonoBehaviour
         else
         {
             Instance = this;
+
         }
 
         rigidbody_ = GetComponent<Rigidbody>();
@@ -70,12 +73,13 @@ public class Football : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (IsClient) return;
         CheckStruggle();
         CheckPlayerCollision();
         
         if(this.transform.position.y < -1)
         {
-            MatchManager.Instance.RestartFromCenter();
+            MatchManager.Instance.RestartFromCenter(TeamFlag.Home);
         }
 
     }
@@ -222,16 +226,17 @@ public class Football : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("RedZone"))
+        if (IsClient) return;
+        if (other.CompareTag("HomeZone"))
         {
-            pitchZone_ = PicthZone.RedZone;
+            pitchZone_ = PicthZone.HomeZone;
             var pair = other.gameObject.name.Trim().Split(' ');
             int number = -1;
             if (int.TryParse(pair[1], out number)) sectorNumber_ = number;
         }
-        else if (other.CompareTag("BlueZone"))
+        else if (other.CompareTag("AwayZone"))
         {
-            pitchZone_ = PicthZone.BlueZone;
+            pitchZone_ = PicthZone.AwayZone;
             var pair = other.gameObject.name.Trim().Split(' ');
             int number = -1;
             if (int.TryParse(pair[1], out number)) sectorNumber_ = number;
@@ -242,12 +247,12 @@ public class Football : MonoBehaviour
         }
         else if (other.CompareTag("GoalAway"))
         {
-            MatchManager.Instance.HandleGoal(TeamFlag.Red);
+            MatchManager.Instance.HandleGoal(TeamFlag.Home);
             Debug.Log("Goal Away");
         }
         else if (other.CompareTag("GoalHome"))
         {
-            MatchManager.Instance.HandleGoal(TeamFlag.Blue);
+            MatchManager.Instance.HandleGoal(TeamFlag.Away);
             Debug.Log("Goal Home");
         }
     }
