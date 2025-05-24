@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using FootballSim.UI;
 
 namespace FootballSim.Player
 {
@@ -90,12 +91,32 @@ namespace FootballSim.Player
         private IEnumerator HandleSprintCooldown(float t_TimeToWait)
         {
             m_CanSprint = false;
-            yield return new WaitForSeconds(t_TimeToWait);
+            float startTime = Time.time;
+            while (Time.time - startTime < t_TimeToWait)
+            {
+                float recoveryPercentage = (Time.time - startTime) / t_TimeToWait;
+                bool isHomeTeam = m_FootballPlayer.TeamFlag == MatchManager.Instance.HomeTeam.TeamFlag;
+                MatchUI.Instance.UpdateTeamStamina(isHomeTeam, recoveryPercentage);
+                yield return null;
+            }
             m_CanSprint = true;
+            bool isHomeTeamFinal = m_FootballPlayer.TeamFlag == MatchManager.Instance.HomeTeam.TeamFlag;
+            MatchUI.Instance.UpdateTeamStamina(isHomeTeamFinal, 1f);
         }
         private IEnumerator HandleSprint()
         {
-            yield return new WaitForSeconds(m_FootballPlayer.Data.MaxRunningTime);
+            while (m_IsSprinting)
+            {
+                float elapsedTimePercentage = (Time.time - m_SprintStartTime) / m_FootballPlayer.Data.MaxRunningTime;
+                bool isHomeTeam = m_FootballPlayer.TeamFlag == MatchManager.Instance.HomeTeam.TeamFlag;
+                MatchUI.Instance.UpdateTeamStamina(isHomeTeam, 1f - elapsedTimePercentage);
+                
+                if (elapsedTimePercentage >= 1f)
+                {
+                    break;
+                }
+                yield return null;
+            }
             if (m_IsSprinting)
             {
                 m_FootballPlayer.Rigidbody.maxLinearVelocity = m_FootballPlayer.Data.MaxWalkSpeed;
@@ -103,7 +124,6 @@ namespace FootballSim.Player
                 m_IsSprinting = false;
                 HandleSprintCooldown(m_FootballPlayer.Data.RunningCooldown);
             }
-
         }
 
         public void OnPassActionEnter()
@@ -243,7 +263,7 @@ namespace FootballSim.Player
                 m_IsHittingBall = true;
                 m_BallHitTimer = Time.time;
                 m_FootballPlayer.StartCoroutine(OnMaxPowerReachTime(t_OnMaxPowerReach));
-
+                MatchUI.Instance.UpdatePowerBar(0f);
             }
         }
 
@@ -251,16 +271,29 @@ namespace FootballSim.Player
         {
             if (m_FootballPlayer.IsTheOwnerOfTheBall && m_IsHittingBall && m_CanHitTheBall)
             {
+                float elapsedTimePercentage = (Time.time - m_BallHitTimer) / m_BallHitMaxPowerReachTime;
                 m_FootballPlayer.SetKickBallTrigger();
                 m_FootballPlayer.FootballPlayerAnimation.OnBallTouchEvent += t_BallHitAction;
                 m_IsHittingBall = false;
                 m_FootballPlayer.StartCoroutine(WaitForBallHitCooldown());
+                m_FootballPlayer.StartCoroutine(WaitBeforeResettingPowerBar(elapsedTimePercentage));
             }
+        }
+
+        private IEnumerator WaitBeforeResettingPowerBar(float finalPower)
+        {
+            yield return new WaitForSeconds(1f);
+            MatchUI.Instance.UpdatePowerBar(0f);
         }
 
         private IEnumerator OnMaxPowerReachTime(Action t_Action)
         {
-            yield return new WaitForSeconds(m_BallHitMaxPowerReachTime);
+            while (m_IsHittingBall)
+            {
+                float elapsedTimePercentage = (Time.time - m_BallHitTimer) / m_BallHitMaxPowerReachTime;
+                MatchUI.Instance.UpdatePowerBar(elapsedTimePercentage);
+                yield return null;
+            }
             FinalizeHitBall(t_Action);
         }
         private float m_BallHitCooldown = 0.5f;

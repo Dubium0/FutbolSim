@@ -1,5 +1,3 @@
-
-
 using System;
 using TMPro;
 using Unity.Netcode;
@@ -24,6 +22,46 @@ namespace FootballSim.UI
 
         [SerializeField]
         private TextMeshProUGUI m_MatchTime;
+        [SerializeField]
+        private UnityEngine.UI.Slider m_HomeTeamStaminaBar;
+        [SerializeField]
+        private UnityEngine.UI.Slider m_AwayTeamStaminaBar;
+
+        [SerializeField]
+        private UnityEngine.UI.Slider m_ShotPowerBar;
+        bool isHomeTeamHuman = false;
+        bool isAwayTeamHuman = false;
+
+        public static MatchUI Instance { get; private set; }
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        public void UpdatePowerBar(float normalizedValue)
+        {
+            m_ShotPowerBar.value = normalizedValue;
+        }
+
+        public void UpdateTeamStamina(bool isHomeTeam, float normalizedValue)
+        {
+            if (isHomeTeam)
+            {
+                m_HomeTeamStaminaBar.value = normalizedValue;
+            }
+            else
+            {
+                m_AwayTeamStaminaBar.value = normalizedValue;
+            }
+        }
 
         private void Start()
         {
@@ -31,6 +69,12 @@ namespace FootballSim.UI
             m_AwayTeamName.text = "Away";
             MatchManager.Instance.OnScoreChanged += HandleScoreChange;
             MatchManager.Instance.MatchTime.OnValueChanged += HandleMatchTime;
+
+            isHomeTeamHuman = MatchManager.Instance.HomeTeam.IsHumanControlled;
+            isAwayTeamHuman = MatchManager.Instance.AwayTeam.IsHumanControlled;
+
+            m_HomeTeamStaminaBar.gameObject.SetActive(isHomeTeamHuman);
+            m_AwayTeamStaminaBar.gameObject.SetActive(isAwayTeamHuman);
         }
         private void HandleMatchTime(int previousValue, int newValue)
         {   
@@ -41,7 +85,6 @@ namespace FootballSim.UI
             string secondsPrefix = seconds >= 10 ? "" : "0";
                 
             m_MatchTime.text = $"{minutePrefix}{minutes} : {secondsPrefix}{seconds}";
-            
         }
 
         private void HandleScoreChange(int t_HomeScore, int t_AwayScore)
@@ -60,11 +103,5 @@ namespace FootballSim.UI
             m_HomeTeamScore.text = t_HomeScore.ToString();
             m_AwayTeamScore.text = t_AwayScore.ToString();
         }
-
-        
-
-
-
-
     }
 }
