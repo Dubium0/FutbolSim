@@ -11,7 +11,7 @@ public partial class AmITheClosestPlayerToBallCondition : Condition
 
     public override bool IsTrue()
     {
-        return true;
+        return Player.Value.OwnerTeam.ClosestPlayerToBall == Player.Value;
     }
 
     public override void OnStart()

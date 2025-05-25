@@ -4,14 +4,12 @@ using Unity.Behavior;
 using UnityEngine;
 using Action = Unity.Behavior.Action;
 using Unity.Properties;
-using System.Collections.Generic;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "ShootTheBall", story: "[Player] shoots to any [ShootDirectionCandidates] ", category: "FootballPlayer/Action", id: "70c6644a20009945af1a2396d9f4b719")]
-public partial class ShootTheBallAction : Action
+[NodeDescription(name: "TryToGetTheBall", story: "[Player] tries to take the ball", category: "FootballPlayer/Action", id: "8800c70ea81296693fa656ca6685bfd9")]
+public partial class TryToGetTheBallAction : Action
 {
     [SerializeReference] public BlackboardVariable<FootballPlayer> Player;
-    [SerializeReference] public BlackboardVariable<List<Vector3>> ShootDirectionCandidates;
 
     protected override Status OnStart()
     {

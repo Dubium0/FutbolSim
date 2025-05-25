@@ -38,83 +38,74 @@ public class MathTest : MonoBehaviour
         Debug.DrawRay(target.position, otherAxis, Color.blue);
         Debug.DrawRay(target.position, targetRb.linearVelocity.normalized);
 
-        StartCoroutine(Heuristic(projOnV, otherAxis));
-    }
-
-    int maxIteration = 10;
-    private float GetOtherAxisSpeed(float max, float current)
-    {
-        return max * max - current * current;
-    }
-
-    private bool isCurrentlyCalculating = false;
-    private IEnumerator Heuristic(Vector3 projAxis, Vector3 otherAxis)
-    {
-        if (isCurrentlyCalculating) yield break;
-        isCurrentlyCalculating = true;
-        float upVelocity = 30;
-        float bottomVelocity = 0;
-        float currentYAxisMagnitude = upVelocity; // strat with max speed
-
-        float errorMargin = 0.5f; // on both axis
-
-        Vector3? Result = null;
-        for (int i = 0; i < maxIteration; i++)
-        {
-            var catchTime = otherAxis.sqrMagnitude / currentYAxisMagnitude;
-            Debug.Log("Catch Time " +catchTime);
-            var xAxisMagnitude = GetOtherAxisSpeed(30, currentYAxisMagnitude);
-
-            var finalVelocityVector = projAxis.normalized * xAxisMagnitude + -otherAxis.normalized * currentYAxisMagnitude;
-
-            var dropPointOfTarget = targetRb.linearVelocity * catchTime+ target.position;
-
-            var ourEstimation = finalVelocityVector * catchTime + follower.position;
-
-            dropPointOfTarget.y = ourEstimation.y;
-
-            Debug.DrawRay(target.position, (dropPointOfTarget - target.position),Color.yellow,0.2f);
-
-            var distance = ourEstimation - dropPointOfTarget;
-            //Debug.Log("our Estimation : " + ourEstimation);
-            dropPoint.position = dropPointOfTarget;
-            estimation.position = ourEstimation;
-            //Debug.Log("drop point : " + dropPointOfTarget);
-            if (distance.sqrMagnitude < errorMargin)
-            {
-                var correctedDir = (dropPointOfTarget - follower.position).normalized;
-                var correctVelocity = (dropPointOfTarget - follower.position).sqrMagnitude / catchTime;
-                //distance is close enough
-                Result = correctedDir * correctVelocity;
-                break;
-            }
-            else
-            {
-                if ((targetRb.linearVelocity + distance.normalized).sqrMagnitude < targetRb.linearVelocity.sqrMagnitude)
-                {
-                    // it means that I were too fast on the the otherAxis
-                    upVelocity = currentYAxisMagnitude;
-                    currentYAxisMagnitude = (currentYAxisMagnitude + bottomVelocity) / 2.0f;
-                }
-                {
-                    // I was so slow on the other axis
-                    bottomVelocity = currentYAxisMagnitude;
-                    currentYAxisMagnitude = (currentYAxisMagnitude + upVelocity) / 2.0f;
-                }
-            }
-
-            Debug.DrawRay(follower.position, finalVelocityVector.normalized,Color.cyan,0.2f);
-            yield return new WaitForSeconds(0.2f);
-        }
-
-        if (Result != null)
-        {
-            Debug.Log("Found the Vector!");
-            Debug.DrawRay(follower.position, Result.Value,Color.green,0.2f);
-        }
-        isCurrentlyCalculating = false;
+        // always move to -otherAxis
+        Heuristics(otherAxis, target.position, projOnV);
         
+
+
     }
+
+    private void Heuristics(Vector3 otherAxis, Vector3 currentBallPosition, Vector3 projOnV)
+    {
+        var currentOtherAxisSpeed = 3.50f;
+        var upSpeed = 7.50f;
+        var bottomSpeed = 0.0f;
+
+        otherAxis.y = 0;
+        currentBallPosition.y = 0;
+        projOnV.y = 0;
+        Vector3 resultSpeedVector = Vector3.zero;
+        float catchTime = 0;
+        for (int iter = 0; iter < 10; iter++)
+        {
+
+            catchTime = otherAxis.sqrMagnitude / currentOtherAxisSpeed;
+
+            var ballPositionOnCatchTime = GetDropPointAfterTSeconds(catchTime);
+            ballPositionOnCatchTime.y = 0;
+
+            var currentPlayerProjAxisPosition = currentBallPosition + projOnV;
+
+            var catchDistance = ballPositionOnCatchTime - currentPlayerProjAxisPosition;
+
+            var catchDirection = catchDistance.normalized;
+
+            var remainingPlayerSpeed = Mathf.Sqrt(30 * 30 - currentOtherAxisSpeed * currentOtherAxisSpeed);
+
+            var currentPlayerProjAxisSpeed = catchDirection * remainingPlayerSpeed;
+
+            var k = catchDistance.x / catchDirection.x;
+
+            if (MathF.Abs(remainingPlayerSpeed * catchTime - k) < 0.5f)
+            {
+                Debug.Log("I catch !"); // increase Y speed
+                resultSpeedVector = currentPlayerProjAxisSpeed;
+                break;
+
+            }
+            else if (remainingPlayerSpeed * catchTime > k)
+            {
+                Debug.Log("I am fast");
+                bottomSpeed = currentOtherAxisSpeed;
+                currentOtherAxisSpeed = (currentOtherAxisSpeed + upSpeed) / 2f;
+            }
+            else if (remainingPlayerSpeed * catchTime < k)
+            {
+                Debug.Log("I am slow");
+                upSpeed = currentOtherAxisSpeed;
+                currentOtherAxisSpeed = (currentOtherAxisSpeed + bottomSpeed) / 2f;
+            }
+        }
+        resultSpeedVector += -otherAxis * currentOtherAxisSpeed;
+        Debug.DrawRay(follower.position, resultSpeedVector.normalized, Color.green);
+
+        Debug.DrawRay(follower.position, resultSpeedVector * catchTime, Color.yellow);
+
+        followerRb.linearVelocity = resultSpeedVector;
+
+
+    }
+
 
 
     public Vector3 GetDropPointAfterTSeconds(float time)

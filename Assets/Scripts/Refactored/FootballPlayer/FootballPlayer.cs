@@ -103,6 +103,8 @@ namespace FootballSim.Player
 
         public Transform CurrentHomePosition { get; private set; }
 
+        
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -183,6 +185,7 @@ namespace FootballSim.Player
             };
             OnBallWinCallback += player =>
             {
+                Debug.Log("OnBallWinCallback");
                 IsTheOwnerOfTheBall = true;
 
                 StartCoroutine(StartForcefullyTakingBallCooldown());
