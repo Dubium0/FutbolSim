@@ -37,6 +37,8 @@ namespace FootballSim.Football
 
         public event Action<FootballPlayer> OnBallHit;
         public event Action<FootballTeam.TeamFlag,FootballPlayer> OnGoal;
+
+        public event Action<FootballTeam.TeamFlag> OnOut;
         public FootballPlayer LastHitPlayer { get; private set; }
         public int CurrentSector { get; private set; } = -1;
         public bool IsGrounded
@@ -204,6 +206,20 @@ namespace FootballSim.Football
                     {
                         CurrentSector = sectorNumber;
                     }
+                }
+            }
+            if (other.CompareTag("HomeOutZone"))
+            {
+                if (OnOut != null)
+                {
+                    OnOut.Invoke(FootballTeam.TeamFlag.Home);
+                }
+            }
+            else if (other.CompareTag("AwayOutZone"))
+            {
+                if (OnOut != null)
+                {
+                    OnOut.Invoke(FootballTeam.TeamFlag.Away);
                 }
             }
         }

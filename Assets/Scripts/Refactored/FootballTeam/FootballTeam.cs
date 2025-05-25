@@ -23,6 +23,8 @@ namespace FootballSim.FootballTeam
         AttackStartFormation,
         DefenseStartFormation,
         DefaultFormation,
+        FreeKickAttackFormation,
+        FreeKickDefenseFormation,
         AttackFormation
     }
     public class FootballTeam : NetworkBehaviour
@@ -43,6 +45,10 @@ namespace FootballSim.FootballTeam
         [SerializeField]
         private FootballFormation m_AttackFormation;
 
+        [SerializeField]
+        private FootballFormation m_FreeKickAttackFormation;
+        [SerializeField]
+        private FootballFormation m_FreeKickDefenseFormation;
         private FootballFormation m_CurrentFormation;
 
         public FormationTag FormationTag { get; private set; }
@@ -101,7 +107,8 @@ namespace FootballSim.FootballTeam
             {
                 FindClosestPlayerToBall();
                 //CycleToClosestPlayer();
-                DetectCurrentFormation();
+                if(MatchManager.Instance.CurrentMatchState == MatchState.Playing)
+                    DetectCurrentFormation();
             }
         }
         private void SetupAndBindActions()
@@ -332,6 +339,12 @@ namespace FootballSim.FootballTeam
                     break;
                 case FormationTag.DefaultFormation:
                     MovePlayersToFormationPositions(m_DefaultFormation, t_ImmidietalyMove);
+                    break;
+                case FormationTag.FreeKickAttackFormation:
+                    MovePlayersToFormationPositions(m_FreeKickAttackFormation, t_ImmidietalyMove);
+                    break;
+                case FormationTag.FreeKickDefenseFormation:
+                    MovePlayersToFormationPositions(m_FreeKickDefenseFormation, t_ImmidietalyMove);
                     break;
             }
             print($"Changing formation to {FormationTag}");

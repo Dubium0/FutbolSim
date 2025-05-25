@@ -12,6 +12,8 @@ TagManager:
   - HomeZone
   - AwayZone
   - Sector
+  - HomeOutZone
+  - AwayOutZone
   layers:
   - Default
   - TransparentFX

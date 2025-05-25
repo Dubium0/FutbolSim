@@ -13,8 +13,8 @@ namespace FootballSim
     public enum MatchState
     {
         Santra,
+        Out,
         Playing,
-
     }
 
     public class MatchManager : NetworkBehaviour
@@ -253,6 +253,7 @@ namespace FootballSim
 
             Football.Football.Instance.OnBallHit += HandleSantraAction;
             Football.Football.Instance.OnGoal += HandleGoalAction;
+            Football.Football.Instance.OnOut += HandleOutAction;
             CurrentMatchState = MatchState.Santra;
             OnMatchStarted += () => { m_IsTickingTime = true; };
             OnMatchStopped += () => { m_IsTickingTime = false; };
@@ -329,6 +330,61 @@ namespace FootballSim
             }
         }
 
+
+        private void HandleOutAction(FootballTeam.TeamFlag t_FreeKickTeam)
+        {
+            if (CurrentMatchState != MatchState.Out) {
+
+                StartCoroutine(OnOutRoutine(t_FreeKickTeam));
+            }
+        }
+        private void HandleFreeKickAction(FootballPlayer t_Player)
+        {
+            if (CurrentMatchState == MatchState.Out)
+            {
+                HomeTeam.LockPlayers(false);
+                AwayTeam.LockPlayers(false);
+                CurrentMatchState = MatchState.Playing;
+                Football.Football.Instance.OnBallHit -= HandleFreeKickAction;
+                 if (OnMatchResumed != null)
+                {
+                    OnMatchResumed.Invoke();
+                }
+            }
+        }
+        private IEnumerator OnOutRoutine(FootballTeam.TeamFlag t_FreeKickTeam)
+        {
+            Football.Football.Instance.SetInteractable(false);
+            NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(0.1f);
+            if (OnMatchStopped != null)
+            {
+                OnMatchStopped.Invoke();
+            }
+            CurrentMatchState = MatchState.Out;
+            yield return new WaitForSeconds(0.2f);
+            HomeTeam.LockPlayers(true);
+            AwayTeam.LockPlayers(true);
+            NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(1.0f);
+            Football.Football.Instance.OnBallHit += HandleFreeKickAction;
+            switch (t_FreeKickTeam)
+            {
+                case FootballTeam.TeamFlag.Home:
+                    Football.Football.Instance.transform.position = PitchData.HomeOutKickPosition.position;
+                    HomeTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
+                    AwayTeam.ChangeFormation(FormationTag.DefaultFormation, true);
+                    break;
+                case FootballTeam.TeamFlag.Away:
+                    Football.Football.Instance.transform.position = PitchData.AwayOutKickPosition.position;
+                    HomeTeam.ChangeFormation(FormationTag.DefaultFormation, true);
+                    AwayTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
+                    break;
+                default:
+                    break;
+            }
+            
+            Football.Football.Instance.SetInteractable(true);
+            
+        }
 
 
         private float m_ElapsedTickTime = 0;

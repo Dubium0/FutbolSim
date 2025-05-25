@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FootballSim.FootballPitch
 {
     public class FootballPitch : MonoBehaviour
-    {   
+    {
         [SerializeField]
         private Transform m_HomeGoalTransform;
         public Transform HomeGoalTransform { get => m_HomeGoalTransform; }
@@ -27,7 +27,9 @@ namespace FootballSim.FootballPitch
         public Transform AwayGoalTransform { get => m_AwayGoalTransform; }
         [SerializeField]
         private List<Transform> m_AwayGoalPoints;
-        public Bounds AwayGoalBounds{get
+        public Bounds AwayGoalBounds
+        {
+            get
             {
                 Bounds bounds = new Bounds(m_AwayGoalPoints[0].position, Vector3.zero);
                 for (int i = 1; i < m_AwayGoalPoints.Count; i++)
@@ -37,6 +39,12 @@ namespace FootballSim.FootballPitch
                 return bounds;
             }
         }
+         [SerializeField]
+        private Transform m_HomeOutKickPosition;
+        public Transform HomeOutKickPosition { get => m_HomeOutKickPosition; }
+         [SerializeField]
+        private Transform m_AwayOutKickPosition;
+        public Transform AwayOutKickPosition{ get => m_AwayOutKickPosition; }
 
 
     }
