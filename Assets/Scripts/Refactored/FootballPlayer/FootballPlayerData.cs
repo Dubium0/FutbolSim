@@ -37,7 +37,10 @@ namespace FootballSim.Player
         public float ShootAngle;
         public float LobPassAngle;
 
-        public float MinimumShootDistance =10;
+        public float MinimumShootDistance = 100;
+
+        public float AggressiveDefenseDistance;
+        public float PassiveDefenseDistance;
 
 
 

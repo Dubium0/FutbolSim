@@ -30,3 +30,6 @@ MonoBehaviour:
   PassAngle: 15
   ShootAngle: 20
   LobPassAngle: 30
+  MinimumShootDistance: 100
+  AggressiveDefenseDistance: 0
+  PassiveDefenseDistance: 0

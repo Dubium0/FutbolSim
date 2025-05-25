@@ -106,13 +106,19 @@ public partial class TryToGetInRecievingPositionAction : Action
         var distanceSwitch = distance.sqrMagnitude > 0.1f ? 1 : 0;
         Player.Value.Rigidbody.AddForce(direction * Player.Value.Data.RunningAcceleration * distanceSwitch, ForceMode.Acceleration);
 
-        if (direction.magnitude > 0)
+        if (distance.magnitude > 0.5f)
         {
             Player.Value.Transform.forward = MathExtra.MoveTowards(Player.Value.Transform.forward, direction, 1 / Player.Value.Data.RotationTime);
         }
         else
         {
-            Player.Value.Transform.forward = MathExtra.MoveTowards(Player.Value.Transform.forward, (ballPosition - Player.Value.transform.position).normalized, 1 / Player.Value.Data.RotationTime);
+            var distanceToBall =  FootballSim.Football.Football.Instance.transform.position - Player.Value.transform.position;
+            distanceToBall.y = 0;
+            if (distanceToBall.sqrMagnitude > 0.0f)
+            {
+                Debug.DrawRay(Player.Value.transform.position, distanceToBall);
+                Player.Value.Transform.forward = distanceToBall.normalized;
+            }
         }
         return Status.Success;
     }

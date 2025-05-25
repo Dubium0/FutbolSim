@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using FootballSim.Player;
-
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -224,14 +224,20 @@ namespace FootballSim.Football
 
             Vector3 acceleration = Physics.gravity;
 
-            float deltaTime = time /20.0f;
+            float deltaTime = time / 20.0f;
+            if (deltaTime < 0.02f)
+            {
+                deltaTime = 0.02f;
+            }
+           
+
             Vector3 position = currentPosition;
             Vector3 velocity = currentVelocity;
             var collider = GetComponent<Collider>();
             var physicsMaterial = collider.material;
             
             float raycastDistance = 0.1f;
-            Debug.Log("Drop point Time " + time);
+         
             for (float t = 0; t < time; t += deltaTime)
             {
 
@@ -248,7 +254,7 @@ namespace FootballSim.Football
 
                 position += velocity * deltaTime;
             }
-
+            //Debug.Log("Ball Position After " + time + " with delta " + deltaTime + " will be " + position);
             return position;
         }
 
@@ -256,15 +262,15 @@ namespace FootballSim.Football
         {
             if (!m_EnableDebug) return;
             
-            for ( float t = 0 ; t < 2; t += 0.2f)
-            {
-                var drop_point = GetDropPointAfterTSeconds(t);
-                float raycastDistance = 0.1f;
-                var isOnGroundNow =  Physics.Raycast(drop_point, Vector3.down, raycastDistance, m_GroundCheckLayer) || Physics.Raycast(drop_point, Vector3.up, 10, m_GroundCheckLayer);
-                if (isOnGroundNow) break;
-                Gizmos.DrawSphere(drop_point, 0.5f);
-            }
-            Gizmos.DrawSphere(transform.position, m_PlayerCheckRadius);
+           //for ( float t = 0 ; t < 2; t += 0.2f)
+           //{
+           //    var drop_point = GetDropPointAfterTSeconds(t);
+           //    float raycastDistance = 0.1f;
+           //    var isOnGroundNow =  Physics.Raycast(drop_point, Vector3.down, raycastDistance, m_GroundCheckLayer) || Physics.Raycast(drop_point, Vector3.up, 10, m_GroundCheckLayer);
+           //    if (isOnGroundNow) break;
+           //    Gizmos.DrawSphere(drop_point, 0.5f);
+           //}
+           //Gizmos.DrawSphere(transform.position, m_PlayerCheckRadius);
         }
     }
 

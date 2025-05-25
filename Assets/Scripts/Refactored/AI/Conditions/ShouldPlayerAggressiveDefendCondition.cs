@@ -11,7 +11,9 @@ public partial class ShouldPlayerAggressiveDefendCondition : Condition
 
     public override bool IsTrue()
     {
-        return true;
+        var distance = FootballSim.Football.Football.Instance.CurrentOwnerPlayer.transform.position - Player.Value.transform.position;
+           
+        return distance.sqrMagnitude <=  Player.Value.Data.AggressiveDefenseDistance ;
     }
 
     public override void OnStart()

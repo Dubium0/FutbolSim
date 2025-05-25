@@ -16,17 +16,41 @@ public partial class CanPlayerPassCondition : Condition
         var layerMaskToCheck = 1 << (Player.Value.TeamFlag == FootballSim.FootballTeam.TeamFlag.Home ?
         FootballPlayer.AwayLayerMask : FootballPlayer.HomeLayerMask);
 
+        Bounds enemyGoalBounds;
+
+        var playerSTeam = Player.Value.TeamFlag;
+        switch (playerSTeam)
+        {
+            case FootballSim.FootballTeam.TeamFlag.Home:
+                enemyGoalBounds = FootballSim.MatchManager.Instance.PitchData.AwayGoalBounds;
+                break;
+            case FootballSim.FootballTeam.TeamFlag.Away:
+                enemyGoalBounds = FootballSim.MatchManager.Instance.PitchData.HomeGoalBounds;
+                break;
+            default:
+                Debug.LogError("This should not happen");
+                return false;
+
+        }
+        var playerDistanceToEnemyGoal = enemyGoalBounds.center - Player.Value.transform.position;
         foreach (var player in Player.Value.OwnerTeam.FootballPlayers)
         {
             if (player != Player.Value)
             {
                 var distanceVector = player.transform.position - Player.Value.transform.position;
-                if (!Physics.Raycast(Player.Value.transform.position,distanceVector.normalized,distanceVector.sqrMagnitude,layerMaskToCheck))
+
+                var distanceToEnemyGoal = enemyGoalBounds.center - player.transform.position;
+
+                if (distanceToEnemyGoal.sqrMagnitude < playerDistanceToEnemyGoal.sqrMagnitude + 4)
                 {
-                    PassDirectionCandidates.Value.Add(distanceVector);
+                    if (!Physics.Raycast(Player.Value.transform.position, distanceVector.normalized, distanceVector.sqrMagnitude, layerMaskToCheck))
+                    {
+                        Debug.DrawRay(Player.Value.transform.position, distanceVector, Color.cyan);
+                        PassDirectionCandidates.Value.Add(distanceVector);
+                    }
                 }
             }
-            
+
         }
 
         return PassDirectionCandidates.Value.Count > 0;
