@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using FootballSim.UI;
 
 namespace FootballSim.Player
 {
@@ -12,6 +13,10 @@ namespace FootballSim.Player
         private FootballPlayer m_FootballPlayer;
 
         private float m_CurrentAcceleration;
+        private float m_SprintStartTime = 0.0f;
+        private bool m_IsSprinting = false;
+        private bool m_CanSprint = true;
+
         public FreeState(FootballPlayer t_player)
         {
             m_FootballPlayer = t_player;
@@ -60,9 +65,6 @@ namespace FootballSim.Player
 
         }
 
-        private float m_SprintStartTime = 0.0f;
-        private bool m_IsSprinting = false;
-        private bool m_CanSprint = true;
         public void OnSprintEnter()
         {
             if (!m_CanSprint) return;
@@ -83,18 +85,30 @@ namespace FootballSim.Player
                 m_IsSprinting = false;
                 float elapsedTimePercentage = (Time.time - m_SprintStartTime) / m_FootballPlayer.Data.MaxRunningTime;
                 m_FootballPlayer.StartCoroutine(HandleSprintCooldown(m_FootballPlayer.Data.RunningCooldown * elapsedTimePercentage));
-
             }
         }
+
         private IEnumerator HandleSprintCooldown(float t_TimeToWait)
         {
             m_CanSprint = false;
             yield return new WaitForSeconds(t_TimeToWait);
             m_CanSprint = true;
         }
+
         private IEnumerator HandleSprint()
         {
-            yield return new WaitForSeconds(m_FootballPlayer.Data.MaxRunningTime);
+            while (m_IsSprinting)
+            {
+                float elapsedTimePercentage = (Time.time - m_SprintStartTime) / m_FootballPlayer.Data.MaxRunningTime;
+                bool isHomeTeam = m_FootballPlayer.TeamFlag == MatchManager.Instance.HomeTeam.TeamFlag;
+                MatchUI.Instance.UpdateTeamStamina(isHomeTeam, 1f - elapsedTimePercentage);
+                
+                if (elapsedTimePercentage >= 1f)
+                {
+                    break;
+                }
+                yield return null;
+            }
             if (m_IsSprinting)
             {
                 m_FootballPlayer.Rigidbody.maxLinearVelocity = m_FootballPlayer.Data.MaxWalkSpeed;
@@ -102,7 +116,6 @@ namespace FootballSim.Player
                 m_IsSprinting = false;
                 HandleSprintCooldown(m_FootballPlayer.Data.RunningCooldown);
             }
-           
         }
 
         public void OnPassActionEnter()

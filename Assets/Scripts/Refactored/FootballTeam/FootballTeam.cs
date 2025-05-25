@@ -70,6 +70,7 @@ namespace FootballSim.FootballTeam
 
 
         private bool m_IsHumanControlled = false;
+        public bool IsHumanControlled { get { return m_IsHumanControlled; } }
 
         //server call
         public void Init(bool t_IsHumanControlled, TeamFlag t_TeamFlag, int t_PlayerControlIndex = 0, bool t_IsOnlineSpawn = false)
