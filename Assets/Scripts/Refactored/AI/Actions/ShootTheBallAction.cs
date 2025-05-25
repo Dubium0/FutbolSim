@@ -30,11 +30,11 @@ public partial class ShootTheBallAction : Action
         {
                 
             Player.Value.SetKickBallTrigger();
-
+            var shootDir = DecideShootDirection();
+            var shootPower = DecideShootPower();
             Player.Value.FootballPlayerAnimation.OnBallTouchEvent += () =>
             {
-                var shootDir = DecideShootDirection();
-                var shootPower = DecideShootPower();
+               
                 FootballSim.Football.Football.Instance.HitBall(
                         shootDir,
                         shootPower,
@@ -63,7 +63,7 @@ public partial class ShootTheBallAction : Action
 
     private float DecideShootPower()
     {
-        float finalPower = 0;
+        float finalPower;
         var maxPower = Player.Value.Data.MaximumShootPower;
         
         int randomInt = UnityEngine.Random.Range(0, 10);

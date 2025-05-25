@@ -367,7 +367,7 @@ MonoBehaviour:
   m_PitchData: {fileID: 3903849352333815521}
   MatchTime:
     m_InternalValue: 0
-  m_InitWithDebug: 1
+  m_InitWithDebug: 0
 --- !u!1001 &441411325
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -379,7 +379,7 @@ PrefabInstance:
     - target: {fileID: 421047801629811742, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 590842772}
+      objectReference: {fileID: 475913158}
     - target: {fileID: 438987881767932905, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_StartTransform
       value: 
@@ -442,6 +442,21 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1466895157082394304, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
   m_PrefabInstance: {fileID: 441411325}
   m_PrefabAsset: {fileID: 0}
+--- !u!134 &475913158
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Football (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance)
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 1
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &543232391
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,21 +582,6 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   FollowOffset: {x: 0, y: 25, z: -25}
---- !u!134 &590842772
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Football (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance)
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 1
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &890194824
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,6 +1071,30 @@ PrefabInstance:
     - target: {fileID: -8631803009743005661, guid: 9fa271460583edd418c910262e185151, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2450507301
+      objectReference: {fileID: 0}
+    - target: {fileID: 1472481835075914575, guid: 9fa271460583edd418c910262e185151, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1660321343955892751, guid: 9fa271460583edd418c910262e185151, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2004432921912544333, guid: 9fa271460583edd418c910262e185151, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2833997621609630194, guid: 9fa271460583edd418c910262e185151, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5611406861681567989, guid: 9fa271460583edd418c910262e185151, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5716285445553934044, guid: 9fa271460583edd418c910262e185151, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6477166346320395654, guid: 9fa271460583edd418c910262e185151, type: 3}
       propertyPath: m_Name

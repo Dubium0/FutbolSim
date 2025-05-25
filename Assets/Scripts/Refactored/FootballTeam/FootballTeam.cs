@@ -101,6 +101,7 @@ namespace FootballSim.FootballTeam
             {
                 FindClosestPlayerToBall();
                 //CycleToClosestPlayer();
+                DetectCurrentFormation();
             }
         }
         private void SetupAndBindActions()
@@ -378,39 +379,85 @@ namespace FootballSim.FootballTeam
         public int GetPlayerIndex(FootballPlayer t_Player) => FootballPlayers.FindIndex(player => t_Player == player);
 
 
-        public void DetectCurrentFormation()
+        private void DetectCurrentFormation()
         {
             if (Football.Football.Instance == null || !m_IsInitialized) return;
             int currentSector = FootballSim.Football.Football.Instance.CurrentSector;
             
             if (TeamFlag == TeamFlag.Home) // Home team attacks right
             {
-                switch (currentSector)
+                if (CurrentBallOwnerPlayer != null)
                 {
-                    case 0:
-                        ChangeFormation(FormationTag.DefenseFormation);
-                        break;
-                    case 1:
-                        ChangeFormation(FormationTag.DefaultFormation);
-                        break;
-                    case 2:
+                    // according to next position of ball( is it closer to enemy goal or our goal) change into attack or
+
+                    var nextBallPosition = CurrentBallOwnerPlayer.transform.position +  CurrentBallOwnerPlayer.Rigidbody.linearVelocity * 0.5f;
+                    var currentBallPosition = CurrentBallOwnerPlayer.transform.position;
+
+                    var enemyGoalPosition = MatchManager.Instance.PitchData.AwayGoalTransform.position;
+
+                    if ((enemyGoalPosition - nextBallPosition).sqrMagnitude < (enemyGoalPosition - currentBallPosition).sqrMagnitude)
+                    {
+                        // means ball is going to enemy goal position
                         ChangeFormation(FormationTag.AttackFormation);
-                        break;
+                    }
+                    else
+                    {
+                        ChangeFormation(FormationTag.DefaultFormation);
+                    }
+
+                }
+                else
+                {
+                    switch (currentSector)
+                    {
+                        case 0:
+                            ChangeFormation(FormationTag.DefenseFormation);
+                            break;
+                        case 1:
+                            ChangeFormation(FormationTag.DefaultFormation);
+                            break;
+                        case 2:
+                            ChangeFormation(FormationTag.AttackFormation);
+                            break;
+                    }
                 }
             }
             else 
             {
-                switch (currentSector)
+                if (CurrentBallOwnerPlayer != null)
                 {
-                    case 0:
+                  
+                    var nextBallPosition = CurrentBallOwnerPlayer.transform.position +  CurrentBallOwnerPlayer.Rigidbody.linearVelocity * 0.5f;
+                    var currentBallPosition = CurrentBallOwnerPlayer.transform.position;
+
+                    var enemyGoalPosition = MatchManager.Instance.PitchData.HomeGoalTransform.position;
+
+                    if ((enemyGoalPosition - nextBallPosition).sqrMagnitude < (enemyGoalPosition - currentBallPosition).sqrMagnitude)
+                    {
+                        // means ball is going to enemy goal position
                         ChangeFormation(FormationTag.AttackFormation);
-                        break;
-                    case 1:
+                    }
+                    else
+                    {
                         ChangeFormation(FormationTag.DefaultFormation);
-                        break;
-                    case 2:
-                        ChangeFormation(FormationTag.DefenseFormation);
-                        break;
+                    }
+
+                }
+                else
+                {
+                        
+                    switch (currentSector)
+                    {
+                        case 0:
+                            ChangeFormation(FormationTag.AttackFormation);
+                            break;
+                        case 1:
+                            ChangeFormation(FormationTag.DefaultFormation);
+                            break;
+                        case 2:
+                            ChangeFormation(FormationTag.DefenseFormation);
+                            break;
+                    }
                 }
             }
         }

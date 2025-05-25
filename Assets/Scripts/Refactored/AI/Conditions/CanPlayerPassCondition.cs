@@ -46,7 +46,7 @@ public partial class CanPlayerPassCondition : Condition
                     if (!Physics.Raycast(Player.Value.transform.position, distanceVector.normalized, distanceVector.sqrMagnitude, layerMaskToCheck))
                     {
                         Debug.DrawRay(Player.Value.transform.position, distanceVector, Color.cyan);
-                        PassDirectionCandidates.Value.Add(distanceVector);
+                        PassDirectionCandidates.Value.Add(distanceVector.normalized);
                     }
                 }
             }
