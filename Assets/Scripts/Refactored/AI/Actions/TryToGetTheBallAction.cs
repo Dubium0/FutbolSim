@@ -18,11 +18,91 @@ public partial class TryToGetTheBallAction : Action
 
     protected override Status OnUpdate()
     {
+        var theVector = Player.Value.transform.position - FootballSim.Football.Football.Instance.transform.position;
+
+        var projOnV = Vector3.Project(theVector, FootballSim.Football.Football.Instance.Rigidbody.linearVelocity.normalized);
+
+        var otherAxis = theVector - projOnV;
+
+        var result = Heuristics(otherAxis, FootballSim.Football.Football.Instance.transform.position, projOnV);
+
+        Player.Value.Rigidbody.linearVelocity = result;
+        if (result.sqrMagnitude > 0)
+        {
+
+            Player.Value.transform.forward = MathExtra.MoveTowards(Player.Value.transform.forward, result.normalized, 1 / Player.Value.Data.RotationTime);
+
+        }
         return Status.Success;
     }
 
     protected override void OnEnd()
     {
     }
+    private Vector3 Heuristics(Vector3 otherAxis, Vector3 currentBallPosition, Vector3 projOnV)
+    {
+        var upSpeed = Player.Value.Data.MaxRunSpeed;
+        var bottomSpeed = 0.0f;
+        var currentOtherAxisSpeed = upSpeed/2.0f;
+
+        otherAxis.y = 0;
+        currentBallPosition.y = 0;
+        projOnV.y = 0;
+        Vector3 resultSpeedVector = Vector3.zero;
+        float catchTime = 0;
+        for (int iter = 0; iter < 10; iter++)
+        {
+
+            catchTime = otherAxis.sqrMagnitude / currentOtherAxisSpeed;
+
+            var ballPositionOnCatchTime = FootballSim.Football.Football.Instance.GetDropPointAfterTSeconds(catchTime);
+            ballPositionOnCatchTime.y = 0;
+
+            var currentPlayerProjAxisPosition = currentBallPosition + projOnV;
+
+            var catchDistance = ballPositionOnCatchTime - currentPlayerProjAxisPosition;
+
+            var catchDirection = catchDistance.normalized;
+
+            var remainingPlayerSpeed = Mathf.Sqrt(30.0f * 30.0f - currentOtherAxisSpeed * currentOtherAxisSpeed);
+
+            var currentPlayerProjAxisSpeed = catchDirection * remainingPlayerSpeed;
+            var k =  0.0f;
+            if (MathF.Abs(catchDirection.x) > 0.001f)
+            {
+                k = catchDistance.x / catchDirection.x;
+            }
+         
+
+            if (MathF.Abs(remainingPlayerSpeed * catchTime - k) < 0.5f)
+            {
+                Debug.Log("I catch !"); // increase Y speed
+                resultSpeedVector = currentPlayerProjAxisSpeed;
+                break;
+
+            }
+            else if (remainingPlayerSpeed * catchTime > k)
+            {
+                Debug.Log("I am fast");
+                bottomSpeed = currentOtherAxisSpeed;
+                currentOtherAxisSpeed = (currentOtherAxisSpeed + upSpeed) / 2f;
+            }
+            else if (remainingPlayerSpeed * catchTime < k)
+            {
+                Debug.Log("I am slow");
+                upSpeed = currentOtherAxisSpeed;
+                currentOtherAxisSpeed = (currentOtherAxisSpeed + bottomSpeed) / 2f;
+            }
+        }
+        resultSpeedVector += -otherAxis * currentOtherAxisSpeed;
+        //Debug.DrawRay(follower.position, resultSpeedVector.normalized, Color.green);
+
+        //Debug.DrawRay(follower.position, resultSpeedVector * catchTime, Color.yellow);
+
+        return resultSpeedVector;
+
+
+    }
 }
+
 

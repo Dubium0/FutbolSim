@@ -224,14 +224,14 @@ namespace FootballSim.Football
 
             Vector3 acceleration = Physics.gravity;
 
-            float deltaTime = 0.02f;
+            float deltaTime = time /20.0f;
             Vector3 position = currentPosition;
             Vector3 velocity = currentVelocity;
             var collider = GetComponent<Collider>();
             var physicsMaterial = collider.material;
-
+            
             float raycastDistance = 0.1f;
-
+            Debug.Log("Drop point Time " + time);
             for (float t = 0; t < time; t += deltaTime)
             {
 
