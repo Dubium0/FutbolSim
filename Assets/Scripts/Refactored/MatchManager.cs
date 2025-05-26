@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using FootballSim.FootballTeam;
 using FootballSim.Networking;
 using FootballSim.Player;
+using Unity.Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -32,6 +35,8 @@ namespace FootballSim
 
         [SerializeField]
         private FootballPitch.FootballPitch m_PitchData;
+        [SerializeField]
+        private CinemachineFollow m_MatchCamera;
 
         public FootballPitch.FootballPitch PitchData { get => m_PitchData; }
 
@@ -50,17 +55,19 @@ namespace FootballSim
         public event Action OnMatchStarted;
         public event Action OnMatchResumed;
         public event Action OnMatchStopped;
-
+        public event Action OnFirstHalfFinish;
+        public event Action<FootballTeam.TeamFlag> OnGameFinish;
+        public event Action OnGoldenBall;
         private bool m_IsFirstSantra = true;
 
         public NetworkVariable<int> MatchTime = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
+        
         private bool m_IsTickingTime = false;
 
         [SerializeField]
         private bool m_InitWithDebug = false;
         
-       
+      
 
         private void Awake()
         {
@@ -443,16 +450,148 @@ namespace FootballSim
             }
             
             Football.Football.Instance.SetInteractable(true);
-            
+        
         }
 
+        private void HandleFirstHalfFinish()
+        {
+            CurrentMatchState = MatchState.Santra;
+            HomeTeam.LockPlayers(true);
+            AwayTeam.LockPlayers(true);
+            Football.Football.Instance.SetInteractable(false);
+
+            if (OnMatchStopped != null)
+            {
+                OnMatchStopped.Invoke();
+            }
+            CurrentMatchState = MatchState.Santra;
+
+            StartCoroutine(ExecuteAfterSeconds(() =>
+            {
+                if (OnFirstHalfFinish != null)
+                {
+                    OnFirstHalfFinish.Invoke();
+                }
+            }));
+        }
+        private IEnumerator ExecuteAfterSeconds(Action t_Action, float t_Time = 1.0f)
+        {
+            yield return new WaitForSeconds(t_Time);
+            t_Action();
+        }
+
+        public void PrepeareForSecondHalf()
+        {
+            HomeTeam.ChangeFormation(FormationTag.DefenseStartFormation, true);
+            AwayTeam.ChangeFormation(FormationTag.AttackStartFormation, true);
+            Football.Football.Instance.OnBallHit += HandleSantraAction;
+
+            Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
+            Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
+            Football.Football.Instance.ResetToStartTransform();
+            Football.Football.Instance.SetInteractable(true);
+            m_MatchCamera.FollowOffset.z = -m_MatchCamera.FollowOffset.z; //sides are changed !!;
+        }
+
+        private void HandleGameFinish()
+        {
+            if (HomeTeamScore == AwayTeamScore)
+            {
+                //initiate golden goal
+                if (OnGoldenBall != null)
+                {
+                    OnGoldenBall.Invoke();
+                }
+                Football.Football.Instance.OnGoal += HandleGoldenGoal;
+                return;
+            }
+            
+            HomeTeam.LockPlayers(true);
+            AwayTeam.LockPlayers(true);
+            Football.Football.Instance.SetInteractable(false);
+
+            if (OnMatchStopped != null)
+            {
+                OnMatchStopped.Invoke();
+            }
+
+            StartCoroutine(ExecuteAfterSeconds(() =>
+            {
+                if (OnGameFinish != null)
+                {
+                    if (HomeTeamScore > AwayTeamScore)
+                    {
+                        OnGameFinish.Invoke(FootballTeam.TeamFlag.Home);
+                    }
+                    else
+                    {
+                        OnGameFinish.Invoke(FootballTeam.TeamFlag.Away);
+                    }
+                }
+            }));
+        }
+
+        private void HandleGoldenGoal(FootballTeam.TeamFlag t_ScorerTeam, FootballPlayer player)
+        {
+         
+            Football.Football.Instance.SetInteractable(false);
+            NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(0.1f);
+            if (OnMatchStopped != null)
+            {
+                OnMatchStopped.Invoke();
+            }
+
+            StartCoroutine(ExecuteAfterSeconds(() =>
+            {
+                NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(1.0f);
+                HomeTeam.LockPlayers(true);
+                AwayTeam.LockPlayers(true);
+
+                switch (t_ScorerTeam)
+                {
+                    case FootballTeam.TeamFlag.Home:
+            
+                        HomeTeamScore++;
+                        break;
+                    case FootballTeam.TeamFlag.Away:
+                 
+                        AwayTeamScore++;
+                        break;
+                    default:
+                        break;
+                }
+                if (OnGameFinish != null)
+                {
+                   
+                    OnGameFinish.Invoke(t_ScorerTeam);
+                    
+                }
+
+            },
+            0.2f));
+
+         
+        }
 
         private float m_ElapsedTickTime = 0;
+        private bool m_IsFirstHalf = true;
+        private bool m_IsGameFinishedCalled = false;
         private void Update()
         {
             if (IsHost && CurrentMatchState == MatchState.Playing)
             {
-
+                if (MatchTime.Value >= 180 && m_IsFirstHalf)
+                {
+                    // first half
+                    m_IsFirstHalf = false;
+                    HandleFirstHalfFinish();
+                }
+                else if (MatchTime.Value >= 360 && !m_IsGameFinishedCalled)
+                {
+                    
+                    m_IsGameFinishedCalled = true;
+                    HandleGameFinish();
+                }
             }
             if (m_IsTickingTime)
             {
