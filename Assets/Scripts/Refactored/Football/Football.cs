@@ -100,6 +100,8 @@ namespace FootballSim.Football
         {
             if (!IsInteractable) return;
 
+            Rigidbody.MovePosition(t_Player.BallPosition);
+
             if (t_Player != CurrentOwnerPlayer)
             {
                 Debug.Log("Only owner can hit the ball!");
