@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: e64e1b28704addc42ae2ad7ce71679aa
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_EffectsSource: {instanceID: 0}
+  - m_BallHitSound: {fileID: 8300000, guid: f1348bf055040e24e8471a577d5e6758, type: 3}
+  - m_GoalSound: {fileID: 8300000, guid: bcb861158203a81439332d40adf190c1, type: 3}
+  - m_BallWinSound: {fileID: 8300000, guid: c2eb660c9ede42242b8ed0c5f1307843, type: 3}
+  - m_MatchWhistleSound: {fileID: 8300000, guid: 3709e47435a9b8d4588c8613f0882095, type: 3}
+  - m_GoalKickWhistleSound: {fileID: 8300000, guid: 880705c6252c41648908c8d111dca106, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

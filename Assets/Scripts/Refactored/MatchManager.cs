@@ -7,6 +7,7 @@ using FootballSim.FootballTeam;
 using FootballSim.Networking;
 using FootballSim.Player;
 using Unity.Cinemachine;
+using FootballSim.UI;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -326,6 +327,7 @@ namespace FootballSim
             {
                 OnMatchStopped.Invoke();
             }
+            SoundManager.Instance.PlayGoalSound();
             yield return new WaitForSeconds(0.2f);
 
             // Get the player who should take the kick-off
@@ -347,6 +349,7 @@ namespace FootballSim
             Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
             Football.Football.Instance.ResetToStartTransform();
             Football.Football.Instance.SetInteractable(true);
+            SoundManager.Instance.PlayGoalKickWhistleSound();
             switch (t_ScorerTeam)
             {
                 case FootballTeam.TeamFlag.Home:
@@ -366,6 +369,7 @@ namespace FootballSim
             {
                 OnScoreChanged.Invoke(HomeTeamScore, AwayTeamScore);
             }
+            SoundManager.Instance.PlayGoalSound();
 
         }
         private void HandleSantraAction(FootballPlayer t_Player,Vector3 t_Force)
@@ -377,21 +381,12 @@ namespace FootballSim
                 CurrentMatchState = MatchState.Playing;
                 Football.Football.Instance.OnBallHit -= HandleSantraAction;
 
-                if (m_IsFirstSantra)
+                if (OnMatchStarted != null)
                 {
-                    if (OnMatchStarted != null)
-                    {
-                        OnMatchStarted.Invoke();
-                    }
-                    m_IsFirstSantra = false;
+                    OnMatchStarted.Invoke();
                 }
-                else
-                {
-                    if (OnMatchResumed != null)
-                    {
-                        OnMatchResumed.Invoke();
-                    }
-                }
+                SoundManager.Instance.PlayMatchWhistleSound();
+                m_IsFirstSantra = false;
             }
         }
 
@@ -433,6 +428,7 @@ namespace FootballSim
             Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
             Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
             Football.Football.Instance.OnBallHit += HandleFreeKickAction;
+            SoundManager.Instance.PlayMatchWhistleSound();
             switch (t_FreeKickTeam)
             {
                 case FootballTeam.TeamFlag.Home:
@@ -451,6 +447,8 @@ namespace FootballSim
             
             Football.Football.Instance.SetInteractable(true);
         
+            SoundManager.Instance.PlayGoalKickWhistleSound();
+            
         }
 
         private void HandleFirstHalfFinish()
