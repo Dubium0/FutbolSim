@@ -310,10 +310,10 @@ namespace FootballSim.Player
 
         }
 
-        public void LockPlayerMovement(bool t_Value)
+        public void LockPlayerMovement(bool t_Value,bool t_StopAI)
         {
             IsMovementLocked = t_Value;
-            IsAITicking = !t_Value;
+            IsAITicking = !t_StopAI;
         }
 
 

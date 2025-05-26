@@ -274,13 +274,13 @@ namespace FootballSim.FootballTeam
             CycleToClosestPlayer();
         }
 
-        public void LockPlayers(bool t_Value)
+        public void LockPlayers(bool t_Value,bool t_StopAI = false)
         {
             if (m_IsInitialized)
             {
                 foreach (var player in FootballPlayers)
                 {
-                    player.LockPlayerMovement(t_Value);
+                    player.LockPlayerMovement(t_Value,t_StopAI);
                 }
             }
         }

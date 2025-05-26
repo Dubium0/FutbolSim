@@ -277,18 +277,19 @@ namespace FootballSim
 
         private void HandleGoalKeeperPossesAction(FootballTeam.TeamFlag flag)
         {
-            if (CurrentMatchState != MatchState.Out) {
+            if (CurrentMatchState == MatchState.Playing) {
                 StartCoroutine(OnGoalKeeperPossesRoutine(flag));
             } 
         }
         private IEnumerator OnGoalKeeperPossesRoutine(FootballTeam.TeamFlag flag)
         {
-            HomeTeam.LockPlayers(true);
-            AwayTeam.LockPlayers(true);
+            HomeTeam.LockPlayers(true,true);
+            AwayTeam.LockPlayers(true,true);
             if (OnMatchStopped != null)
             {
                 OnMatchStopped.Invoke();
             }
+            Football.Football.Instance.SetInteractable(false);
             CurrentMatchState = MatchState.Out;
             Vector3 targetTransform = Vector3.zero;
             switch (flag)
@@ -307,16 +308,17 @@ namespace FootballSim
                 default:
                     break;
             }
-
-
-            yield return new WaitForSeconds(2.0f);
-
-            Football.Football.Instance.OnBallHit += HandleFreeKickAction;
             Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
             Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
-            Football.Football.Instance.transform.position = targetTransform;
-            HomeTeam.LockPlayers(false);
-            AwayTeam.LockPlayers(false);
+            Football.Football.Instance.Rigidbody.MovePosition(targetTransform);
+
+            yield return new WaitForSeconds(2.0f);
+           
+            HomeTeam.LockPlayers(true);
+            AwayTeam.LockPlayers(true);
+            Football.Football.Instance.SetInteractable(true);
+            Football.Football.Instance.OnBallHit += HandleFreeKickAction;
+           
          
         }
         private void HandleGoalAction(FootballTeam.TeamFlag t_ScorerTeam, FootballPlayer t_ScorerPlayer)
@@ -324,7 +326,7 @@ namespace FootballSim
             StartCoroutine(OnGoalRoutine(t_ScorerTeam, t_ScorerPlayer));
         }
         private IEnumerator OnGoalRoutine(FootballTeam.TeamFlag t_ScorerTeam, FootballPlayer t_ScorerPlayer)
-        {
+        {      
             //first zoom into scorerplayer
             Football.Football.Instance.SetInteractable(false);
             NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(0.1f);
@@ -419,6 +421,7 @@ namespace FootballSim
         }
         private IEnumerator OnOutRoutine(FootballTeam.TeamFlag t_FreeKickTeam)
         {
+        
             Football.Football.Instance.SetInteractable(false);
             NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(0.1f);
             if (OnMatchStopped != null)
@@ -427,9 +430,9 @@ namespace FootballSim
             }
             CurrentMatchState = MatchState.Out;
             yield return new WaitForSeconds(0.2f);
-            HomeTeam.LockPlayers(true);
-            AwayTeam.LockPlayers(true);
             NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(1.0f);
+            AwayTeam.LockPlayers(true,true);
+            HomeTeam.LockPlayers(true,true);
             Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
             Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
             Football.Football.Instance.OnBallHit += HandleFreeKickAction;
@@ -449,12 +452,11 @@ namespace FootballSim
                 default:
                     break;
             }
-
             Football.Football.Instance.SetInteractable(true);
-            yield return new WaitForSeconds(0.5f);
-            HomeTeam.LockPlayers(false);
-            AwayTeam.LockPlayers(false);
+            HomeTeam.LockPlayers(true);
+            AwayTeam.LockPlayers(true);
             SoundManager.Instance.PlayGoalKickWhistleSound();
+        
             
             
         }
