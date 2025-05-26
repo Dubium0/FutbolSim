@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Text.RegularExpressions;
-using FootballSim.Networking;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -103,12 +100,14 @@ namespace FootballSim.UI
             MatchManager.Instance.OnFirstHalfFinish += HandleFirstHalfEnd;
             MatchManager.Instance.OnGameFinish += HandleGameFinishRpc;
             MatchManager.Instance.OnGoldenBall += HandleOnGoldenBallRpc;
+            MatchManager.Instance.OnInit += () =>
+            {
+                isHomeTeamHuman = MatchManager.Instance.HomeTeam.IsHumanControlled;
+                isAwayTeamHuman = MatchManager.Instance.AwayTeam.IsHumanControlled;
+                m_HomeTeamStaminaBar.gameObject.SetActive(isHomeTeamHuman);
+                m_AwayTeamStaminaBar.gameObject.SetActive(isAwayTeamHuman);
+            }; 
 
-            isHomeTeamHuman = MatchManager.Instance.HomeTeam.IsHumanControlled;
-            isAwayTeamHuman = MatchManager.Instance.AwayTeam.IsHumanControlled;
-
-            m_HomeTeamStaminaBar.gameObject.SetActive(isHomeTeamHuman);
-            m_AwayTeamStaminaBar.gameObject.SetActive(isAwayTeamHuman);
         }
 
         [Rpc(SendTo.ClientsAndHost)]

@@ -313,6 +313,7 @@ namespace FootballSim.Player
         public void LockPlayerMovement(bool t_Value)
         {
             IsMovementLocked = t_Value;
+            IsAITicking = !t_Value;
         }
 
 
@@ -486,9 +487,20 @@ namespace FootballSim.Player
 
         public void SmoothlyGoToHomePosition()
         {
-
+            StartCoroutine(GoHomeRoutine());
+            
         }
-
+        private IEnumerator GoHomeRoutine()
+        {   
+            while ((CurrentHomePosition.position - transform.position).sqrMagnitude > 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, CurrentHomePosition.position, Data.MaxRunSpeed * Time.deltaTime);
+                transform.forward = (CurrentHomePosition.position - transform.position).normalized;
+                Debug.Log("Kubilay kasardir");
+                yield return new WaitForEndOfFrame();
+            }
+            transform.rotation = CurrentHomePosition.rotation;
+        }
         
     }   
 

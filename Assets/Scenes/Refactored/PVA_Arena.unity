@@ -119,6 +119,22 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!134 &110705145
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Football (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
+    (Instance)
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 1
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &151696016
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,6 +381,7 @@ MonoBehaviour:
   m_AITestTeamPrefab: {fileID: 4587414655141786642, guid: 7c2b08c2e6274534cbde7e82d3d188ec, type: 3}
   m_PlayerTestTeamPrefab: {fileID: 2009837791282534699, guid: a6b8c01aac9b27f44a655ab09d05064f, type: 3}
   m_PitchData: {fileID: 3903849352333815521}
+  m_MatchCamera: {fileID: 543232396}
   MatchTime:
     m_InternalValue: 0
   m_InitWithDebug: 0
@@ -379,7 +396,7 @@ PrefabInstance:
     - target: {fileID: 421047801629811742, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 1494465167}
+      objectReference: {fileID: 110705145}
     - target: {fileID: 438987881767932905, guid: 8aff69f99f615be438c94c5b87212616, type: 3}
       propertyPath: m_StartTransform
       value: 
@@ -1110,6 +1127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectsSource: {fileID: 1415110336}
+  m_GoalSource: {fileID: 0}
   m_BallHitSound: {fileID: 8300000, guid: f1348bf055040e24e8471a577d5e6758, type: 3}
   m_GoalSound: {fileID: 8300000, guid: bcb861158203a81439332d40adf190c1, type: 3}
   m_BallWinSound: {fileID: 8300000, guid: c2eb660c9ede42242b8ed0c5f1307843, type: 3}
@@ -1133,21 +1151,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!134 &1494465167
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Football (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance) (Instance) (Instance) (Instance)
-    (Instance) (Instance) (Instance) (Instance)
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 1
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &1775248799
 GameObject:
   m_ObjectHideFlags: 0

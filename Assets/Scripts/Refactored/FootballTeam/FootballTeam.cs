@@ -326,30 +326,30 @@ namespace FootballSim.FootballTeam
             switch (FormationTag)
             {
                 case FormationTag.DefenseFormation:
-                    MovePlayersToFormationPositions(m_DefenseFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_DefenseFormation, t_ImmidietalyMove,t_smoothly);
                     break;
                 case FormationTag.AttackFormation:
-                    MovePlayersToFormationPositions(m_AttackFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_AttackFormation, t_ImmidietalyMove,t_smoothly);
                     break;
                 case FormationTag.AttackStartFormation:
-                    MovePlayersToFormationPositions(m_AttackStartFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_AttackStartFormation, t_ImmidietalyMove,t_smoothly);
                     break;
                 case FormationTag.DefenseStartFormation:
-                    MovePlayersToFormationPositions(m_DefenseStartFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_DefenseStartFormation, t_ImmidietalyMove,t_smoothly);
                     break;
                 case FormationTag.DefaultFormation:
-                    MovePlayersToFormationPositions(m_DefaultFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_DefaultFormation, t_ImmidietalyMove,t_smoothly);
                     break;
                 case FormationTag.FreeKickAttackFormation:
-                    MovePlayersToFormationPositions(m_FreeKickAttackFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_FreeKickAttackFormation, t_ImmidietalyMove,t_smoothly);
                     break;
                 case FormationTag.FreeKickDefenseFormation:
-                    MovePlayersToFormationPositions(m_FreeKickDefenseFormation, t_ImmidietalyMove);
+                    MovePlayersToFormationPositions(m_FreeKickDefenseFormation, t_ImmidietalyMove,t_smoothly);
                     break;
             }
             //print($"Changing formation to {FormationTag}");
         }
-        private void MovePlayersToFormationPositions(FootballSim.FootballTeam.FootballFormation t_TargetFormation, bool t_ImmidietalyMove = false)
+        private void MovePlayersToFormationPositions(FootballSim.FootballTeam.FootballFormation t_TargetFormation, bool t_ImmidietalyMove = false,bool t_smoothlyMove = false)
         {
             if (!m_IsInitialized) return;
             m_CurrentFormation = t_TargetFormation;
@@ -383,6 +383,10 @@ namespace FootballSim.FootballTeam
                 player.SetHomePosition(targetPosition);
                 if (t_ImmidietalyMove)
                     player.ImmidiatelyMoveToHomePosition();
+                else if (t_smoothlyMove)
+                {
+                    player.SmoothlyGoToHomePosition();
+                }
             }
 
 
