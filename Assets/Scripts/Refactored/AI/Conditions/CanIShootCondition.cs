@@ -41,7 +41,7 @@ public partial class CanIShootCondition : Condition
         FootballPlayer.AwayLayerMask : FootballPlayer.HomeLayerMask);
         if (distance.sqrMagnitude <= Player.Value.Data.MinimumShootDistance)
         {
-            Debug.Log(" Distance is okey");
+            
             var zLeftExtend = enemyGoalBounds.center.z - enemyGoalBounds.extents.z;
             var zRightExtend = enemyGoalBounds.center.z + enemyGoalBounds.extents.z;
 
@@ -49,13 +49,13 @@ public partial class CanIShootCondition : Condition
             var maxZ = math.max(zLeftExtend, zRightExtend);
 
             var zStepValue = (math.abs(zLeftExtend) + math.abs(zRightExtend))/10.0f;
-            Debug.Log($"X step value = {zStepValue}");
+           
             var yLeftExtend = enemyGoalBounds.center.y - enemyGoalBounds.extents.y;
             var yRightExtend = enemyGoalBounds.center.y + enemyGoalBounds.extents.y;
             var minY = math.min(yLeftExtend, yRightExtend);
             var maxY = math.max(yLeftExtend, yRightExtend);
             var yStepValue = (math.abs(yLeftExtend) + math.abs(yRightExtend))/5.0f;
-            Debug.Log($"Y step value = {yStepValue}");
+           
 
             for (var z = minZ; z <= maxZ; z += zStepValue)
             {

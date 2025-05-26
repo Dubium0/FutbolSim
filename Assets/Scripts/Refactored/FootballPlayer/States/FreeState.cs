@@ -117,7 +117,10 @@ namespace FootballSim.Player
                 HandleSprintCooldown(m_FootballPlayer.Data.RunningCooldown);
             }
         }
-
+        public void OnNotMovementRelatedUpdate()
+        {
+            
+        }
         public void OnPassActionEnter()
         {
             //for now empty

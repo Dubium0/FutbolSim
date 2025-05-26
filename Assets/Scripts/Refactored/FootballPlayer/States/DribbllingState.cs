@@ -56,6 +56,16 @@ namespace FootballSim.Player
 
             m_FootballPlayer.Rigidbody.AddForce(inputVector * m_CurrentAcceleration, ForceMode.Acceleration);
 
+            //if (inputVector.magnitude > 0)
+            //{
+            //    
+            //    m_FootballPlayer.Transform.forward = MathExtra.MoveTowards(m_FootballPlayer.Transform.forward, inputVector, 1 / m_FootballPlayer.Data.RotationTime);
+            //}
+        }
+
+        public void OnNotMovementRelatedUpdate()
+        {
+            var inputVector = m_FootballPlayer.InputSource.MovementVector;
             if (inputVector.magnitude > 0)
             {
                 

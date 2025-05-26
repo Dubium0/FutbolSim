@@ -8,7 +8,7 @@ namespace FootballSim.Player
         public void OnExit();
         public void OnFixedUpdate();
         public void OnUpdate();
-
+        public void OnNotMovementRelatedUpdate();
         public void OnSprintEnter();
         public void OnSprintExit();
 

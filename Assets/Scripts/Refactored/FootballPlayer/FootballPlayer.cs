@@ -2,8 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using FootballSim.FootballTeam;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -103,7 +105,7 @@ namespace FootballSim.Player
 
         public Transform CurrentHomePosition { get; private set; }
 
-        
+
 
         public override void OnNetworkSpawn()
         {
@@ -265,9 +267,14 @@ namespace FootballSim.Player
             if (!m_IsInitialized) return;
             if (IsHost)
             {
-                if (m_IsHumanControlled && !IsMovementLocked)
+                if (m_IsHumanControlled)
                 {
-                    m_CurrentState.OnUpdate();
+                    if (!IsMovementLocked)
+                    {
+
+                        m_CurrentState.OnUpdate();
+                    }
+                    m_CurrentState.OnNotMovementRelatedUpdate();
                 }
                 m_ElapsedTime += Time.deltaTime * 1000;
                 if (m_ElapsedTime >= m_TickIntervalMs)
@@ -292,7 +299,7 @@ namespace FootballSim.Player
             {
                 if (m_IsHumanControlled && !IsMovementLocked)
                 {
-                   m_CurrentState.OnFixedUpdate();
+                    m_CurrentState.OnFixedUpdate();
                 }
                 m_Animator.SetFloat("Velocity", Rigidbody.linearVelocity.sqrMagnitude);
             }
@@ -364,7 +371,7 @@ namespace FootballSim.Player
                 EnableIndicator(t_IsHumanControlled);
                 EnableIndicatorRpc(t_IsHumanControlled);
             }
-       
+
             m_IsHumanControlled = t_IsHumanControlled;
         }
         public void SetKickBallTrigger()
@@ -476,6 +483,13 @@ namespace FootballSim.Player
             transform.position = CurrentHomePosition.position;
             transform.rotation = CurrentHomePosition.rotation;
         }
+
+        public void SmoothlyGoToHomePosition()
+        {
+
+        }
+
+        
     }   
 
 }

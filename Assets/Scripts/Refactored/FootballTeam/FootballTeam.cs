@@ -319,7 +319,7 @@ namespace FootballSim.FootballTeam
 
         }
 
-        public void ChangeFormation(FormationTag t_TargetFormation, bool t_ImmidietalyMove = false)
+        public void ChangeFormation(FormationTag t_TargetFormation, bool t_ImmidietalyMove = false, bool t_smoothly = false)
         {
             FormationTag = t_TargetFormation;
 
@@ -396,7 +396,7 @@ namespace FootballSim.FootballTeam
         {
             if (Football.Football.Instance == null || !m_IsInitialized) return;
             int currentSector = FootballSim.Football.Football.Instance.CurrentSector;
-            
+            Debug.Log("Current sector " + currentSector);
             if (TeamFlag == TeamFlag.Home) // Home team attacks right
             {
                 if (CurrentBallOwnerPlayer != null)
@@ -407,11 +407,16 @@ namespace FootballSim.FootballTeam
                     var currentBallPosition = CurrentBallOwnerPlayer.transform.position;
 
                     var enemyGoalPosition = MatchManager.Instance.PitchData.AwayGoalTransform.position;
-
-                    if ((enemyGoalPosition - nextBallPosition).sqrMagnitude < (enemyGoalPosition - currentBallPosition).sqrMagnitude)
+                    if (currentSector == 0)
                     {
+                        ChangeFormation(FormationTag.DefenseFormation);
+                    }
+                    else if ((enemyGoalPosition - nextBallPosition).sqrMagnitude < (enemyGoalPosition - currentBallPosition).sqrMagnitude)
+                    {
+                          
                         // means ball is going to enemy goal position
                         ChangeFormation(FormationTag.AttackFormation);
+                        
                     }
                     else
                     {
@@ -421,17 +426,39 @@ namespace FootballSim.FootballTeam
                 }
                 else
                 {
-                    switch (currentSector)
+
+                    var enemyBallOwner = Football.Football.Instance.CurrentOwnerPlayer;
+                    if (enemyBallOwner != null)
                     {
-                        case 0:
+                        var nextBallPosition = enemyBallOwner.transform.position + enemyBallOwner.Rigidbody.linearVelocity * 0.5f;
+                        var currentBallPosition = enemyBallOwner.transform.position;
+                        var ourGoalPosition = MatchManager.Instance.PitchData.HomeGoalTransform.position;
+                        if ((ourGoalPosition - nextBallPosition).sqrMagnitude < (ourGoalPosition - currentBallPosition).sqrMagnitude)
+                        {
+                            // means ball is going to enemy goal position
                             ChangeFormation(FormationTag.DefenseFormation);
-                            break;
-                        case 1:
+
+                        }
+                        else
+                        {
                             ChangeFormation(FormationTag.DefaultFormation);
-                            break;
-                        case 2:
-                            ChangeFormation(FormationTag.AttackFormation);
-                            break;
+                        }
+                    }
+                    else
+                    {
+                        
+                        switch (currentSector)
+                        {
+                            case 0:
+                                ChangeFormation(FormationTag.DefenseFormation);
+                                break;
+                            case 1:
+                                ChangeFormation(FormationTag.DefaultFormation);
+                                break;
+                            case 2:
+                                ChangeFormation(FormationTag.AttackFormation);
+                                break;
+                        }
                     }
                 }
             }
@@ -444,11 +471,14 @@ namespace FootballSim.FootballTeam
                     var currentBallPosition = CurrentBallOwnerPlayer.transform.position;
 
                     var enemyGoalPosition = MatchManager.Instance.PitchData.HomeGoalTransform.position;
-
-                    if ((enemyGoalPosition - nextBallPosition).sqrMagnitude < (enemyGoalPosition - currentBallPosition).sqrMagnitude)
+                    if (currentSector == 2)
                     {
-                        // means ball is going to enemy goal position
+                        ChangeFormation(FormationTag.DefenseFormation);
+                    }
+                    else if ((enemyGoalPosition - nextBallPosition).sqrMagnitude < (enemyGoalPosition - currentBallPosition).sqrMagnitude){
+                    // means ball is going to enemy goal position
                         ChangeFormation(FormationTag.AttackFormation);
+                     
                     }
                     else
                     {
@@ -459,17 +489,38 @@ namespace FootballSim.FootballTeam
                 else
                 {
                         
-                    switch (currentSector)
+                    var enemyBallOwner = Football.Football.Instance.CurrentOwnerPlayer;
+                    if (enemyBallOwner != null)
                     {
-                        case 0:
-                            ChangeFormation(FormationTag.AttackFormation);
-                            break;
-                        case 1:
-                            ChangeFormation(FormationTag.DefaultFormation);
-                            break;
-                        case 2:
+                        var nextBallPosition = enemyBallOwner.transform.position + enemyBallOwner.Rigidbody.linearVelocity * 0.5f;
+                        var currentBallPosition = enemyBallOwner.transform.position;
+                        var ourGoalPosition = MatchManager.Instance.PitchData.AwayGoalTransform.position;
+                        if ((ourGoalPosition - nextBallPosition).sqrMagnitude < (ourGoalPosition - currentBallPosition).sqrMagnitude)
+                        {
+                            // means ball is going to enemy goal position
                             ChangeFormation(FormationTag.DefenseFormation);
-                            break;
+
+                        }
+                        else
+                        {
+                            ChangeFormation(FormationTag.DefaultFormation);
+                        }
+                    }
+                    else
+                    {
+                        
+                        switch (currentSector)
+                        {
+                            case 0:
+                                ChangeFormation(FormationTag.AttackFormation);
+                                break;
+                            case 1:
+                                ChangeFormation(FormationTag.DefaultFormation);
+                                break;
+                            case 2:
+                                ChangeFormation(FormationTag.DefenseFormation);
+                                break;
+                        }
                     }
                 }
             }

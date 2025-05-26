@@ -35,10 +35,12 @@ namespace FootballSim.Football
 
         public event Action<FootballPlayer, FootballPlayer> OnBallOwnerChanged;
 
-        public event Action<FootballPlayer> OnBallHit;
+        public event Action<FootballPlayer,Vector3> OnBallHit;
         public event Action<FootballTeam.TeamFlag,FootballPlayer> OnGoal;
 
         public event Action<FootballTeam.TeamFlag> OnOut;
+
+        public event Action<FootballTeam.TeamFlag> OnGoalKeeperPosses;
         public FootballPlayer LastHitPlayer { get; private set; }
         public int CurrentSector { get; private set; } = -1;
         public bool IsGrounded
@@ -57,11 +59,23 @@ namespace FootballSim.Football
             if (Instance == null)
             {
                 Instance = this;
+                OnBallOwnerChanged += HandleGoalKeeperOwn;
 
             }
             else
             {
                 Destroy(gameObject);
+            }
+        }
+
+        private void HandleGoalKeeperOwn(FootballPlayer t_OldOwner, FootballPlayer t_NewOwner)
+        {
+            if (t_NewOwner != null && t_NewOwner.PlayerType == Player.PlayerType.GoalKeeper)
+            {
+                if (OnGoalKeeperPosses != null)
+                {
+                    OnGoalKeeperPosses.Invoke(t_NewOwner.TeamFlag);
+                }
             }
         }
 
@@ -99,7 +113,7 @@ namespace FootballSim.Football
             }
             if (OnBallHit != null)
             {
-                OnBallHit(t_Player);
+                OnBallHit(t_Player,t_ForceVector * t_ShootPower);
                 LastHitPlayer = t_Player;
             }
                 
@@ -226,7 +240,7 @@ namespace FootballSim.Football
 
         private void AdjustPosition()
         {
-            if (CurrentOwnerPlayer != null && IsInteractable)
+            if (CurrentOwnerPlayer != null && IsInteractable )  
             {
                 var targetPosition = CurrentOwnerPlayer.BallPosition;
                 transform.position = targetPosition;

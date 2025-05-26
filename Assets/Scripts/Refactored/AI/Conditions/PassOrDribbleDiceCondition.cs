@@ -20,16 +20,14 @@ public partial class PassOrDribbleDiceCondition : Condition
 
     public override bool IsTrue()
     {
-        Debug.Log("Time is " + Time.time);
-
-        Debug.Log("My Latest desicion time  is " + m_LastDesicionTime);
+     
         if (m_LastDesicionTime + m_DesicionInterval < Time.time)
         {
-            Debug.Log("Lets decide");
+           
             var passDice = UnityEngine.Random.Range(0, 10) + m_PassDesicionInfluence;
             var dribbleDice = UnityEngine.Random.Range(0, 10) + m_DribbleDesicionInfluence;
             m_LatestDesicion = passDice > dribbleDice;
-            Debug.Log("My desicion " + m_LatestDesicion);
+         
             if (m_LatestDesicion)
             {
                 m_PassDesicionInfluence += 1;

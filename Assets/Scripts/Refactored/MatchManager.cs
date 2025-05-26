@@ -59,6 +59,8 @@ namespace FootballSim
 
         [SerializeField]
         private bool m_InitWithDebug = false;
+        
+       
 
         private void Awake()
         {
@@ -71,8 +73,8 @@ namespace FootballSim
             {
                 Destroy(gameObject);
             }
-            
-            
+
+
         }
 
         public void SetupOnlinePVP(GameStartConfig t_Config, ulong t_ClientId)
@@ -254,6 +256,7 @@ namespace FootballSim
             Football.Football.Instance.OnBallHit += HandleSantraAction;
             Football.Football.Instance.OnGoal += HandleGoalAction;
             Football.Football.Instance.OnOut += HandleOutAction;
+            Football.Football.Instance.OnGoalKeeperPosses += HandleGoalKeeperPossesAction;
             CurrentMatchState = MatchState.Santra;
             OnMatchStarted += () => { m_IsTickingTime = true; };
             OnMatchStopped += () => { m_IsTickingTime = false; };
@@ -261,6 +264,48 @@ namespace FootballSim
 
         }
 
+        private void HandleGoalKeeperPossesAction(FootballTeam.TeamFlag flag)
+        {
+            if (CurrentMatchState != MatchState.Out) {
+                StartCoroutine(OnGoalKeeperPossesRoutine(flag));
+            } 
+        }
+        private IEnumerator OnGoalKeeperPossesRoutine(FootballTeam.TeamFlag flag)
+        {
+            HomeTeam.LockPlayers(true);
+            AwayTeam.LockPlayers(true);
+            if (OnMatchStopped != null)
+            {
+                OnMatchStopped.Invoke();
+            }
+            CurrentMatchState = MatchState.Out;
+            Vector3 targetTransform = Vector3.zero;
+            switch (flag)
+            {
+                case FootballTeam.TeamFlag.Home:
+                    targetTransform = PitchData.HomeOutKickPosition.position;
+                    HomeTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
+                    AwayTeam.ChangeFormation(FormationTag.FreeKickDefenseFormation, true);
+                    
+                    break;
+                case FootballTeam.TeamFlag.Away:
+                    targetTransform = PitchData.AwayOutKickPosition.position;
+                    HomeTeam.ChangeFormation(FormationTag.FreeKickDefenseFormation, true);
+                    AwayTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
+                    break;
+                default:
+                    break;
+            }
+          
+         
+            yield return new WaitForSeconds(.5f);
+          
+            Football.Football.Instance.OnBallHit += HandleFreeKickAction;
+            Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
+            Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
+            Football.Football.Instance.transform.position = targetTransform;
+         
+        }
         private void HandleGoalAction(FootballTeam.TeamFlag t_ScorerTeam, FootballPlayer t_ScorerPlayer)
         {
             StartCoroutine(OnGoalRoutine(t_ScorerTeam, t_ScorerPlayer));
@@ -280,6 +325,8 @@ namespace FootballSim
             NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(1.0f);
             HomeTeam.LockPlayers(true);
             AwayTeam.LockPlayers(true);
+            Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
+            Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
             Football.Football.Instance.ResetToStartTransform();
             Football.Football.Instance.SetInteractable(true);
             switch (t_ScorerTeam)
@@ -303,7 +350,7 @@ namespace FootballSim
             }
 
         }
-        private void HandleSantraAction(FootballPlayer t_Player)
+        private void HandleSantraAction(FootballPlayer t_Player,Vector3 t_Force)
         {
             if (CurrentMatchState == MatchState.Santra)
             {
@@ -338,7 +385,7 @@ namespace FootballSim
                 StartCoroutine(OnOutRoutine(t_FreeKickTeam));
             }
         }
-        private void HandleFreeKickAction(FootballPlayer t_Player)
+        private void HandleFreeKickAction(FootballPlayer t_Player, Vector3 t_Force)
         {
             if (CurrentMatchState == MatchState.Out)
             {
@@ -365,17 +412,19 @@ namespace FootballSim
             HomeTeam.LockPlayers(true);
             AwayTeam.LockPlayers(true);
             NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(1.0f);
+            Football.Football.Instance.Rigidbody.linearVelocity = Vector3.zero;
+            Football.Football.Instance.Rigidbody.angularVelocity = Vector3.zero;
             Football.Football.Instance.OnBallHit += HandleFreeKickAction;
             switch (t_FreeKickTeam)
             {
                 case FootballTeam.TeamFlag.Home:
                     Football.Football.Instance.transform.position = PitchData.HomeOutKickPosition.position;
                     HomeTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
-                    AwayTeam.ChangeFormation(FormationTag.DefaultFormation, true);
+                    AwayTeam.ChangeFormation(FormationTag.FreeKickDefenseFormation, true);
                     break;
                 case FootballTeam.TeamFlag.Away:
                     Football.Football.Instance.transform.position = PitchData.AwayOutKickPosition.position;
-                    HomeTeam.ChangeFormation(FormationTag.DefaultFormation, true);
+                    HomeTeam.ChangeFormation(FormationTag.FreeKickDefenseFormation, true);
                     AwayTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
                     break;
                 default:

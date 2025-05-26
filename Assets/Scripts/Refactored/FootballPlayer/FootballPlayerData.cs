@@ -42,7 +42,7 @@ namespace FootballSim.Player
         public float AggressiveDefenseDistance;
         public float PassiveDefenseDistance;
 
-
+        public float MaxJumpPower = 10f; //Only used for goal keeper.
 
 
     }   
