@@ -148,6 +148,7 @@ namespace FootballSim.Player
                     rotatedForwardVector.normalized,
                     m_FootballPlayer.Data.MaximumPassPower,
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
             });
         }
 
@@ -167,6 +168,7 @@ namespace FootballSim.Player
                         m_FootballPlayer.Data.MaximumPassPower,
                         elapsedTimePercentage),
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
 
             });
         }
@@ -179,6 +181,7 @@ namespace FootballSim.Player
                     m_FootballPlayer.transform.forward,
                     m_FootballPlayer.Data.MaximumThrougPassPower,
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
             });
         }
 
@@ -194,6 +197,7 @@ namespace FootballSim.Player
                         m_FootballPlayer.Data.MaximumThrougPassPower,
                         elapsedTimePercentage),
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
 
             });
         }
@@ -209,6 +213,7 @@ namespace FootballSim.Player
                     rotatedForwardVector.normalized,
                     m_FootballPlayer.Data.MaximumLobPassPower,
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
             });
         }
 
@@ -227,6 +232,7 @@ namespace FootballSim.Player
                         m_FootballPlayer.Data.MaximumLobPassPower,
                         elapsedTimePercentage),
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
 
             });
         }
@@ -242,6 +248,7 @@ namespace FootballSim.Player
                     rotatedForwardVector,
                     m_FootballPlayer.Data.MaximumShootPower,
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
             });
 
         }
@@ -262,6 +269,7 @@ namespace FootballSim.Player
                         m_FootballPlayer.Data.MaximumShootPower,
                         elapsedTimePercentage),
                     m_FootballPlayer);
+                SoundManager.Instance.PlayBallHitSound();
 
             });
 

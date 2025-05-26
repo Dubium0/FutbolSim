@@ -1,7 +1,7 @@
-
 using System;
 using System.Linq;
 using FootballSim.Player;
+using FootballSim.UI;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -185,8 +185,10 @@ namespace FootballSim.Football
                 {
                     OnBallOwnerChanged(prevOwner, CurrentOwnerPlayer);
                 }
-
-
+                //if (CurrentOwnerPlayer != null)
+                //{
+                //    SoundManager.Instance.PlayBallWinSound();
+                //}
             }
         }
         public void ResetToStartTransform()
