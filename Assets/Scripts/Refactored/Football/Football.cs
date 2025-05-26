@@ -193,7 +193,7 @@ namespace FootballSim.Football
         {
             transform.position = m_StartTransform.position;
             transform.rotation = m_StartTransform.rotation;
-            
+            Rigidbody.MovePosition(m_StartTransform.position);
         }
         private void OnTriggerEnter(Collider other)
         {

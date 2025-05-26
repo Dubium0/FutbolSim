@@ -347,7 +347,7 @@ namespace FootballSim.FootballTeam
                     MovePlayersToFormationPositions(m_FreeKickDefenseFormation, t_ImmidietalyMove);
                     break;
             }
-            print($"Changing formation to {FormationTag}");
+            //print($"Changing formation to {FormationTag}");
         }
         private void MovePlayersToFormationPositions(FootballSim.FootballTeam.FootballFormation t_TargetFormation, bool t_ImmidietalyMove = false)
         {
@@ -396,7 +396,7 @@ namespace FootballSim.FootballTeam
         {
             if (Football.Football.Instance == null || !m_IsInitialized) return;
             int currentSector = FootballSim.Football.Football.Instance.CurrentSector;
-            Debug.Log("Current sector " + currentSector);
+           // Debug.Log("Current sector " + currentSector);
             if (TeamFlag == TeamFlag.Home) // Home team attacks right
             {
                 if (CurrentBallOwnerPlayer != null)

@@ -320,6 +320,17 @@ namespace FootballSim
                 OnMatchStopped.Invoke();
             }
             yield return new WaitForSeconds(0.2f);
+
+            // Get the player who should take the kick-off
+            FootballPlayer kickTaker = t_ScorerTeam == FootballTeam.TeamFlag.Home ? 
+                HomeTeam.FootballPlayers[0] : 
+                AwayTeam.FootballPlayers[0];
+
+
+            Vector3 ballPosition = kickTaker.transform.position;
+            ballPosition.y = 1.4f;
+            Football.Football.Instance.Rigidbody.MovePosition(ballPosition);
+
             CurrentMatchState = MatchState.Santra;
             Football.Football.Instance.OnBallHit += HandleSantraAction;
             NetworkConnectionRPCS.Instance.SetGameTimeScaleRpc(1.0f);
@@ -418,12 +429,12 @@ namespace FootballSim
             switch (t_FreeKickTeam)
             {
                 case FootballTeam.TeamFlag.Home:
-                    Football.Football.Instance.transform.position = PitchData.HomeOutKickPosition.position;
+                    Football.Football.Instance.Rigidbody.MovePosition(PitchData.HomeOutKickPosition.position);
                     HomeTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
                     AwayTeam.ChangeFormation(FormationTag.FreeKickDefenseFormation, true);
                     break;
                 case FootballTeam.TeamFlag.Away:
-                    Football.Football.Instance.transform.position = PitchData.AwayOutKickPosition.position;
+                    Football.Football.Instance.Rigidbody.MovePosition(PitchData.AwayOutKickPosition.position);
                     HomeTeam.ChangeFormation(FormationTag.FreeKickDefenseFormation, true);
                     AwayTeam.ChangeFormation(FormationTag.FreeKickAttackFormation, true);
                     break;
