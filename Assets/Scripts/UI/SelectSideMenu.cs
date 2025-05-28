@@ -5,7 +5,7 @@ using System.Text;
 using DG.Tweening;
 using TMPro;
 
-public class SelectSideManager : MonoBehaviour
+public class SelectSideMenu : MonoBehaviour
 {
     // UI Elements
     [SerializeField] private GameObject player1Side;
@@ -304,8 +304,8 @@ public class SelectSideManager : MonoBehaviour
     {
         if (player1ControlsText != null && player2ControlsText != null)
         {
-            player1ControlsText.text = isInputMapSwapped ? "WASD" : "ARROWS";
-            player2ControlsText.text = isInputMapSwapped ? "ARROWS" : "WASD";
+            player1ControlsText.text = isInputMapSwapped ? "ARROWS" : "WASD";
+            player2ControlsText.text = isInputMapSwapped ? "WASD" : "ARROWS";
         }
     }
 
@@ -382,7 +382,7 @@ public class SelectSideManager : MonoBehaviour
         }
         
         bool bothSidesReady = leftSideReadyState && rightSideReadyState;
-        TeamFlag controlledTeamFlag = leftSideReadyState ? TeamFlag.Home : TeamFlag.Away;
+        FootballSim.FootballTeam.TeamFlag controlledTeamFlag = leftSideReadyState ? FootballSim.FootballTeam.TeamFlag.Home : FootballSim.FootballTeam.TeamFlag.Away;
     
         if (!readyPlayers.Contains(player))
         {
@@ -394,27 +394,48 @@ public class SelectSideManager : MonoBehaviour
             readyPlayers.Remove(player);
             Debug.Log($"[Ready] Removed Player {player.PlayerIndex + 1} from ready list");
         }
-    
+
         if (readyPlayers.Count == connectedPlayers.Count)
         {
             Debug.Log("[Game] All players ready, starting game...");
-            Dictionary<TeamFlag, List<int>> teamPlayerIndices = new Dictionary<TeamFlag, List<int>>();
-            teamPlayerIndices[TeamFlag.Home] = new List<int>();
-            teamPlayerIndices[TeamFlag.Away] = new List<int>();
+            Dictionary<FootballSim.FootballTeam.TeamFlag, List<int>> teamPlayerIndices = new Dictionary<FootballSim.FootballTeam.TeamFlag, List<int>>();
+            teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Home] = new List<int>();
+            teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Away] = new List<int>();
 
             foreach (var readyPlayer in readyPlayers)
             {
                 string pos = GetPositionName(readyPlayer.CurrentPosition);
-                TeamFlag teamFlag = pos == "Left" ? TeamFlag.Home : TeamFlag.Away;
+                FootballSim.FootballTeam.TeamFlag teamFlag = pos == "Left" ? FootballSim.FootballTeam.TeamFlag.Home : FootballSim.FootballTeam.TeamFlag.Away;
                 teamPlayerIndices[teamFlag].Add(readyPlayer.PlayerIndex);
                 Debug.Log($"[Team] Player {readyPlayer.PlayerIndex + 1} assigned to {teamFlag}");
             }
-            GameStartConfig config = new ();
-            config.gameMode = GameMode.LocalPVP;
-           
-            config.teamPlayerIndices = teamPlayerIndices;
-            GameManager.Instance.StartGame(config);
-            gameObject.SetActive(false);
+            //GameStartConfig config = new ();
+            //config.gameMode = GameMode.LocalPVP;
+            //
+            //config.teamPlayerIndices = teamPlayerIndices;
+            //GameManager.Instance.StartGame(config);
+            //gameObject.SetActive(false);
+            FootballSim.GameStartConfig config = new();
+
+            config.HomePlayerIndex = teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Home].Count > 0 ? teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Home][0] : -1;
+            config.AwayPlayerIndex = teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Away].Count > 0 ? teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Away][0] : -1;
+            config.GameMode = teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Home].Count > 0 && teamPlayerIndices[FootballSim.FootballTeam.TeamFlag.Away].Count > 0 ? 
+                    FootballSim.GameMode.PVP_LOCAL : FootballSim.GameMode.PVA;
+
+
+            switch (config.GameMode)
+            {
+                case FootballSim.GameMode.PVP_LOCAL:
+                    config.HomePlayerIndex += 1;
+                    config.AwayPlayerIndex += 1;
+                    break;
+                default:
+                    break;
+            }
+
+            FootballSim.GameManager.Instance.InitiateGame(config);
+            
+
         }
     }
 

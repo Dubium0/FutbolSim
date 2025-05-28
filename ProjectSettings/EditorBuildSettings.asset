@@ -18,10 +18,10 @@ EditorBuildSettings:
     path: Assets/Scenes/GoalkeeperTest.unity
     guid: 33b2028ec9340fa43aeb7681e3681d44
   - enabled: 1
-    path: Assets/Scenes/Refactored/MainMenu.unity
+    path: Assets/Scenes/MainMenu.unity
     guid: e9713c56d6cbfd343a8ab4aa3d30a71f
   - enabled: 1
-    path: Assets/Scenes/Refactored/PVA_Arena.unity
+    path: Assets/Scenes/PVA_Arena.unity
     guid: cb85e1bd8199b364abff97a5d9f01083
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 99f9c9493070a9d4c979a8fec7c5a8d3, type: 2}

@@ -496,7 +496,6 @@ namespace FootballSim.Player
             {
                 transform.position = Vector3.MoveTowards(transform.position, CurrentHomePosition.position, Data.MaxRunSpeed * Time.deltaTime);
                 transform.forward = (CurrentHomePosition.position - transform.position).normalized;
-                Debug.Log("Kubilay kasardir");
                 yield return new WaitForEndOfFrame();
             }
             transform.rotation = CurrentHomePosition.rotation;
