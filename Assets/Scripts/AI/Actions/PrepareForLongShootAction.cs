@@ -5,8 +5,7 @@ using UnityEngine;
 using Action = Unity.Behavior.Action;
 using Unity.Properties;
 using Unity.Mathematics;
-using Unity.VisualScripting;
-using System.Collections;
+
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(name: "PrepareForLongShoot", story: "[Player] defends agains long shoots", category: "FootballPlayer/Action", id: "93e52fe602e57720c753c6fa48e20beb")]

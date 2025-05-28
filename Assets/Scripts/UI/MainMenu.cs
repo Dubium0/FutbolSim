@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using FootballSim.Networking;
-
 using Steamworks;
 using TMPro;
 using Unity.Netcode;

@@ -4,7 +4,7 @@ using Unity.Behavior;
 using UnityEngine;
 using Action = Unity.Behavior.Action;
 using Unity.Properties;
-using System.Linq;
+
 
 [Serializable, GeneratePropertyBag]
 [NodeDescription(name: "TryToGetInRecievingPosition", story: "[Player] tries to be in a nice spot to receieve ball.", category: "FootballPlayer/Action", id: "77cbad19dd3d331ddd75b2b62a499f26")]
@@ -108,7 +108,7 @@ public partial class TryToGetInRecievingPositionAction : Action
 
         if (distance.magnitude > 0.5f)
         {
-            Player.Value.Transform.forward = MathExtra.MoveTowards(Player.Value.Transform.forward, direction, 1 / Player.Value.Data.RotationTime);
+            Player.Value.Transform.forward = FootballSim.Utility.MathExtra.MoveTowards(Player.Value.Transform.forward, direction, 1 / Player.Value.Data.RotationTime);
         }
         else
         {

@@ -1,7 +1,6 @@
 
 
 using System.Collections.Generic;
-using FootballSim.Player;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;

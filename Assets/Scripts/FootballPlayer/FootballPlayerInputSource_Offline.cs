@@ -1,9 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.PlayerLoop;
-using UnityEngine.Video;
-
 
 namespace FootballSim.Player
 {

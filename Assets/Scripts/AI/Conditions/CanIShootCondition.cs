@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Behavior;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable, Unity.Properties.GeneratePropertyBag]

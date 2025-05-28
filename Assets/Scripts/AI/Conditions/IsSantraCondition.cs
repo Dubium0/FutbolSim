@@ -1,6 +1,5 @@
 using System;
 using Unity.Behavior;
-using UnityEngine;
 
 [Serializable, Unity.Properties.GeneratePropertyBag]
 [Condition(name: "IsSantra", story: "Is match state santra", category: "FootballPlayer/Conditions", id: "24d815bc57b467950ba25de10b9a26ca")]

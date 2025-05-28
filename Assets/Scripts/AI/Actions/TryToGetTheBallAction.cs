@@ -41,7 +41,7 @@ public partial class TryToGetTheBallAction : Action
         if (result.sqrMagnitude > 0 && result != null)
         {
 
-            Player.Value.transform.forward = MathExtra.MoveTowards(Player.Value.transform.forward, result.normalized, 1 / Player.Value.Data.RotationTime);
+            Player.Value.transform.forward = FootballSim.Utility.MathExtra.MoveTowards(Player.Value.transform.forward, result.normalized, 1 / Player.Value.Data.RotationTime);
 
         }
        

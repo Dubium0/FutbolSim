@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
 using FootballSim.Player;
-using FootballSim.UI;
-using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 

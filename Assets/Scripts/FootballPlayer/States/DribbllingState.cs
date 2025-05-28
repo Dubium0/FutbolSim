@@ -69,7 +69,7 @@ namespace FootballSim.Player
             if (inputVector.magnitude > 0)
             {
                 
-                m_FootballPlayer.Transform.forward = MathExtra.MoveTowards(m_FootballPlayer.Transform.forward, inputVector, 1 / m_FootballPlayer.Data.RotationTime);
+                m_FootballPlayer.Transform.forward = Utility.MathExtra.MoveTowards(m_FootballPlayer.Transform.forward, inputVector, 1 / m_FootballPlayer.Data.RotationTime);
             }
         }
 
