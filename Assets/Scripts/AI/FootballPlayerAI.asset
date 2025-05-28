@@ -1,5 +1,895 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8284898951096417832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db920e62f70f420bb33c771449926fa4, type: 3}
+  m_Name: FootballPlayerAI
+  m_EditorClassIdentifier: 
+  Graphs:
+  - rid: 4840404878967439429
+  RootGraph:
+    rid: 4840404878967439429
+  m_DebugInfo: {fileID: 5997736598271028585}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 4840404878967439429
+      type: {class: BehaviorGraphModule, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        AuthoringAssetID:
+          m_Value0: 2645668016454177831
+          m_Value1: 11818030096543151755
+        m_DebugInfo: {fileID: 0}
+        Root:
+          rid: 4840404878967439430
+        BlackboardReference:
+          rid: 4840404878967439431
+        BlackboardGroupReferences: []
+        m_ActiveNodes: []
+        m_NodesToTick: []
+        m_NodesToEnd:
+          rid: 4840404878967439432
+        m_EndedNodes:
+          rid: 4840404878967439433
+        m_VersionTimestamp: 638840618400839509
+    - rid: 4840404878967439430
+      type: {class: Start, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 11260871316715647986
+          m_Value1: 5355448408776264718
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: -2
+        m_Child:
+          rid: 4840404878967439434
+        Repeat: 1
+        AllowMultipleRepeatsPerTick: 0
+    - rid: 4840404878967439431
+      type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        m_Blackboard:
+          rid: 4840404878967439435
+        m_Source: {fileID: 5323658777516415253}
+    - rid: 4840404878967439432
+      type: {class: 'Stack`1[[Unity.Behavior.Node, Unity.Behavior]]', ns: System.Collections.Generic, asm: mscorlib}
+      data: 
+    - rid: 4840404878967439433
+      type: {class: 'HashSet`1[[Unity.Behavior.Node, Unity.Behavior]]', ns: System.Collections.Generic, asm: System.Core}
+      data: 
+    - rid: 4840404878967439434
+      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 13000753599825380327
+          m_Value1: 149229351156158080
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439430
+        m_Children:
+        - rid: 4840404878967439436
+        - rid: 4840404878967439437
+    - rid: 4840404878967439435
+      type: {class: Blackboard, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        m_Variables:
+        - rid: 4840404878967439438
+        - rid: 4840404878967439439
+        - rid: 4840404878967439440
+        - rid: 4840404878967439441
+        - rid: 4840404878967439442
+    - rid: 4840404878967439436
+      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 13000753599825380327
+          m_Value1: 149229351156158080
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439434
+        m_Conditions:
+        - rid: 4840404878967439443
+        m_RequiresAllConditions: 0
+    - rid: 4840404878967439437
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 15701469642160572955
+          m_Value1: 10665984382306362519
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439434
+        m_Children:
+        - rid: 4840404878967439444
+        - rid: 4840404878967439445
+        m_Conditions:
+        - rid: 4840404878967439446
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439444
+        False:
+          rid: 4840404878967439445
+    - rid: 4840404878967439438
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 0}
+    - rid: 4840404878967439439
+      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 2656859747028446742
+          m_Value1: 17624447375892448052
+        Name: Player
+        m_Value: {fileID: 0}
+    - rid: 4840404878967439440
+      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7370743701938744648
+          m_Value1: 5458053884022615758
+        Name: ShootDirectionCandidates
+        m_Value: []
+    - rid: 4840404878967439441
+      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 17006772538303825522
+          m_Value1: 17333315749948469217
+        Name: PassDirectionCandidates
+        m_Value: []
+    - rid: 4840404878967439442
+      type: {class: 'SharedBlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 7131009861829772352
+          m_Value1: 4862802420060053327
+        Name: Minimum Distance To Goal
+        m_Value: 0
+        m_SharedVariablesRuntimeAsset: {fileID: 5323658777516415253}
+    - rid: 4840404878967439443
+      type: {class: IsAiEnabledCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439444
+      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 4845817070566348585
+          m_Value1: 10680949013628359873
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439437
+        m_Children:
+        - rid: 4840404878967439447
+        - rid: 4840404878967439448
+    - rid: 4840404878967439445
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 4785545743181321301
+          m_Value1: 1263033458108255016
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439437
+        m_Children:
+        - rid: 4840404878967439449
+        - rid: 4840404878967439450
+        m_Conditions:
+        - rid: 4840404878967439451
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439449
+        False:
+          rid: 4840404878967439450
+    - rid: 4840404878967439446
+      type: {class: IsSantraCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+    - rid: 4840404878967439447
+      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 4845817070566348585
+          m_Value1: 10680949013628359873
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439444
+        m_Conditions:
+        - rid: 4840404878967439452
+        - rid: 4840404878967439453
+        m_RequiresAllConditions: 1
+    - rid: 4840404878967439448
+      type: {class: PlaySantraAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 2608660065059245547
+          m_Value1: 5418046797944389887
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439444
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439449
+      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 16982669220594599521
+          m_Value1: 7226636730201239489
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439445
+        m_Children:
+        - rid: 4840404878967439454
+        - rid: 4840404878967439455
+    - rid: 4840404878967439450
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 1575161083588648525
+          m_Value1: 17240207985053642538
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439445
+        m_Children:
+        - rid: 4840404878967439456
+        - rid: 4840404878967439457
+        m_Conditions:
+        - rid: 4840404878967439458
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439456
+        False:
+          rid: 4840404878967439457
+    - rid: 4840404878967439451
+      type: {class: IsMatchStateOutCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439452
+      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439453
+      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439454
+      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 16982669220594599521
+          m_Value1: 7226636730201239489
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439449
+        m_Conditions:
+        - rid: 4840404878967439459
+        - rid: 4840404878967439460
+        - rid: 4840404878967439461
+        m_RequiresAllConditions: 1
+    - rid: 4840404878967439455
+      type: {class: PassTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 12872579558963292739
+          m_Value1: 1182823868804930335
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439449
+        Player:
+          rid: 4840404878967439439
+        PassDirectionCandidates:
+          rid: 4840404878967439441
+    - rid: 4840404878967439456
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 15490705344040160641
+          m_Value1: 16953331057174806828
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439450
+        m_Children:
+        - rid: 4840404878967439462
+        - rid: 4840404878967439463
+        m_Conditions:
+        - rid: 4840404878967439464
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439462
+        False:
+          rid: 4840404878967439463
+    - rid: 4840404878967439457
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 17284289184473577065
+          m_Value1: 10689269285540873237
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439450
+        m_Children:
+        - rid: 4840404878967439465
+        - rid: 4840404878967439466
+        m_Conditions:
+        - rid: 4840404878967439467
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439465
+        False:
+          rid: 4840404878967439466
+    - rid: 4840404878967439458
+      type: {class: IsGoalKeeperCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439459
+      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439460
+      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439461
+      type: {class: CanPlayerPassCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+        PassDirectionCandidates:
+          rid: 4840404878967439441
+    - rid: 4840404878967439462
+      type: {class: TryToGetInRecievingPositionAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 16240716133793319023
+          m_Value1: 16113195087341734435
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439456
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439463
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 3391644257800618966
+          m_Value1: 6691019549106555136
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439456
+        m_Children:
+        - rid: 4840404878967439468
+        - rid: 4840404878967439469
+        m_Conditions:
+        - rid: 4840404878967439470
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439468
+        False:
+          rid: 4840404878967439469
+    - rid: 4840404878967439464
+      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439465
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 2306196353169170659
+          m_Value1: 16040311817440328097
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439457
+        m_Children:
+        - rid: 4840404878967439471
+        - rid: 4840404878967439472
+        m_Conditions:
+        - rid: 4840404878967439473
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439471
+        False:
+          rid: 4840404878967439472
+    - rid: 4840404878967439466
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 1144618162054202650
+          m_Value1: 2873155324984621908
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439457
+        m_Children:
+        - rid: 4840404878967439474
+        - rid: 4840404878967439475
+        m_Conditions:
+        - rid: 4840404878967439476
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439474
+        False:
+          rid: 4840404878967439475
+    - rid: 4840404878967439467
+      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439468
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 10087022854109377134
+          m_Value1: 16857733277270031058
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439463
+        m_Children:
+        - rid: 4840404878967439477
+        - rid: 4840404878967439478
+        m_Conditions:
+        - rid: 4840404878967439479
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439477
+        False:
+          rid: 4840404878967439478
+    - rid: 4840404878967439469
+      type: {class: RecieveTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 4079520964694126940
+          m_Value1: 13402184617351386059
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439463
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439470
+      type: {class: DoEnemyTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439471
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 1178325805300868223
+          m_Value1: 168528776764195713
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439465
+        m_Children:
+        - rid: 4840404878967439480
+        - rid: 4840404878967439481
+        m_Conditions:
+        - rid: 4840404878967439482
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439480
+        False:
+          rid: 4840404878967439481
+    - rid: 4840404878967439472
+      type: {class: TryToGetInRecievingPositionAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 16708082000873864890
+          m_Value1: 4743724122549898362
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439465
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439473
+      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439474
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 17581759597718108209
+          m_Value1: 5451665627187566060
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439466
+        m_Children:
+        - rid: 4840404878967439483
+        - rid: 4840404878967439484
+        m_Conditions:
+        - rid: 4840404878967439485
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439483
+        False:
+          rid: 4840404878967439484
+    - rid: 4840404878967439475
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 4141464835446869374
+          m_Value1: 10055698737964351300
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439466
+        m_Children:
+        - rid: 4840404878967439486
+        - rid: 4840404878967439487
+        m_Conditions:
+        - rid: 4840404878967439488
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439486
+        False:
+          rid: 4840404878967439487
+    - rid: 4840404878967439476
+      type: {class: DoEnemyTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439477
+      type: {class: TryToGetTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 8082649099176748511
+          m_Value1: 6924703042113830992
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439468
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439478
+      type: {class: PrepareForLongShootAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 10536072876056222804
+          m_Value1: 920427760496843594
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439468
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439479
+      type: {class: IsEnemyPlayerInsideTheCriticalRegionCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439480
+      type: {class: ShootTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 2778063446131115747
+          m_Value1: 13581754643355371068
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439471
+        Player:
+          rid: 4840404878967439439
+        ShootDirectionCandidates:
+          rid: 4840404878967439440
+    - rid: 4840404878967439481
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 18193209912593360129
+          m_Value1: 15245517009948673784
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439471
+        m_Children:
+        - rid: 4840404878967439489
+        - rid: 4840404878967439490
+        m_Conditions:
+        - rid: 4840404878967439491
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439489
+        False:
+          rid: 4840404878967439490
+    - rid: 4840404878967439482
+      type: {class: CanIShootCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+        ShootDirectionCandidates:
+          rid: 4840404878967439440
+    - rid: 4840404878967439483
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 16556217845633658490
+          m_Value1: 13515462196695581674
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439474
+        m_Children:
+        - rid: 4840404878967439492
+        - rid: 4840404878967439493
+        m_Conditions:
+        - rid: 4840404878967439494
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439492
+        False:
+          rid: 4840404878967439493
+    - rid: 4840404878967439484
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 10861526476968039355
+          m_Value1: 10305805245230537936
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439474
+        m_Children:
+        - rid: 4840404878967439495
+        - rid: 4840404878967439496
+        m_Conditions:
+        - rid: 4840404878967439497
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439495
+        False:
+          rid: 4840404878967439496
+    - rid: 4840404878967439485
+      type: {class: AmITheClosestPlayerToBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439486
+      type: {class: TryToGetTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 13336184471272325199
+          m_Value1: 6750002553784757742
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439475
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439487
+      type: {class: GoToHomePositionAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 441256172471610821
+          m_Value1: 2037236472090374092
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439475
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439488
+      type: {class: AmITheClosestPlayerToBallCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439489
+      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        ID:
+          m_Value0: 7347809749603943293
+          m_Value1: 9543057646457630193
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439481
+        m_Children:
+        - rid: 4840404878967439498
+        - rid: 4840404878967439499
+        m_Conditions:
+        - rid: 4840404878967439500
+        m_RequiresAllConditions: 0
+        True:
+          rid: 4840404878967439498
+        False:
+          rid: 4840404878967439499
+    - rid: 4840404878967439490
+      type: {class: DribbleAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 12962121708760344630
+          m_Value1: 11767023679884895918
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439481
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439491
+      type: {class: CanPlayerPassCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+        PassDirectionCandidates:
+          rid: 4840404878967439441
+    - rid: 4840404878967439492
+      type: {class: TryToGetTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 17002776585655473832
+          m_Value1: 3913899117416370527
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439483
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439493
+      type: {class: PassiveDefenseAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 17603380753755873352
+          m_Value1: 4515779658485284859
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439483
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439494
+      type: {class: ShouldPlayerAggressiveDefendCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+        MinimumDistanceToGoal:
+          rid: 4840404878967439442
+    - rid: 4840404878967439495
+      type: {class: PassiveDefenseAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 2908070670992845504
+          m_Value1: 8849251430453767735
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439484
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439496
+      type: {class: GoToHomePositionAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 11605685140519153385
+          m_Value1: 14288950082624754690
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439484
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439497
+      type: {class: IsPlayerInsideTheDefendRegionCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
+        MinimumDistanceToGoal:
+          rid: 4840404878967439442
+    - rid: 4840404878967439498
+      type: {class: PassTheBallAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 13726282927787619663
+          m_Value1: 4344121951558124543
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439489
+        Player:
+          rid: 4840404878967439439
+        PassDirectionCandidates:
+          rid: 4840404878967439441
+    - rid: 4840404878967439499
+      type: {class: DribbleAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 11500423681276398285
+          m_Value1: 12988903763097475188
+        Graph:
+          rid: 4840404878967439429
+        m_Parent:
+          rid: 4840404878967439489
+        Player:
+          rid: 4840404878967439439
+    - rid: 4840404878967439500
+      type: {class: PassOrDribbleDiceCondition, ns: , asm: Assembly-CSharp}
+      data:
+        Graph:
+          rid: 4840404878967439429
+        Player:
+          rid: 4840404878967439439
 --- !u!114 &-6497186578216718184
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -162,9 +1052,9 @@ MonoBehaviour:
   - rid: 4840404816573759545
   - rid: 4840404816573759546
   - rid: 4840404816573759558
-  m_VersionTimestamp: 638840309781066192
-  m_DebugInfo: {fileID: 8542363834510006724}
-  m_RuntimeGraph: {fileID: 782981527611676403}
+  m_VersionTimestamp: 638840618400839509
+  m_DebugInfo: {fileID: 5997736598271028585}
+  m_RuntimeGraph: {fileID: -8284898951096417832}
   AssetID:
     m_Value0: 2645668016454177831
     m_Value1: 11818030096543151755
@@ -4718,896 +5608,6 @@ MonoBehaviour:
         IsExposed: 1
         m_IsShared: 0
         m_Value: {fileID: 0}
---- !u!114 &782981527611676403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db920e62f70f420bb33c771449926fa4, type: 3}
-  m_Name: FootballPlayerAI
-  m_EditorClassIdentifier: 
-  Graphs:
-  - rid: 4840404816573759564
-  RootGraph:
-    rid: 4840404816573759564
-  m_DebugInfo: {fileID: 8542363834510006724}
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 4840404816573759564
-      type: {class: BehaviorGraphModule, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        AuthoringAssetID:
-          m_Value0: 2645668016454177831
-          m_Value1: 11818030096543151755
-        m_DebugInfo: {fileID: 8542363834510006724}
-        Root:
-          rid: 4840404816573759565
-        BlackboardReference:
-          rid: 4840404816573759566
-        BlackboardGroupReferences: []
-        m_ActiveNodes: []
-        m_NodesToTick: []
-        m_NodesToEnd:
-          rid: 4840404816573759567
-        m_EndedNodes:
-          rid: 4840404816573759568
-        m_VersionTimestamp: 638840309781066192
-    - rid: 4840404816573759565
-      type: {class: Start, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 11260871316715647986
-          m_Value1: 5355448408776264718
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: -2
-        m_Child:
-          rid: 4840404816573759569
-        Repeat: 1
-        AllowMultipleRepeatsPerTick: 0
-    - rid: 4840404816573759566
-      type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        m_Blackboard:
-          rid: 4840404816573759570
-        m_Source: {fileID: 5323658777516415253}
-    - rid: 4840404816573759567
-      type: {class: 'Stack`1[[Unity.Behavior.Node, Unity.Behavior]]', ns: System.Collections.Generic, asm: mscorlib}
-      data: 
-    - rid: 4840404816573759568
-      type: {class: 'HashSet`1[[Unity.Behavior.Node, Unity.Behavior]]', ns: System.Collections.Generic, asm: System.Core}
-      data: 
-    - rid: 4840404816573759569
-      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 13000753599825380327
-          m_Value1: 149229351156158080
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759565
-        m_Children:
-        - rid: 4840404816573759571
-        - rid: 4840404816573759572
-    - rid: 4840404816573759570
-      type: {class: Blackboard, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        m_Variables:
-        - rid: 4840404816573759573
-        - rid: 4840404816573759574
-        - rid: 4840404816573759575
-        - rid: 4840404816573759576
-        - rid: 4840404816573759577
-    - rid: 4840404816573759571
-      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 13000753599825380327
-          m_Value1: 149229351156158080
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759569
-        m_Conditions:
-        - rid: 4840404816573759578
-        m_RequiresAllConditions: 0
-    - rid: 4840404816573759572
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 15701469642160572955
-          m_Value1: 10665984382306362519
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759569
-        m_Children:
-        - rid: 4840404816573759579
-        - rid: 4840404816573759580
-        m_Conditions:
-        - rid: 4840404816573759581
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759579
-        False:
-          rid: 4840404816573759580
-    - rid: 4840404816573759573
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 0}
-    - rid: 4840404816573759574
-      type: {class: 'BlackboardVariable`1[[FootballSim.Player.FootballPlayer, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 2656859747028446742
-          m_Value1: 17624447375892448052
-        Name: Player
-        m_Value: {fileID: 0}
-    - rid: 4840404816573759575
-      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7370743701938744648
-          m_Value1: 5458053884022615758
-        Name: ShootDirectionCandidates
-        m_Value: []
-    - rid: 4840404816573759576
-      type: {class: 'BlackboardVariable`1[[System.Collections.Generic.List`1[[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 17006772538303825522
-          m_Value1: 17333315749948469217
-        Name: PassDirectionCandidates
-        m_Value: []
-    - rid: 4840404816573759577
-      type: {class: 'SharedBlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 7131009861829772352
-          m_Value1: 4862802420060053327
-        Name: Minimum Distance To Goal
-        m_Value: 0
-        m_SharedVariablesRuntimeAsset: {fileID: 5323658777516415253}
-    - rid: 4840404816573759578
-      type: {class: IsAiEnabledCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759579
-      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 4845817070566348585
-          m_Value1: 10680949013628359873
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759572
-        m_Children:
-        - rid: 4840404816573759582
-        - rid: 4840404816573759583
-    - rid: 4840404816573759580
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 4785545743181321301
-          m_Value1: 1263033458108255016
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759572
-        m_Children:
-        - rid: 4840404816573759584
-        - rid: 4840404816573759585
-        m_Conditions:
-        - rid: 4840404816573759586
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759584
-        False:
-          rid: 4840404816573759585
-    - rid: 4840404816573759581
-      type: {class: IsSantraCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-    - rid: 4840404816573759582
-      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 4845817070566348585
-          m_Value1: 10680949013628359873
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759579
-        m_Conditions:
-        - rid: 4840404816573759587
-        - rid: 4840404816573759588
-        m_RequiresAllConditions: 1
-    - rid: 4840404816573759583
-      type: {class: PlaySantraAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 2608660065059245547
-          m_Value1: 5418046797944389887
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759579
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759584
-      type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 16982669220594599521
-          m_Value1: 7226636730201239489
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759580
-        m_Children:
-        - rid: 4840404816573759589
-        - rid: 4840404816573759590
-    - rid: 4840404816573759585
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 1575161083588648525
-          m_Value1: 17240207985053642538
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759580
-        m_Children:
-        - rid: 4840404816573759591
-        - rid: 4840404816573759592
-        m_Conditions:
-        - rid: 4840404816573759593
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759591
-        False:
-          rid: 4840404816573759592
-    - rid: 4840404816573759586
-      type: {class: IsMatchStateOutCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759587
-      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759588
-      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759589
-      type: {class: ConditionalGuardAction, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 16982669220594599521
-          m_Value1: 7226636730201239489
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759584
-        m_Conditions:
-        - rid: 4840404816573759594
-        - rid: 4840404816573759595
-        - rid: 4840404816573759596
-        m_RequiresAllConditions: 1
-    - rid: 4840404816573759590
-      type: {class: PassTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 12872579558963292739
-          m_Value1: 1182823868804930335
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759584
-        Player:
-          rid: 4840404816573759574
-        PassDirectionCandidates:
-          rid: 4840404816573759576
-    - rid: 4840404816573759591
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 15490705344040160641
-          m_Value1: 16953331057174806828
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759585
-        m_Children:
-        - rid: 4840404816573759597
-        - rid: 4840404816573759598
-        m_Conditions:
-        - rid: 4840404816573759599
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759597
-        False:
-          rid: 4840404816573759598
-    - rid: 4840404816573759592
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 17284289184473577065
-          m_Value1: 10689269285540873237
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759585
-        m_Children:
-        - rid: 4840404816573759600
-        - rid: 4840404816573759601
-        m_Conditions:
-        - rid: 4840404816573759602
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759600
-        False:
-          rid: 4840404816573759601
-    - rid: 4840404816573759593
-      type: {class: IsGoalKeeperCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759594
-      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759595
-      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759596
-      type: {class: CanPlayerPassCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-        PassDirectionCandidates:
-          rid: 4840404816573759576
-    - rid: 4840404816573759597
-      type: {class: TryToGetInRecievingPositionAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 16240716133793319023
-          m_Value1: 16113195087341734435
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759591
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759598
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 3391644257800618966
-          m_Value1: 6691019549106555136
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759591
-        m_Children:
-        - rid: 4840404816573759603
-        - rid: 4840404816573759604
-        m_Conditions:
-        - rid: 4840404816573759605
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759603
-        False:
-          rid: 4840404816573759604
-    - rid: 4840404816573759599
-      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759600
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 2306196353169170659
-          m_Value1: 16040311817440328097
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759592
-        m_Children:
-        - rid: 4840404816573759606
-        - rid: 4840404816573759607
-        m_Conditions:
-        - rid: 4840404816573759608
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759606
-        False:
-          rid: 4840404816573759607
-    - rid: 4840404816573759601
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 1144618162054202650
-          m_Value1: 2873155324984621908
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759592
-        m_Children:
-        - rid: 4840404816573759609
-        - rid: 4840404816573759610
-        m_Conditions:
-        - rid: 4840404816573759611
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759609
-        False:
-          rid: 4840404816573759610
-    - rid: 4840404816573759602
-      type: {class: DoOwnerTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759603
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 10087022854109377134
-          m_Value1: 16857733277270031058
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759598
-        m_Children:
-        - rid: 4840404816573759612
-        - rid: 4840404816573759613
-        m_Conditions:
-        - rid: 4840404816573759614
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759612
-        False:
-          rid: 4840404816573759613
-    - rid: 4840404816573759604
-      type: {class: RecieveTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 4079520964694126940
-          m_Value1: 13402184617351386059
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759598
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759605
-      type: {class: DoEnemyTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759606
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 1178325805300868223
-          m_Value1: 168528776764195713
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759600
-        m_Children:
-        - rid: 4840404816573759615
-        - rid: 4840404816573759616
-        m_Conditions:
-        - rid: 4840404816573759617
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759615
-        False:
-          rid: 4840404816573759616
-    - rid: 4840404816573759607
-      type: {class: TryToGetInRecievingPositionAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 16708082000873864890
-          m_Value1: 4743724122549898362
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759600
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759608
-      type: {class: DoPlayerHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759609
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 17581759597718108209
-          m_Value1: 5451665627187566060
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759601
-        m_Children:
-        - rid: 4840404816573759618
-        - rid: 4840404816573759619
-        m_Conditions:
-        - rid: 4840404816573759620
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759618
-        False:
-          rid: 4840404816573759619
-    - rid: 4840404816573759610
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 4141464835446869374
-          m_Value1: 10055698737964351300
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759601
-        m_Children:
-        - rid: 4840404816573759621
-        - rid: 4840404816573759622
-        m_Conditions:
-        - rid: 4840404816573759623
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759621
-        False:
-          rid: 4840404816573759622
-    - rid: 4840404816573759611
-      type: {class: DoEnemyTeamHasTheBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759612
-      type: {class: TryToGetTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 8082649099176748511
-          m_Value1: 6924703042113830992
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759603
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759613
-      type: {class: PrepareForLongShootAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 10536072876056222804
-          m_Value1: 920427760496843594
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759603
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759614
-      type: {class: IsEnemyPlayerInsideTheCriticalRegionCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759615
-      type: {class: ShootTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 2778063446131115747
-          m_Value1: 13581754643355371068
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759606
-        Player:
-          rid: 4840404816573759574
-        ShootDirectionCandidates:
-          rid: 4840404816573759575
-    - rid: 4840404816573759616
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 18193209912593360129
-          m_Value1: 15245517009948673784
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759606
-        m_Children:
-        - rid: 4840404816573759624
-        - rid: 4840404816573759625
-        m_Conditions:
-        - rid: 4840404816573759626
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759624
-        False:
-          rid: 4840404816573759625
-    - rid: 4840404816573759617
-      type: {class: CanIShootCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-        ShootDirectionCandidates:
-          rid: 4840404816573759575
-    - rid: 4840404816573759618
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 16556217845633658490
-          m_Value1: 13515462196695581674
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759609
-        m_Children:
-        - rid: 4840404816573759627
-        - rid: 4840404816573759628
-        m_Conditions:
-        - rid: 4840404816573759629
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759627
-        False:
-          rid: 4840404816573759628
-    - rid: 4840404816573759619
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 10861526476968039355
-          m_Value1: 10305805245230537936
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759609
-        m_Children:
-        - rid: 4840404816573759630
-        - rid: 4840404816573759631
-        m_Conditions:
-        - rid: 4840404816573759632
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759630
-        False:
-          rid: 4840404816573759631
-    - rid: 4840404816573759620
-      type: {class: AmITheClosestPlayerToBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759621
-      type: {class: TryToGetTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 13336184471272325199
-          m_Value1: 6750002553784757742
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759610
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759622
-      type: {class: GoToHomePositionAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 441256172471610821
-          m_Value1: 2037236472090374092
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759610
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759623
-      type: {class: AmITheClosestPlayerToBallCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759624
-      type: {class: BranchingConditionComposite, ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        ID:
-          m_Value0: 7347809749603943293
-          m_Value1: 9543057646457630193
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759616
-        m_Children:
-        - rid: 4840404816573759633
-        - rid: 4840404816573759634
-        m_Conditions:
-        - rid: 4840404816573759635
-        m_RequiresAllConditions: 0
-        True:
-          rid: 4840404816573759633
-        False:
-          rid: 4840404816573759634
-    - rid: 4840404816573759625
-      type: {class: DribbleAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 12962121708760344630
-          m_Value1: 11767023679884895918
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759616
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759626
-      type: {class: CanPlayerPassCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-        PassDirectionCandidates:
-          rid: 4840404816573759576
-    - rid: 4840404816573759627
-      type: {class: TryToGetTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 17002776585655473832
-          m_Value1: 3913899117416370527
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759618
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759628
-      type: {class: PassiveDefenseAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 17603380753755873352
-          m_Value1: 4515779658485284859
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759618
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759629
-      type: {class: ShouldPlayerAggressiveDefendCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-        MinimumDistanceToGoal:
-          rid: 4840404816573759577
-    - rid: 4840404816573759630
-      type: {class: PassiveDefenseAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 2908070670992845504
-          m_Value1: 8849251430453767735
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759619
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759631
-      type: {class: GoToHomePositionAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 11605685140519153385
-          m_Value1: 14288950082624754690
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759619
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759632
-      type: {class: IsPlayerInsideTheDefendRegionCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
-        MinimumDistanceToGoal:
-          rid: 4840404816573759577
-    - rid: 4840404816573759633
-      type: {class: PassTheBallAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 13726282927787619663
-          m_Value1: 4344121951558124543
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759624
-        Player:
-          rid: 4840404816573759574
-        PassDirectionCandidates:
-          rid: 4840404816573759576
-    - rid: 4840404816573759634
-      type: {class: DribbleAction, ns: , asm: Assembly-CSharp}
-      data:
-        ID:
-          m_Value0: 11500423681276398285
-          m_Value1: 12988903763097475188
-        Graph:
-          rid: 4840404816573759564
-        m_Parent:
-          rid: 4840404816573759624
-        Player:
-          rid: 4840404816573759574
-    - rid: 4840404816573759635
-      type: {class: PassOrDribbleDiceCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Graph:
-          rid: 4840404816573759564
-        Player:
-          rid: 4840404816573759574
 --- !u!114 &5323658777516415253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5620,7 +5620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c02bb70996b49eba31d0c206e28da24, type: 3}
   m_Name: FootballPlayerAI Blackboard
   m_EditorClassIdentifier: 
-  VersionTimestamp: 638838244532120628
+  VersionTimestamp: 638840309780867785
   AssetID:
     m_Value0: 2645668016454177831
     m_Value1: 11818030096543151755
@@ -5677,7 +5677,7 @@ MonoBehaviour:
           m_Value1: 4862802420060053327
         Name: Minimum Distance To Goal
         m_Value: 20
---- !u!114 &8542363834510006724
+--- !u!114 &5997736598271028585
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

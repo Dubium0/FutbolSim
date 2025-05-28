@@ -53,7 +53,7 @@ public partial class ShootTheBallAction : Action
 
         var chosenCandidate = ShootDirectionCandidates.Value[randomInt];
 
-        var probabilisticMiss =  UnityEngine.Random.Range(1, 4) > 1;   // 1 out of 4 shoots misses
+        var probabilisticMiss =  UnityEngine.Random.Range(1, 5) <2;   // 1 out of 5 shoots misses
         if (probabilisticMiss) {
 
             chosenCandidate += m_MissOffset;
@@ -68,7 +68,7 @@ public partial class ShootTheBallAction : Action
         
         int randomInt = UnityEngine.Random.Range(0, 10);
 
-        finalPower = math.lerp(Player.Value.Data.MaximumShootPower / 5, maxPower, randomInt / 10.0f);
+        finalPower = math.lerp(Player.Value.Data.MaximumShootPower / 2, maxPower, randomInt / 10.0f);
         
         return finalPower;
     }

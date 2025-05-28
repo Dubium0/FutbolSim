@@ -30,6 +30,7 @@ MonoBehaviour:
   PassAngle: 15
   ShootAngle: 20
   LobPassAngle: 30
-  MinimumShootDistance: 100
+  MinimumShootDistance: 200
   AggressiveDefenseDistance: 8
   PassiveDefenseDistance: 3.5
+  MaxJumpPower: 10
