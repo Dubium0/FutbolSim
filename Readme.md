@@ -3,17 +3,6 @@
 **A fun, little arcade football game with online P2P, local versus, and single-player modes.**
 **![Gameplay Demo](images/footballSim.gif)**
 
----
-## 📖 Table of Contents
-
-* [About the Project](#about-the-project)
-* [🚀 Getting Started](#getting-started)
-* [🔧 How to Play](#how-to-play)
-* [💻 Technologies Used](#technologies-used)
-* [📄 License](#license)
-* [🙏 Acknowledgements](#acknowledgements)
-
----
 
 ## <a name="about-the-project"></a>ℹ️ About The Project
 
@@ -39,21 +28,8 @@ At its heart, this is just a simple, fun game. We learned a ton making it, and w
 
 ## <a name="getting-started"></a>🚀 Getting Started
 
-
-### Prerequisites
-This section will guide you on how to get started, whether you just want to play the game or explore the project code.
-
-### <a name="for-players"></a>For Players
-
-1.  Go to the [**Releases Page**](https://github.com/Dubium0/FutbolSim/releases) of this repository.
-2.  Download the latest `.zip` file for your operating system (e.g., `FootballSim.zip`).
-3.  Unzip the file.
-4.  Run the `FootballSim.exe` executable and enjoy the game!
-
-### <a name="for-developers"></a>For Developers (The Behind-the-Scenes Part)
-
 #### Prerequisites
-
+This section will guide you on how to get started, whether you just want to play the game or explore the project code.
 * **Unity Hub**
 * **Unity Editor vith Version:** `6000.0.xx`
 
