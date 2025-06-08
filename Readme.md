@@ -22,8 +22,16 @@ Welcome to **Football Sim**! This game is a senior project which is developed by
 It's a simple, fast-paced arcade football game that's all about quick fun. We wanted to make sure you could enjoy it in a few different ways:
 
 * **Online P2P Multiplayer:** Challenge a friend to a match online! We integrated **Steamworks** to make connecting as easy as possible.
+
+**![Gameplay Demo](images/online_PVP.gif)**
 * **Local PvP:** The classic couch co-op experience. Perfect for some friendly rivalry.
+
+
+**![Gameplay Demo](images/player_vsplayer_local.gif)**
+
 * **Player vs. AI:** For solo players, we've programmed a surprisingly competent AI opponent using **Behavior Trees**. See if you can outsmart our little machine!
+
+**![Gameplay Demo](images/PlayerVSAI.gif)**
 
 At its heart, this is just a simple, fun game. We learned a ton making it, and we hope you have as much fun playing it as we did building it.
 
