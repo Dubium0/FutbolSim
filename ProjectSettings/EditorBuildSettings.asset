@@ -8,13 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Main Menu.unity
     guid: adeae1c5d188247488a3efa51eb01c51
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Networked Player Vs Player.unity
     guid: 973a74bc0644ab040b5795410c30b8bb
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GoalkeeperTest.unity
     guid: 33b2028ec9340fa43aeb7681e3681d44
   - enabled: 1

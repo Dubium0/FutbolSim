@@ -21,9 +21,9 @@ MonoBehaviour:
   m_OverrideGlobalSceneList: 1
   m_Scenes:
   - m_enabled: 1
-    m_path: Assets/Scenes/Refactored/MainMenu.unity
+    m_path: Assets/Scenes/MainMenu.unity
   - m_enabled: 1
-    m_path: Assets/Scenes/Refactored/PVA_Arena.unity
+    m_path: Assets/Scenes/PVA_Arena.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings: []

@@ -588,13 +588,13 @@ namespace FootballSim
         {
             if (IsHost && CurrentMatchState == MatchState.Playing)
             {
-                if (MatchTime.Value >= 5 && m_IsFirstHalf)
+                if (MatchTime.Value >= 90 && m_IsFirstHalf)
                 {
                     // first half
                     m_IsFirstHalf = false;
                     HandleFirstHalfFinish();
                 }
-                else if (MatchTime.Value >= 360 && !m_IsGameFinishedCalled)
+                else if (MatchTime.Value >= 180 && !m_IsGameFinishedCalled)
                 {
                     
                     m_IsGameFinishedCalled = true;
