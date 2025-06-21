@@ -71,8 +71,6 @@ Controls are very similiar to popular football games.
 
 ## <a name="technologies-used"></a>💻 Technologies Used
 
-Detail the primary technologies and assets used in your project. This is crucial for anyone wanting to understand the technical aspects of your game.
-
 * **Game Engine:** [Unity](https://unity.com/)
 * **Programming Language:** [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)
 
